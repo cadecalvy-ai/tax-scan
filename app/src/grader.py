@@ -1,6 +1,8 @@
 """Tax Return Grader - command line.
 
-    python -m src.grader inputs/<folder> --out outputs/<run>
+    python -m src.grader ../inputs/clients --out ../outputs/<run>      (run from the app folder)
+
+Easiest: double-click "Grade My Clients.bat" in the main folder.
 
 <folder> is either one client folder (PDFs inside) or a folder of client
 folders. For each client: read the PDFs (OCR for scans), extract the figures,
@@ -18,14 +20,13 @@ from pathlib import Path
 
 import yaml
 
-from . import report
+from . import paths, report
 from .privacy import consent_from_file, mask_ssn
 from .record import build_record
 from .signals import evaluate, score
 from .validate import analyze_year
 
-ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CONFIG = ROOT / "config" / "grader.yaml"
+DEFAULT_CONFIG = paths.CONFIG
 log = logging.getLogger("grader")
 
 FIGURE_ROWS = [("agi", "Adjusted gross income"), ("total_income", "Total income"), ("wages", "Wages"),
@@ -181,12 +182,16 @@ def run(input_path, out_dir, config=None, cache_dir=None, workers=1):
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m src.grader", description="Grade client tax returns (runs locally).")
     ap.add_argument("input", help="a client folder, or a folder of client folders")
-    ap.add_argument("--out", default="outputs/run", help="output folder (default outputs/run)")
+    ap.add_argument("--out", default=str(paths.OUTPUTS / "run"), help="output folder (default outputs/run)")
     ap.add_argument("--config", default=None, help="config YAML (default config/grader.yaml)")
     ap.add_argument("--cache", default=None, help="optional folder to cache OCR results (keep it private/local)")
     ap.add_argument("--workers", type=int, default=1, help="clients to process in parallel (default 1)")
     a = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
+    if not Path(a.input).is_dir() or not client_folders(a.input):
+        print(f"No client folders with PDFs found in {Path(a.input).resolve()}.\n"
+              "Put one folder per client there (see inputs/clients/README.txt), then run again.")
+        return 1
     results = run(a.input, a.out, a.config, a.cache, a.workers)
     for r in sorted(results, key=lambda r: -(r.get("scores", {}).get("aum_score", -1))):
         if r["status"] == "graded":

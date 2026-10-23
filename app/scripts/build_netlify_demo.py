@@ -1,17 +1,18 @@
 """Build the public Tax Scan site for Netlify from the FICTIONAL test clients.
 
-    .venv\\Scripts\\python scripts\\build_netlify_demo.py
+    Double-click "Build Website.bat" in the main folder, or from the app folder:
+    ..\\.venv\\Scripts\\python scripts\\build_netlify_demo.py
 
-Output (netlify_site/):
+Output in netlify_site/site/, zipped as netlify_site/tax-scan-site.zip for uploading:
   index.html            landing page (hero + drop box, demo mode: nothing is uploaded or read)
   anime.min.js          animation library (MIT), served locally
   sample-clients.zip    the 24 fictional clients' PDFs, to try the drop box / the local grader
   demo/index.html       ranking of the sample clients
   demo/clients/*.html   one profile per sample client
 
-Netlify publishes this folder (see netlify.toml); pushing to GitHub redeploys it.
+To update the live site, drag tax-scan-site.zip onto the Deploys page of the Netlify project.
 
-Safety: this only ever publishes fictional data. It grades inputs/test_clients and stops if
+Safety: this only ever publishes fictional data. It grades inputs/sample_clients and stops if
 any client is not marked as a fictional test client, or if an unmasked SSN appears in a page.
 Never point it at real client folders - the site is public.
 """
@@ -21,14 +22,14 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))      # the app folder
 
+from src import paths  # noqa: E402
 from src.grader import run  # noqa: E402
 from src.landing import WEB, build_sample_zip, render_landing, sample_names  # noqa: E402
 
-SRC = ROOT / "inputs" / "test_clients"
-SITE = ROOT / "netlify_site"
+SRC = paths.SAMPLE_CLIENTS
+SITE = paths.SITE
 BANNER = ("<div class='banner'><b>Demo &mdash; fictional test data.</b> These clients, returns, and numbers are "
           "invented to show what Tax Scan produces. No real client data.</div>")
 NOINDEX = "<meta name='robots' content='noindex'>"
@@ -81,9 +82,9 @@ def main():
     for f in list(SITE.rglob("*.html")) + list(SITE.rglob("*.csv")):
         if re.search(r"\b\d{3}-\d{2}-\d{4}\b", f.read_text(encoding="utf-8", errors="ignore")):
             sys.exit(f"Refusing to publish: unmasked SSN found in {f}")
-    zip_path = shutil.make_archive(str(SITE), "zip", SITE)
+    zip_path = shutil.make_archive(str(paths.SITE_ZIP.with_suffix("")), "zip", SITE)
     n = len(list((SITE / "demo" / "clients").glob("*.html")))
-    print(f"Built {SITE}: landing page, {n} sample client profiles, sample-clients.zip. Also {zip_path}")
+    print(f"Built the site ({n} sample client profiles). Upload this file to Netlify: {zip_path}")
 
 
 if __name__ == "__main__":

@@ -44,7 +44,7 @@ def test_drop_a_folder_of_clients(client):
     files = []
     for cid in ("C08", "C21"):
         folder = next(CLIENTS.glob(f"{cid}_*"))
-        files += [(f"test_clients/{folder.name}/{p.name}", p) for p in folder.glob("*.pdf")]
+        files += [(f"sample_clients/{folder.name}/{p.name}", p) for p in folder.glob("*.pdf")]
     resp = client.post("/grade", data=_upload(files), content_type="multipart/form-data")
     assert resp.status_code == 200, resp.get_json()
     url = resp.get_json()["url"]

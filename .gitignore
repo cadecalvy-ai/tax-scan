@@ -1,9 +1,8 @@
 # --- Client data must never be committed (this repo is public) ---
-# Only the FICTIONAL test clients are tracked. Real client folders, uploads,
+# Only the FICTIONAL sample clients are tracked. Real client folders, uploads,
 # reports, and OCR caches stay on this computer.
-inputs/*
-!inputs/README.md
-!inputs/test_clients/
+inputs/clients/*
+!inputs/clients/README.txt
 outputs/*
 !outputs/README.md
 client.yaml
@@ -18,4 +17,4 @@ __pycache__/
 .claude/
 
 # --- build artifacts ---
-netlify_site.zip
+netlify_site/tax-scan-site.zip

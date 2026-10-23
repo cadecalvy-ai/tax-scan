@@ -1,4 +1,4 @@
-# Netlify serves the static demo of the FICTIONAL test-client reports.
-# Rebuild it with:  .venv\Scripts\python scripts\build_netlify_demo.py
+# Netlify serves the static demo of the FICTIONAL sample clients.
+# Rebuild it with netlify_site\Build Website.bat
 [build]
-  publish = "netlify_site"
+  publish = "netlify_site/site"

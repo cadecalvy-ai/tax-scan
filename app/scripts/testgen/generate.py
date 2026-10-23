@@ -1,4 +1,4 @@
-"""Generate the 24 FICTIONAL test clients into inputs/test_clients/.
+"""Generate the 24 FICTIONAL test clients into inputs/sample_clients/.
 
 Run from the project root:
     .venv\\Scripts\\python scripts\\testgen\\generate.py
@@ -20,8 +20,8 @@ import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[1]
-sys.path[:0] = [str(HERE), str(ROOT / "starter")]
+APP = HERE.parents[1]
+sys.path[:0] = [str(HERE), str(APP / "starter"), str(APP)]
 
 import numpy as np                                  # noqa: E402
 from PIL import Image, ImageFilter                  # noqa: E402
@@ -31,7 +31,8 @@ import returns                                      # noqa: E402
 import sources                                      # noqa: E402
 from specs import CLIENTS                           # noqa: E402
 
-OUT = ROOT / "inputs" / "test_clients"
+from src import paths  # noqa: E402
+OUT = paths.SAMPLE_CLIENTS
 PDFTOPPM = shutil.which("pdftoppm") or next(
     (str(p) for p in (Path.home() / "AppData/Local/Microsoft/WinGet/Packages").glob("*Poppler*/**/pdftoppm.exe")), None)
 

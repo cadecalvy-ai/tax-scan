@@ -19,12 +19,12 @@ from pathlib import Path, PurePosixPath
 from flask import Flask, abort, jsonify, redirect, request, send_file, send_from_directory
 from werkzeug.utils import secure_filename
 
+from . import paths
 from .grader import run
 from .landing import WEB, build_sample_zip, render_landing
 
 HOST, PORT = "127.0.0.1", 5057
-ROOT = Path(__file__).resolve().parents[1]
-RUNS = ROOT / "outputs" / "web"
+RUNS = paths.WEB_RUNS
 KEEP = {".pdf", ".yaml", ".yml"}          # PDFs plus client.yaml (consent flag)
 RUN_RE = re.compile(r"^\d{4}-\d{2}-\d{2}_\d{6}$")
 

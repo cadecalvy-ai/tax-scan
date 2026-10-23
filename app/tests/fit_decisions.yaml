@@ -1,5 +1,5 @@
 # Fit-level disagreements between the default rules (config/grader.yaml) and the
-# intended levels in inputs/test_clients/answer_key.json.
+# intended levels in inputs/sample_clients/answer_key.json.
 #
 # These are NOT extraction errors. The grader reads each return correctly, but
 # the rules as written score the client differently from the intended level.

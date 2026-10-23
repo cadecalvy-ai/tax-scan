@@ -8,9 +8,10 @@ import json
 import zipfile
 from pathlib import Path
 
+from . import paths
+
 WEB = Path(__file__).resolve().parent / "web"
-ROOT = WEB.parents[1]
-SAMPLE_CLIENTS = ROOT / "inputs" / "test_clients"
+SAMPLE_CLIENTS = paths.SAMPLE_CLIENTS
 
 
 def render_landing(mode, runs=(), sample_url="", sample_names=()):

@@ -13,7 +13,8 @@ footer `SAMPLE — FICTIONAL TEST DATA — NOT A REAL RETURN`.
 ## How it was made
 
 ```
-.venv\Scripts\python scripts\testgen\generate.py
+cd app
+..\.venv\Scripts\python scripts\testgen\generate.py
 ```
 
 The script is deterministic: the same inputs produce the same files, and the scan noise uses a fixed seed.
@@ -21,10 +22,10 @@ It deletes and rewrites the PDFs in `C??_*` folders each time.
 
 | File | What it is |
 |---|---|
-| `scripts/testgen/specs.py` | The 24 client definitions (income, people, payers, designed signals, intended fit) |
-| `scripts/testgen/returns.py` | Turns engine output into rounded form lines; draws the 1040 and schedules |
-| `scripts/testgen/sources.py` | Draws the W-2s, 1099s, SSA-1099, K-1, 3921, 1098, and the profile page |
-| `scripts/testgen/generate.py` | Runs everything, checks reconciliation, makes the scans, writes the answer key |
+| `app/scripts/testgen/specs.py` | The 24 client definitions (income, people, payers, designed signals, intended fit) |
+| `app/scripts/testgen/returns.py` | Turns engine output into rounded form lines; draws the 1040 and schedules |
+| `app/scripts/testgen/sources.py` | Draws the W-2s, 1099s, SSA-1099, K-1, 3921, 1098, and the profile page |
+| `app/scripts/testgen/generate.py` | Runs everything, checks reconciliation, makes the scans, writes the answer key |
 
 Figures come from `starter/tax_engine.py` (`compute()` then `assign_payments()`). Each schedule line is rounded
 once and every total is the sum of the printed lines, so each return foots. `reconciliation_report.txt` lists
@@ -101,6 +102,6 @@ a target, the mismatch gets listed for a decision.
   8995-A would apply (C12). EIC, Form 8812, Form 2210, and state returns are not computed. Line 38's
   estimated tax penalty is a flat 4.5% of the balance due.
 - Line numbers follow the 2025 Form 1040 (11a/11b, 13a/13b) and the 2024 Form 1040 (11, 13). See
-  `research/form_line_reference.md`.
+  `app/docs/research/form_line_reference.md`.
 - The 1099-B is a one-page summary from a composite statement, with no transaction detail.
 - Box 3 of the 1099-R is blank. W-2 state tax is a flat 5.45% of wages.

@@ -3,9 +3,11 @@ import json
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-CLIENTS = ROOT / "inputs" / "test_clients"
-CACHE = ROOT / ".pytest_cache" / "ocr"          # OCR cache for fictional data only
+from src import paths  # noqa: E402
+
+ROOT = paths.ROOT
+CLIENTS = paths.SAMPLE_CLIENTS
+CACHE = paths.APP / ".pytest_cache" / "ocr"          # OCR cache for fictional data only
 GRADES = "ABCDF"
 
 
