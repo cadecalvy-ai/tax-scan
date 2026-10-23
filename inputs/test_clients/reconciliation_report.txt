@@ -1,0 +1,36 @@
+Reconciliation checks (printed form lines vs. source documents and vs. the tax engine)
+
+C01 2025: 17/17 checks pass
+C02 2025: 17/17 checks pass
+C03 2025: 19/19 checks pass
+C04 2025: 21/21 checks pass
+C05 2025: 23/23 checks pass
+C05 2024: 23/23 checks pass
+C06 2025: 19/19 checks pass
+C07 2025: 20/20 checks pass
+C07 2024: 20/20 checks pass
+C08 2025: 17/17 checks pass
+C09 2025: 20/20 checks pass
+C10 2025: 20/20 checks pass
+C10 2024: 17/17 checks pass
+C11 2025: 19/19 checks pass
+C12 2025: 23/23 checks pass
+C13 2025: 21/21 checks pass
+C13 2024: 21/21 checks pass
+C14 2025: 19/19 checks pass
+C15 2025: 19/19 checks pass
+C16 2025: 20/20 checks pass
+C16 2024: 20/20 checks pass
+C17 2025: 17/17 checks pass
+C18 2025: 22/22 checks pass
+C19 2025: 19/19 checks pass
+C20 2025: 19/19 checks pass
+C20 2024: 19/19 checks pass
+C21 2025: 17/17 checks pass
+C21 2024: 17/17 checks pass
+C22 2025: 17/17 checks pass
+C22 2024: 17/17 checks pass
+C23 2025: 17/17 checks pass
+C24 2025: 22/22 checks pass
+
+Total failures: 0

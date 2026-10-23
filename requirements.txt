@@ -1,0 +1,20 @@
+# Python 3.11+ (developed on 3.12). Install into a venv:
+#   python -m venv .venv
+#   .venv\Scripts\python -m pip install -r requirements.txt
+# External tools (Windows): Poppler (pdftoppm) and Tesseract OCR, e.g.
+#   winget install oschwartz10612.Poppler
+#   winget install UB-Mannheim.TesseractOCR
+
+# test-data generator (Phase 1)
+reportlab>=4.0
+numpy>=1.26
+Pillow>=10.0
+
+# grader (Phase 2)
+pdfplumber>=0.11
+pypdf>=4.0
+pdf2image>=1.17
+pytesseract>=0.3.10
+PyYAML>=6.0
+Flask>=3.0          # optional local upload page (python -m src.webapp)
+pytest>=8.0

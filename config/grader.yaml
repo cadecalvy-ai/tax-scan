@@ -1,0 +1,123 @@
+# Tax Return Grader - every threshold, weight, and band lives here.
+# Edit freely; nothing in the code is hard-coded. Amounts are in dollars.
+# After editing, re-run the grader. The report shows which rule fired and why.
+
+# ---------------------------------------------------------------- bands
+bands:
+  aum:                 # AUM score 0-100 -> fit level
+    high: 60
+    med: 30            # below med -> low
+  grades:              # Annuity and Life points -> letter grade
+    A: 70
+    B: 50
+    C: 35
+    D: 20              # below D -> F
+
+# ---------------------------------------------------------------- AUM (points add up, capped)
+aum:
+  cap: 100
+  agi:                          # Form 1040 line 11 / 11a. Highest tier reached counts.
+    tiers: [[150000, 15], [250000, 20], [500000, 25]]
+  invest_income:                # dividends (3b) + capital gains (7)
+    tiers: [[5000, 15], [25000, 20]]
+  interest:                     # taxable interest (2b); $2k at ~4% is ~$50k in cash
+    tiers: [[2000, 10], [10000, 15]]
+  retirement_distribution:      # any IRA/401k/pension distribution (4a/5a or a 1099-R)
+    points: 15
+  rollover:                     # 1099-R code G at or above min; REPLACES retirement_distribution
+    min: 100000
+    points: 25
+  inheritance:                  # 1099-R code 4, or dividends >= multiple x prior year
+    points: 15
+    dividend_multiple: 3
+    min_current_dividends: 2000 # ignore jumps from tiny amounts (e.g. $10 -> $40)
+  asset_sale:                   # home or business sale gain (8949 rows / Sch D line 10 / 1099-S)
+    min_gain: 100000
+    points: 20
+  niit:                         # Form 8960 line 17 or Schedule 2 line 12 > 0
+    points: 10
+  stock_comp_amt:               # Form 3921/3922 present, or AMT (Form 6251 line 11 > 0)
+    points: 10
+  no_retirement_savings:
+    min_income: 100000
+    # income used for the test: "earned" = W-2 wages + Schedule C net + S-corp K-1 box 1; or "agi"
+    income_basis: earned
+    deferral_codes: [D, E, F, G, S, AA, BB]   # W-2 box 12 codes that count as saving
+    points: 10
+  income_drop:                  # needs a prior-year return
+    min_drop_pct: 40            # AGI fell by at least this much ...
+    early_retirement_max_age: 64   # ... or wages went from >0 to 0 with the older spouse at/under this age
+    points: 10
+  early_withdrawal:             # 1099-R code 1, or Form 5329 Part I additional tax
+    points: 10
+
+# ---------------------------------------------------------------- Annuity (points -> grade)
+annuity:
+  age:                          # oldest of taxpayer/spouse at 12/31 of the tax year
+    tiers: [[55, 25], [65, 30]]
+  pension_ira_income:           # taxable IRA (4b) + pension (5b) > 0
+    points: 20
+  interest:
+    tiers: [[2000, 15], [10000, 25]]
+  bracket_24:                   # taxable income (line 15) at or above the start of the 24% bracket
+    points: 10
+    start:
+      2025: {single: 103350, mfj: 206700, mfs: 103350, hoh: 103350, qss: 206700}
+      2024: {single: 100525, mfj: 201050, mfs: 100525, hoh: 100500, qss: 201050}
+  transition:                   # any one: SS started, rollover, widowhood, income drop
+    points: 15
+  rmd_age:                      # age at or above, with IRA distributions (4a > 0)
+    age: 73
+    points: 10
+
+# ---------------------------------------------------------------- Life (points -> grade)
+life:
+  dependents:
+    base: 25
+    per_dependent: 5
+    max_counted: 3
+  single_earner:                # married filing jointly; one spouse has >= share of earned income
+    share: 0.80
+    points: 20
+  business_owner:               # Schedule C net or S-corp K-1 box 1 at or above min
+    min: 50000
+    points: 20
+  income:                       # AGI
+    tiers: [[150000, 15], [300000, 20]]
+  life_event:                   # marriage, new baby, divorce, widowhood (counted once)
+    points: 15
+  age_over:                     # oldest person strictly older than this
+    age: 75
+    points: -20
+
+# ---------------------------------------------------------------- validation
+validation:
+  tolerance: 1                  # dollars of rounding allowed when comparing figures
+
+# ---------------------------------------------------------------- talking points
+# {placeholders} are filled from the signal's details. Keep them short.
+talking_points:
+  aum.rollover: "Rolled over {value} in {year}. Confirm where it landed and offer a full portfolio review."
+  aum.retirement_distribution: "Taking {value} in retirement-account distributions. Review withdrawal strategy and tax drag."
+  aum.inheritance: "Signs of an inheritance ({detail}). Inherited assets often sit unmanaged; offer to review them."
+  aum.asset_sale: "Sale gain of {value} ({detail}). Large proceeds may be sitting in cash; discuss a reinvestment plan."
+  aum.interest: "{value} of taxable interest suggests a large cash/CD position. Discuss yield and allocation."
+  aum.invest_income: "{value} of dividends and capital gains. There is a taxable portfolio to review for tax efficiency."
+  aum.niit: "Paying net investment income tax ({value}). Tax-aware investing and asset location could help."
+  aum.stock_comp_amt: "Equity compensation / AMT ({detail}). Concentrated stock and exercise planning conversation."
+  aum.no_retirement_savings: "High earner ({value}) with no retirement deferrals visible. Discuss 401(k)/SEP/solo 401(k)."
+  aum.income_drop: "Income fell sharply ({detail}). Possible retirement or job change; low-bracket window for Roth conversions."
+  aum.early_withdrawal: "Early retirement-plan withdrawal ({value}) with penalty. Cash-flow review; old 401(k) may be rollable."
+  aum.agi: "AGI of {value}."
+  annuity.age: "Age {value}: in the window for income planning and guarantees."
+  annuity.pension_ira_income: "Living partly on pension/IRA income ({value}). Discuss guaranteed lifetime income."
+  annuity.interest: "{value} of interest. CD money may fit a fixed or fixed-indexed annuity."
+  annuity.bracket_24: "Taxable income of {value} (24%+ bracket). Tax-deferred growth may be attractive."
+  annuity.transition: "Life transition: {detail}. A natural time to revisit income strategy."
+  annuity.rmd_age: "At RMD age ({value}). Coordinate required distributions; QCDs if charitable."
+  life.dependents: "{value} dependent(s). Confirm life coverage is sized to protect them."
+  life.single_earner: "Single-earner household ({detail}). The family depends on one income."
+  life.business_owner: "Business owner ({detail}). Key-person and buy-sell coverage conversation."
+  life.income: "Income of {value}. Coverage should keep pace with earnings."
+  life.life_event: "Life event: {detail}. Beneficiaries and coverage need a refresh."
+  life.age_over: "Age {value}. New life coverage is less likely to fit."

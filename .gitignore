@@ -1,0 +1,21 @@
+# --- Client data must never be committed (this repo is public) ---
+# Only the FICTIONAL test clients are tracked. Real client folders, uploads,
+# reports, and OCR caches stay on this computer.
+inputs/*
+!inputs/README.md
+!inputs/test_clients/
+outputs/*
+!outputs/README.md
+client.yaml
+client.yml
+.cache/
+
+# --- Python / tooling ---
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.claude/
+
+# --- build artifacts ---
+netlify_site.zip

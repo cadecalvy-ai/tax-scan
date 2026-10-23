@@ -1,0 +1,54 @@
+# Fit-level disagreements between the default rules (config/grader.yaml) and the
+# intended levels in inputs/test_clients/answer_key.json.
+#
+# These are NOT extraction errors. The grader reads each return correctly, but
+# the rules as written score the client differently from the intended level.
+# Per the brief, the rules were not tuned to match. Decide each one: change a
+# rule or weight in config/grader.yaml, or change the intended level in the
+# answer key. Then delete the entry here. (Each listed case is an xfail(strict)
+# test, so it starts "XPASS"-failing if a change makes it agree.)
+pending:
+  - client: C08
+    product: aum
+    rules_give: "25 (low)"
+    intended: high
+    why: >
+      Only aum.rollover_100k fires (25). AGI is $132,820 and there's no other investment income. A $418,000
+      rollover alone can't reach 'high' (60). Options: raise the rollover weight, or make it scale with size.
+  - client: C16
+    product: aum
+    rules_give: "40 (med)"
+    intended: high
+    why: >
+      invest_income_25k (20) + interest_2k (10) + income_drop (10). AGI fell to $37,000, so the AGI tiers
+      don't fire even though $11,800 of dividends and $22,000 of gains imply a sizable portfolio. The rules
+      measure income, not assets.
+  - client: C06
+    product: aum
+    rules_give: "25 (low)"
+    intended: med
+    why: >
+      interest_2k (10) + retirement_distribution (15). Retirees with $6,200 of CD interest (roughly $150k in
+      CDs) plus pension and IRA income. AGI of $131,160 is below the $150k tier.
+  - client: C20
+    product: aum
+    rules_give: "15 (low)"
+    intended: med
+    why: >
+      Only interest_10k (15). $14,200 of interest implies about $350k in CDs, but AGI is $46,390 and nothing
+      else fires. The 2024-to-2025 AGI drop is 38%, just under the 40% income_drop threshold.
+  - client: C14
+    product: aum
+    rules_give: "0 (low)"
+    intended: med
+    why: >
+      No AUM rule looks at rental real estate. Four rentals with $98,400 of rents (Schedule E) is a real
+      estate concentration, but the rules have no signal for it. AGI is $132,300, and Dale has a 401(k), so
+      no_retirement_savings doesn't fire.
+  - client: C03
+    product: aum
+    rules_give: "15 (low)"
+    intended: med
+    why: >
+      Only agi_150k (15). Daniel maxes his 401(k) (code D) and the family has just $1,850 of dividends. The
+      rules see a high earner who is already saving, so there's no other AUM hook.

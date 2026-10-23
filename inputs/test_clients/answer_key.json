@@ -1,0 +1,5298 @@
+{
+  "meta": {
+    "description": "Answer key for the 24 FICTIONAL test clients. See README.md.",
+    "tax_year": 2025,
+    "band_definitions": {
+      "aum_fit": {
+        "high": "score >= 60",
+        "med": "30 <= score < 60",
+        "low": "score < 30"
+      },
+      "grades": {
+        "A": ">= 70",
+        "B": ">= 50",
+        "C": ">= 35",
+        "D": ">= 20",
+        "F": "< 20"
+      },
+      "band_format": "'A-B' means grade A or B is acceptable; 'D-F' means D or F."
+    },
+    "signal_ids": "product.rule, e.g. aum.rollover_100k, annuity.transition, life.dependents"
+  },
+  "clients": [
+    {
+      "id": "C01",
+      "folder": "C01_Brandvold_Tyler",
+      "names": [
+        "Tyler Brandvold"
+      ],
+      "ages": [
+        26
+      ],
+      "filing_status": "single",
+      "agi_2025": 42541,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 179,
+      "amount_owed_2025": 0,
+      "designed_signals": [],
+      "narrative": "Control: low fit everywhere",
+      "intended": {
+        "aum_fit": "low",
+        "annuity_band": "D-F",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 42500,
+            "1z": 42500,
+            "2a": 0,
+            "2b": 41,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 42541,
+            "10": 0,
+            "11a": 42541,
+            "11b": 42541,
+            "12": 15750,
+            "13a": 0,
+            "13b": 0,
+            "14": 15750,
+            "15": 26791,
+            "16": 2976,
+            "17": 0,
+            "18": 2976,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 2976,
+            "23": 0,
+            "24": 2976,
+            "25a": 3155,
+            "25b": 0,
+            "25c": 0,
+            "25d": 3155,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 3155,
+            "34": 179,
+            "35a": 179,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [],
+          "schedules": {},
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Prairie Kettle Coffee Roasters Inc.",
+                "box1": 42500,
+                "box2": 3155,
+                "box12": {
+                  "D": 1700
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Ninebark Federal Credit Union",
+                "box1": 41
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 42541.0,
+            "taxable_income": 26791.0,
+            "total_tax": 2976.42,
+            "refund": 178.58,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C02",
+      "folder": "C02_Okafor_Marcus",
+      "names": [
+        "Marcus Okafor",
+        "Jenna Okafor"
+      ],
+      "ages": [
+        33,
+        32
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 99085,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 130,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "life.dependents"
+      ],
+      "narrative": "Dependents, young family",
+      "intended": {
+        "aum_fit": "low",
+        "annuity_band": "D-F",
+        "life_band": "B-C"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Jenna Okafor",
+            "dob": "1993-11-07",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Amara Okafor",
+              "dob": "2021-05-14",
+              "age": 4,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Eli Okafor",
+              "dob": "2024-02-09",
+              "age": 1,
+              "relationship": "Son"
+            }
+          ],
+          "form_1040": {
+            "1a": 99000,
+            "1z": 99000,
+            "2a": 0,
+            "2b": 85,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 99085,
+            "10": 0,
+            "11a": 99085,
+            "11b": 99085,
+            "12": 31500,
+            "13a": 0,
+            "13b": 0,
+            "14": 31500,
+            "15": 67585,
+            "16": 7633,
+            "17": 0,
+            "18": 7633,
+            "19": 4400,
+            "20": 0,
+            "21": 4400,
+            "22": 3233,
+            "23": 0,
+            "24": 3233,
+            "25a": 3363,
+            "25b": 0,
+            "25c": 0,
+            "25d": 3363,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 3363,
+            "34": 130,
+            "35a": 130,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [],
+          "schedules": {},
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Harrowgate Climate Services LLC",
+                "box1": 58000,
+                "box2": 1970,
+                "box12": {
+                  "D": 2900
+                },
+                "box13_retirement_plan": true
+              },
+              {
+                "who": "s",
+                "employer": "Bright Molar Family Dental PLLC",
+                "box1": 41000,
+                "box2": 1393,
+                "box12": {},
+                "box13_retirement_plan": false
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 85
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 99085.0,
+            "taxable_income": 67585.0,
+            "total_tax": 3233.2,
+            "refund": 129.8,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C03",
+      "folder": "C03_Lindqvist_Daniel",
+      "names": [
+        "Daniel Lindqvist",
+        "Rachel Lindqvist"
+      ],
+      "ages": [
+        41,
+        39
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 188060,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 879,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "life.single_earner",
+        "life.dependents",
+        "life.income_150k",
+        "aum.agi_150k"
+      ],
+      "narrative": "Single earner, 3 dependents, high income",
+      "intended": {
+        "aum_fit": "med",
+        "annuity_band": "D-F",
+        "life_band": "A-B"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Rachel Lindqvist",
+            "dob": "1986-01-30",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Soren Lindqvist",
+              "dob": "2013-04-02",
+              "age": 12,
+              "relationship": "Son"
+            },
+            {
+              "name": "Ingrid Lindqvist",
+              "dob": "2016-09-19",
+              "age": 9,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Axel Lindqvist",
+              "dob": "2019-06-11",
+              "age": 6,
+              "relationship": "Son"
+            }
+          ],
+          "form_1040": {
+            "1a": 186000,
+            "1z": 186000,
+            "2a": 0,
+            "2b": 210,
+            "3a": 1400,
+            "3b": 1850,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 188060,
+            "10": 0,
+            "11a": 188060,
+            "11b": 188060,
+            "12": 31500,
+            "13a": 0,
+            "13b": 0,
+            "14": 31500,
+            "15": 156560,
+            "16": 24173,
+            "17": 0,
+            "18": 24173,
+            "19": 6600,
+            "20": 0,
+            "21": 6600,
+            "22": 17573,
+            "23": 0,
+            "24": 17573,
+            "25a": 18452,
+            "25b": 0,
+            "25c": 0,
+            "25d": 18452,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 18452,
+            "34": 879,
+            "35a": 879,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch B"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 210,
+              "4": 210,
+              "6": 1850
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Tamarack Gearworks Inc.",
+                "box1": 186000,
+                "box2": 18452,
+                "box12": {
+                  "D": 23500
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 210
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 1850,
+                "box1b": 1400,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 188060.0,
+            "taxable_income": 156560.0,
+            "total_tax": 17573.2,
+            "refund": 878.8,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C04",
+      "folder": "C04_Raman_Priya",
+      "names": [
+        "Priya Raman"
+      ],
+      "ages": [
+        34
+      ],
+      "filing_status": "single",
+      "agi_2025": 293040,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 0,
+      "amount_owed_2025": 10359,
+      "designed_signals": [
+        "aum.stock_comp_amt",
+        "aum.invest_income_25k",
+        "aum.agi_250k"
+      ],
+      "narrative": "Stock comp, AMT, cap gains, high AGI",
+      "intended": {
+        "aum_fit": "high",
+        "annuity_band": "D-F",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 238000,
+            "1z": 238000,
+            "2a": 0,
+            "2b": 640,
+            "3a": 3900,
+            "3b": 4800,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 49600,
+            "8": 0,
+            "9": 293040,
+            "10": 0,
+            "11a": 293040,
+            "11b": 293040,
+            "12": 15750,
+            "13a": 0,
+            "13b": 0,
+            "14": 15750,
+            "15": 277290,
+            "16": 59829,
+            "17": 24399,
+            "18": 84228,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 84228,
+            "23": 2092,
+            "24": 86320,
+            "25a": 75961,
+            "25b": 0,
+            "25c": 0,
+            "25d": 75961,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 75961,
+            "34": 0,
+            "35a": 0,
+            "36": 0,
+            "38": 0,
+            "37": 10359
+          },
+          "forms_attached": [
+            "3921",
+            "6251",
+            "8960",
+            "Sch 2",
+            "Sch B",
+            "Sch D"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 640,
+              "4": 640,
+              "6": 4800
+            },
+            "Sch D": {
+              "1a_cost": 41600,
+              "1a_proceeds": 60000,
+              "1a_gain": 18400,
+              "7": 18400,
+              "8a_cost": 52800,
+              "8a_proceeds": 84000,
+              "8a_gain": 31200,
+              "13": 0,
+              "15": 31200,
+              "16": 49600
+            },
+            "6251": {
+              "1": 277290,
+              "2a": 0,
+              "2i": 145000,
+              "4": 422290,
+              "5": 88100,
+              "6": 334190,
+              "7": 84228,
+              "9": 84228,
+              "10": 59829,
+              "11": 24399
+            },
+            "8960": {
+              "1": 640,
+              "2": 4800,
+              "4a": 0,
+              "5a": 49600,
+              "5b": 0,
+              "4c": 0,
+              "5d": 49600,
+              "8": 55040,
+              "12": 55040,
+              "13": 293040,
+              "14": 200000,
+              "15": 93040,
+              "16": 55040,
+              "17": 2092
+            },
+            "Sch 2": {
+              "2": 24399,
+              "3": 24399,
+              "4": 0,
+              "8": 0,
+              "12": 2092,
+              "21": 2092
+            },
+            "3921": {
+              "company": "Quillfeather Software Corp.",
+              "granted": "03/15/2021",
+              "exercised": "08/12/2025",
+              "price": 4.25,
+              "fmv": 33.25,
+              "shares": 5000
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Quillfeather Software Corp.",
+                "box1": 238000,
+                "box2": 75961,
+                "box12": {
+                  "D": 23500
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Ninebark Federal Credit Union",
+                "box1": 640
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 4800,
+                "box1b": 3900,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [],
+            "ssa_1099": [],
+            "3921": {
+              "spread": 145000
+            }
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 293040.0,
+            "taxable_income": 277290.0,
+            "total_tax": 86319.72,
+            "refund": 0.0,
+            "owed": 10358.72,
+            "niit": 2091.52,
+            "amt": 24399.4
+          }
+        }
+      }
+    },
+    {
+      "id": "C05",
+      "folder": "C05_Feld_Aaron",
+      "names": [
+        "Aaron Feld",
+        "Megan Feld"
+      ],
+      "ages": [
+        46,
+        44
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 325831,
+      "agi_2024": 282058,
+      "has_2024": true,
+      "scan": "none",
+      "refund_2025": 0,
+      "amount_owed_2025": 6804,
+      "designed_signals": [
+        "aum.no_retirement_savings",
+        "life.business_owner",
+        "aum.agi_250k",
+        "life.income_300k",
+        "life.dependents"
+      ],
+      "narrative": "Business owner with no retirement plan, high income, dependents",
+      "intended": {
+        "aum_fit": "med",
+        "annuity_band": "D-F",
+        "life_band": "A-B"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Megan Feld",
+            "dob": "1981-10-21",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Lila Feld",
+              "dob": "2011-07-15",
+              "age": 14,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Owen Feld",
+              "dob": "2014-03-28",
+              "age": 11,
+              "relationship": "Son"
+            }
+          ],
+          "form_1040": {
+            "1a": 28000,
+            "1z": 28000,
+            "2a": 0,
+            "2b": 2900,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 310000,
+            "9": 340900,
+            "10": 15069,
+            "11a": 325831,
+            "11b": 325831,
+            "12": 31500,
+            "13a": 58866,
+            "13b": 0,
+            "14": 90366,
+            "15": 235465,
+            "16": 42205,
+            "17": 0,
+            "18": 42205,
+            "19": 4400,
+            "20": 0,
+            "21": 4400,
+            "22": 37805,
+            "23": 30248,
+            "24": 68053,
+            "25a": 2449,
+            "25b": 0,
+            "25c": 0,
+            "25d": 2449,
+            "26": 58800,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 61249,
+            "34": 0,
+            "35a": 0,
+            "36": 0,
+            "38": 0,
+            "37": 6804
+          },
+          "forms_attached": [
+            "8960",
+            "8995",
+            "Sch 1",
+            "Sch 2",
+            "Sch B",
+            "Sch C",
+            "Sch SE"
+          ],
+          "schedules": {
+            "Sch C": {
+              "1": 905000,
+              "7": 905000,
+              "28": 595000,
+              "29": 310000,
+              "31": 310000,
+              "8": 6700,
+              "13": 38000,
+              "15": 24000,
+              "17": 12500,
+              "20b": 72000,
+              "22": 118000,
+              "23": 4200,
+              "25": 9800,
+              "26": 285000,
+              "27a": 24800
+            },
+            "Sch SE": {
+              "2": 310000,
+              "3": 310000,
+              "4a": 286285,
+              "4c": 286285,
+              "6": 286285,
+              "7": 176100,
+              "8a": 0,
+              "9": 176100,
+              "10": 21836,
+              "11": 8302,
+              "12": 30138,
+              "13": 15069
+            },
+            "Sch 1": {
+              "3": 310000,
+              "5": 0,
+              "7": 0,
+              "10": 310000,
+              "13": 0,
+              "15": 15069,
+              "16": 0,
+              "20": 0,
+              "26": 15069
+            },
+            "Sch B": {
+              "2": 2900,
+              "4": 2900,
+              "6": 0
+            },
+            "8995": {
+              "2": 294931,
+              "4": 294931,
+              "5": 58986,
+              "11": 294331,
+              "12": 0,
+              "15": 58866,
+              "13": 294331,
+              "14": 58866,
+              "10": 58986
+            },
+            "8960": {
+              "1": 2900,
+              "2": 0,
+              "4a": 0,
+              "5a": 0,
+              "5b": 0,
+              "4c": 0,
+              "5d": 0,
+              "8": 2900,
+              "12": 2900,
+              "13": 325831,
+              "14": 250000,
+              "15": 75831,
+              "16": 2900,
+              "17": 110
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 30138,
+              "8": 0,
+              "12": 110,
+              "21": 30248
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "s",
+                "employer": "Zumbro Valley Public Schools ISD 0000",
+                "box1": 28000,
+                "box2": 2449,
+                "box12": {},
+                "box13_retirement_plan": false
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 2900
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 325830.67,
+            "taxable_income": 235464.53,
+            "total_tax": 68054.35,
+            "refund": 0.0,
+            "owed": 6805.35,
+            "niit": 110.2,
+            "amt": 0.0
+          }
+        },
+        "2024": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Megan Feld",
+            "dob": "1981-10-21",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Lila Feld",
+              "dob": "2011-07-15",
+              "age": 13,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Owen Feld",
+              "dob": "2014-03-28",
+              "age": 10,
+              "relationship": "Son"
+            }
+          ],
+          "form_1040": {
+            "1a": 26500,
+            "1z": 26500,
+            "2a": 0,
+            "2b": 1600,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 268000,
+            "9": 296100,
+            "10": 14042,
+            "11": 282058,
+            "12": 29200,
+            "13": 50572,
+            "14": 79772,
+            "15": 202286,
+            "16": 34634,
+            "17": 0,
+            "18": 34634,
+            "19": 4000,
+            "20": 0,
+            "21": 4000,
+            "22": 30634,
+            "23": 28144,
+            "24": 58778,
+            "25a": 2239,
+            "25b": 0,
+            "25c": 0,
+            "25d": 2239,
+            "26": 53600,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 55839,
+            "34": 0,
+            "35a": 0,
+            "36": 0,
+            "38": 0,
+            "37": 2939
+          },
+          "forms_attached": [
+            "8960",
+            "8995",
+            "Sch 1",
+            "Sch 2",
+            "Sch B",
+            "Sch C",
+            "Sch SE"
+          ],
+          "schedules": {
+            "Sch C": {
+              "1": 838000,
+              "7": 838000,
+              "28": 570000,
+              "29": 268000,
+              "31": 268000,
+              "8": 6100,
+              "13": 41000,
+              "15": 22800,
+              "17": 11900,
+              "20b": 70000,
+              "22": 109000,
+              "23": 4000,
+              "25": 9400,
+              "26": 272000,
+              "27a": 23800
+            },
+            "Sch SE": {
+              "2": 268000,
+              "3": 268000,
+              "4a": 247498,
+              "4c": 247498,
+              "6": 247498,
+              "7": 168600,
+              "8a": 0,
+              "9": 168600,
+              "10": 20906,
+              "11": 7177,
+              "12": 28083,
+              "13": 14042
+            },
+            "Sch 1": {
+              "3": 268000,
+              "5": 0,
+              "7": 0,
+              "10": 268000,
+              "13": 0,
+              "15": 14042,
+              "16": 0,
+              "20": 0,
+              "26": 14042
+            },
+            "Sch B": {
+              "2": 1600,
+              "4": 1600,
+              "6": 0
+            },
+            "8995": {
+              "2": 253958,
+              "4": 253958,
+              "5": 50792,
+              "11": 252858,
+              "12": 0,
+              "15": 50572,
+              "13": 252858,
+              "14": 50572,
+              "10": 50792
+            },
+            "8960": {
+              "1": 1600,
+              "2": 0,
+              "4a": 0,
+              "5a": 0,
+              "5b": 0,
+              "4c": 0,
+              "5d": 0,
+              "8": 1600,
+              "12": 1600,
+              "13": 282058,
+              "14": 250000,
+              "15": 32058,
+              "16": 1600,
+              "17": 61
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 28083,
+              "8": 0,
+              "12": 61,
+              "21": 28144
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "s",
+                "employer": "Zumbro Valley Public Schools ISD 0000",
+                "box1": 26500,
+                "box2": 2239,
+                "box12": {},
+                "box13_retirement_plan": false
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 1600
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 282058.08,
+            "taxable_income": 202286.46,
+            "total_tax": 58778.39,
+            "refund": 0.0,
+            "owed": 2939.39,
+            "niit": 60.8,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C06",
+      "folder": "C06_Haugen_Gerald",
+      "names": [
+        "Gerald Haugen",
+        "Linda Haugen"
+      ],
+      "ages": [
+        68,
+        66
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 131160,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "all",
+      "refund_2025": 469,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "annuity.age_65",
+        "annuity.pension_ira_income",
+        "aum.retirement_distribution",
+        "aum.interest_2k",
+        "annuity.interest_2k"
+      ],
+      "narrative": "Retirees, pension and IRA income, CDs",
+      "intended": {
+        "aum_fit": "med",
+        "annuity_band": "A-B",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": true,
+            "spouse": true
+          },
+          "spouse": {
+            "name": "Linda Haugen",
+            "dob": "1959-12-03",
+            "deceased": null
+          },
+          "dependents": [],
+          "form_1040": {
+            "1a": 0,
+            "1z": 0,
+            "2a": 0,
+            "2b": 6200,
+            "3a": 2400,
+            "3b": 3100,
+            "4a": 30000,
+            "4b": 30000,
+            "5a": 48000,
+            "5b": 48000,
+            "6a": 51600,
+            "6b": 43860,
+            "7": 0,
+            "8": 0,
+            "9": 131160,
+            "10": 0,
+            "11a": 131160,
+            "11b": 131160,
+            "12": 34700,
+            "13a": 0,
+            "13b": 12000,
+            "14": 46700,
+            "15": 84460,
+            "16": 9370,
+            "17": 0,
+            "18": 9370,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 9370,
+            "23": 0,
+            "24": 9370,
+            "25a": 0,
+            "25b": 9839,
+            "25c": 0,
+            "25d": 9839,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 9839,
+            "34": 469,
+            "35a": 469,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch 1-A",
+            "Sch B"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 6200,
+              "4": 6200,
+              "6": 3100
+            },
+            "Sch 1-A": {
+              "n": 2,
+              "34": 131160,
+              "35": 150000,
+              "36": 0,
+              "37": 0,
+              "38": 12000
+            }
+          },
+          "sources": {
+            "w2": [],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 3900
+              },
+              {
+                "payer": "Cuyuna Range Community Bank",
+                "box1": 2300
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Driftless Index Funds",
+                "box1a": 3100,
+                "box1b": 2400,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [
+              {
+                "who": "t",
+                "payer": "Driftless Index Funds",
+                "box1": 30000,
+                "box2a": 30000,
+                "box4": 3784,
+                "box7": "7",
+                "ira_sep_simple": true,
+                "form_1040_line": "4a"
+              },
+              {
+                "who": "t",
+                "payer": "Arrowhead Ore Workers Pension Plan",
+                "box1": 48000,
+                "box2a": 48000,
+                "box4": 6055,
+                "box7": "7",
+                "ira_sep_simple": false,
+                "form_1040_line": "5a"
+              }
+            ],
+            "ssa_1099": [
+              {
+                "who": "t",
+                "box5": 31200,
+                "box6": 0
+              },
+              {
+                "who": "s",
+                "box5": 20400,
+                "box6": 0
+              }
+            ]
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 131160.0,
+            "taxable_income": 84460.0,
+            "total_tax": 9370.2,
+            "refund": 468.8,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C07",
+      "folder": "C07_Sundberg_Margaret",
+      "names": [
+        "Margaret Sundberg"
+      ],
+      "ages": [
+        71
+      ],
+      "filing_status": "single",
+      "agi_2025": 99240,
+      "agi_2024": 109840,
+      "has_2024": true,
+      "scan": "none",
+      "refund_2025": 429,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "life.life_event_widowhood",
+        "annuity.transition",
+        "annuity.age_65",
+        "annuity.pension_ira_income",
+        "aum.retirement_distribution",
+        "aum.interest_2k",
+        "annuity.interest_2k"
+      ],
+      "narrative": "Widowhood (MFJ to Single), cash, IRA",
+      "intended": {
+        "aum_fit": "med",
+        "annuity_band": "A-B",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": true,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 0,
+            "1z": 0,
+            "2a": 0,
+            "2b": 9400,
+            "3a": 4100,
+            "3b": 5200,
+            "4a": 18000,
+            "4b": 18000,
+            "5a": 22000,
+            "5b": 22000,
+            "6a": 38400,
+            "6b": 32640,
+            "7": 12000,
+            "8": 0,
+            "9": 99240,
+            "10": 0,
+            "11a": 99240,
+            "11b": 99240,
+            "12": 17750,
+            "13a": 0,
+            "13b": 4546,
+            "14": 22296,
+            "15": 76944,
+            "16": 10715,
+            "17": 0,
+            "18": 10715,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 10715,
+            "23": 0,
+            "24": 10715,
+            "25a": 0,
+            "25b": 11144,
+            "25c": 0,
+            "25d": 11144,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 11144,
+            "34": 429,
+            "35a": 429,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch 1-A",
+            "Sch B",
+            "Sch D"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 9400,
+              "4": 9400,
+              "6": 5200
+            },
+            "Sch D": {
+              "7": 0,
+              "8a_cost": 23500,
+              "8a_proceeds": 35500,
+              "8a_gain": 12000,
+              "13": 0,
+              "15": 12000,
+              "16": 12000
+            },
+            "Sch 1-A": {
+              "n": 1,
+              "34": 99240,
+              "35": 75000,
+              "36": 24240,
+              "37": 1454,
+              "38": 4546
+            }
+          },
+          "sources": {
+            "w2": [],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 5600
+              },
+              {
+                "payer": "Gooseberry Falls Credit Union",
+                "box1": 3800
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 5200,
+                "box1b": 4100,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [
+              {
+                "who": "t",
+                "payer": "Driftless Index Funds",
+                "box1": 18000,
+                "box2a": 18000,
+                "box4": 5015,
+                "box7": "7",
+                "ira_sep_simple": true,
+                "form_1040_line": "4a"
+              },
+              {
+                "who": "t",
+                "payer": "North Shore Paper Mill Retirement Plan",
+                "box1": 22000,
+                "box2a": 22000,
+                "box4": 6129,
+                "box7": "4",
+                "ira_sep_simple": false,
+                "form_1040_line": "5a"
+              }
+            ],
+            "ssa_1099": [
+              {
+                "who": "t",
+                "box5": 38400,
+                "box6": 0
+              }
+            ]
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 99240.0,
+            "taxable_income": 76944.4,
+            "total_tax": 10714.77,
+            "refund": 429.23,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        },
+        "2024": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": true,
+            "spouse": true
+          },
+          "spouse": {
+            "name": "Harold Sundberg",
+            "dob": "1950-01-22",
+            "deceased": "08/19/2024"
+          },
+          "dependents": [],
+          "form_1040": {
+            "1a": 0,
+            "1z": 0,
+            "2a": 0,
+            "2b": 8700,
+            "3a": 3800,
+            "3b": 4900,
+            "4a": 18000,
+            "4b": 18000,
+            "5a": 34000,
+            "5b": 34000,
+            "6a": 44400,
+            "6b": 37740,
+            "7": 6500,
+            "8": 0,
+            "9": 109840,
+            "10": 0,
+            "11": 109840,
+            "12": 32300,
+            "13": 0,
+            "14": 32300,
+            "15": 77540,
+            "16": 7605,
+            "17": 0,
+            "18": 7605,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 7605,
+            "23": 0,
+            "24": 7605,
+            "25a": 0,
+            "25b": 7909,
+            "25c": 0,
+            "25d": 7909,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 7909,
+            "34": 304,
+            "35a": 304,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch B",
+            "Sch D"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 8700,
+              "4": 8700,
+              "6": 4900
+            },
+            "Sch D": {
+              "7": 0,
+              "8a_cost": 14000,
+              "8a_proceeds": 20500,
+              "8a_gain": 6500,
+              "13": 0,
+              "15": 6500,
+              "16": 6500
+            }
+          },
+          "sources": {
+            "w2": [],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 5200
+              },
+              {
+                "payer": "Gooseberry Falls Credit Union",
+                "box1": 3500
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 4900,
+                "box1b": 3800,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [
+              {
+                "who": "t",
+                "payer": "Driftless Index Funds",
+                "box1": 18000,
+                "box2a": 18000,
+                "box4": 2738,
+                "box7": "7",
+                "ira_sep_simple": true,
+                "form_1040_line": "4a"
+              },
+              {
+                "who": "s",
+                "payer": "North Shore Paper Mill Retirement Plan",
+                "box1": 34000,
+                "box2a": 34000,
+                "box4": 5171,
+                "box7": "7",
+                "ira_sep_simple": false,
+                "form_1040_line": "5a"
+              }
+            ],
+            "ssa_1099": [
+              {
+                "who": "s",
+                "box5": 27600,
+                "box6": 0
+              },
+              {
+                "who": "t",
+                "box5": 16800,
+                "box6": 0
+              }
+            ]
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 109840.0,
+            "taxable_income": 77540.0,
+            "total_tax": 7604.8,
+            "refund": 304.2,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C08",
+      "folder": "C08_Marsh_Kevin",
+      "names": [
+        "Kevin Marsh"
+      ],
+      "ages": [
+        61
+      ],
+      "filing_status": "single",
+      "agi_2025": 132820,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 1047,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "aum.rollover_100k",
+        "annuity.transition",
+        "annuity.age_55"
+      ],
+      "narrative": "Rollover, near retirement",
+      "intended": {
+        "aum_fit": "high",
+        "annuity_band": "A-B",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 132000,
+            "1z": 132000,
+            "2a": 0,
+            "2b": 820,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 418000,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 132820,
+            "10": 0,
+            "11a": 132820,
+            "11b": 132820,
+            "12": 15750,
+            "13a": 0,
+            "13b": 0,
+            "14": 15750,
+            "15": 117070,
+            "16": 20944,
+            "17": 0,
+            "18": 20944,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 20944,
+            "23": 0,
+            "24": 20944,
+            "25a": 21991,
+            "25b": 0,
+            "25c": 0,
+            "25d": 21991,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 21991,
+            "34": 1047,
+            "35a": 1047,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [],
+          "schedules": {},
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Pinecrest Valve & Fitting Co.",
+                "box1": 132000,
+                "box2": 21991,
+                "box12": {
+                  "D": 18000
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Ninebark Federal Credit Union",
+                "box1": 820
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [
+              {
+                "who": "t",
+                "payer": "Pinecrest Valve & Fitting Co. 401(k) Plan",
+                "box1": 418000,
+                "box2a": 0,
+                "box4": 0,
+                "box7": "G",
+                "ira_sep_simple": false,
+                "form_1040_line": "5a"
+              }
+            ],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 132820.0,
+            "taxable_income": 117070.0,
+            "total_tax": 20943.8,
+            "refund": 1047.2,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C09",
+      "folder": "C09_Kowalczyk_Brian",
+      "names": [
+        "Brian Kowalczyk",
+        "Tasha Kowalczyk"
+      ],
+      "ages": [
+        52,
+        50
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 155800,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "all",
+      "refund_2025": 554,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "aum.early_withdrawal"
+      ],
+      "narrative": "Early withdrawal, job loss, 401k left at old employer",
+      "intended": {
+        "aum_fit": "med",
+        "annuity_band": "D-F",
+        "life_band": "B-C"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Tasha Kowalczyk",
+            "dob": "1975-08-05",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Mason Kowalczyk",
+              "dob": "2009-10-17",
+              "age": 16,
+              "relationship": "Son"
+            }
+          ],
+          "form_1040": {
+            "1a": 111000,
+            "1z": 111000,
+            "2a": 0,
+            "2b": 0,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 35000,
+            "5b": 35000,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 9800,
+            "9": 155800,
+            "10": 0,
+            "11a": 155800,
+            "11b": 155800,
+            "12": 31500,
+            "13a": 0,
+            "13b": 0,
+            "14": 31500,
+            "15": 124300,
+            "16": 17174,
+            "17": 0,
+            "18": 17174,
+            "19": 2200,
+            "20": 0,
+            "21": 2200,
+            "22": 14974,
+            "23": 3500,
+            "24": 18474,
+            "25a": 11048,
+            "25b": 7980,
+            "25c": 0,
+            "25d": 19028,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 19028,
+            "34": 554,
+            "35a": 554,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "5329",
+            "Sch 1",
+            "Sch 2"
+          ],
+          "schedules": {
+            "Sch 1": {
+              "3": 0,
+              "5": 0,
+              "7": 9800,
+              "10": 9800,
+              "13": 0,
+              "15": 0,
+              "16": 0,
+              "20": 0,
+              "26": 0
+            },
+            "5329": {
+              "1": 35000,
+              "2": 0,
+              "3": 35000,
+              "4": 3500
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "8": 3500,
+              "12": 0,
+              "21": 3500
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Granite City Fabrication Inc.",
+                "box1": 64000,
+                "box2": 6370,
+                "box12": {
+                  "D": 3200
+                },
+                "box13_retirement_plan": true
+              },
+              {
+                "who": "s",
+                "employer": "Mississippi Bend Clinic Partners",
+                "box1": 47000,
+                "box2": 4678,
+                "box12": {
+                  "D": 2350
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [],
+            "1099_div": [],
+            "1099_r": [
+              {
+                "who": "t",
+                "payer": "Granite City Fabrication 401(k) Plan",
+                "box1": 35000,
+                "box2a": 35000,
+                "box4": 7000,
+                "box7": "1",
+                "ira_sep_simple": false,
+                "form_1040_line": "5a"
+              }
+            ],
+            "ssa_1099": [],
+            "1099_g": {
+              "box1": 9800,
+              "box4": 980
+            }
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 155800.0,
+            "taxable_income": 124300.0,
+            "total_tax": 18474.0,
+            "refund": 554.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C10",
+      "folder": "C10_Ellison_Sarah",
+      "names": [
+        "Sarah Ellison",
+        "Jon Ellison"
+      ],
+      "ages": [
+        45,
+        47
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 288850,
+      "agi_2024": 203280,
+      "has_2024": true,
+      "scan": "none",
+      "refund_2025": 2126,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "aum.inheritance",
+        "aum.retirement_distribution"
+      ],
+      "narrative": "Inheritance, dividend jump year over year",
+      "intended": {
+        "aum_fit": "high",
+        "annuity_band": "D-F",
+        "life_band": "B-C"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Jon Ellison",
+            "dob": "1978-12-09",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Harper Ellison",
+              "dob": "2012-06-03",
+              "age": 13,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Miles Ellison",
+              "dob": "2015-01-20",
+              "age": 10,
+              "relationship": "Son"
+            }
+          ],
+          "form_1040": {
+            "1a": 210000,
+            "1z": 210000,
+            "2a": 0,
+            "2b": 450,
+            "3a": 13100,
+            "3b": 16400,
+            "4a": 62000,
+            "4b": 62000,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 288850,
+            "10": 0,
+            "11a": 288850,
+            "11b": 288850,
+            "12": 31500,
+            "13a": 0,
+            "13b": 0,
+            "14": 31500,
+            "15": 257350,
+            "16": 46279,
+            "17": 0,
+            "18": 46279,
+            "19": 4400,
+            "20": 0,
+            "21": 4400,
+            "22": 41879,
+            "23": 640,
+            "24": 42519,
+            "25a": 38445,
+            "25b": 6200,
+            "25c": 0,
+            "25d": 44645,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 44645,
+            "34": 2126,
+            "35a": 2126,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "8960",
+            "Sch 2",
+            "Sch B"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 450,
+              "4": 450,
+              "6": 16400
+            },
+            "8960": {
+              "1": 450,
+              "2": 16400,
+              "4a": 0,
+              "5a": 0,
+              "5b": 0,
+              "4c": 0,
+              "5d": 0,
+              "8": 16850,
+              "12": 16850,
+              "13": 288850,
+              "14": 250000,
+              "15": 38850,
+              "16": 16850,
+              "17": 640
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "8": 0,
+              "12": 640,
+              "21": 640
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Bluewater Lantern Analytics Inc.",
+                "box1": 121000,
+                "box2": 22152,
+                "box12": {
+                  "D": 12000
+                },
+                "box13_retirement_plan": true
+              },
+              {
+                "who": "s",
+                "employer": "Ridgeline Survey & Design LLC",
+                "box1": 89000,
+                "box2": 16293,
+                "box12": {
+                  "D": 8000
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 450
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 16400,
+                "box1b": 13100,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [
+              {
+                "who": "t",
+                "payer": "Kestrel Ridge Brokerage",
+                "box1": 62000,
+                "box2a": 62000,
+                "box4": 6200,
+                "box7": "4",
+                "ira_sep_simple": true,
+                "form_1040_line": "4a"
+              }
+            ],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 288850.0,
+            "taxable_income": 257350.0,
+            "total_tax": 42519.3,
+            "refund": 2125.7,
+            "owed": 0.0,
+            "niit": 640.3,
+            "amt": 0.0
+          }
+        },
+        "2024": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Jon Ellison",
+            "dob": "1978-12-09",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Harper Ellison",
+              "dob": "2012-06-03",
+              "age": 12,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Miles Ellison",
+              "dob": "2015-01-20",
+              "age": 9,
+              "relationship": "Son"
+            }
+          ],
+          "form_1040": {
+            "1a": 202000,
+            "1z": 202000,
+            "2a": 0,
+            "2b": 380,
+            "3a": 700,
+            "3b": 900,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 203280,
+            "10": 0,
+            "11": 203280,
+            "12": 29200,
+            "13": 0,
+            "14": 29200,
+            "15": 174080,
+            "16": 28355,
+            "17": 0,
+            "18": 28355,
+            "19": 4000,
+            "20": 0,
+            "21": 4000,
+            "22": 24355,
+            "23": 0,
+            "24": 24355,
+            "25a": 25572,
+            "25b": 0,
+            "25c": 0,
+            "25d": 25572,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 25572,
+            "34": 1217,
+            "35a": 1217,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [],
+          "schedules": {},
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Bluewater Lantern Analytics Inc.",
+                "box1": 116000,
+                "box2": 14685,
+                "box12": {
+                  "D": 11500
+                },
+                "box13_retirement_plan": true
+              },
+              {
+                "who": "s",
+                "employer": "Ridgeline Survey & Design LLC",
+                "box1": 86000,
+                "box2": 10887,
+                "box12": {
+                  "D": 7700
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 380
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 900,
+                "box1b": 700,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 203280.0,
+            "taxable_income": 174080.0,
+            "total_tax": 24354.6,
+            "refund": 1217.4,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C11",
+      "folder": "C11_Tollefson_Robert",
+      "names": [
+        "Robert Tollefson",
+        "Diane Tollefson"
+      ],
+      "ages": [
+        58,
+        57
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 301400,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "sources",
+      "refund_2025": 0,
+      "amount_owed_2025": 4276,
+      "designed_signals": [
+        "aum.asset_sale_gain_100k",
+        "aum.niit"
+      ],
+      "narrative": "Home-sale liquidity, NIIT",
+      "intended": {
+        "aum_fit": "high",
+        "annuity_band": "C-D",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Diane Tollefson",
+            "dob": "1968-06-16",
+            "deceased": null
+          },
+          "dependents": [],
+          "form_1040": {
+            "1a": 180000,
+            "1z": 180000,
+            "2a": 0,
+            "2b": 1400,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 120000,
+            "8": 0,
+            "9": 301400,
+            "10": 0,
+            "11a": 301400,
+            "11b": 301400,
+            "12": 31500,
+            "13a": 0,
+            "13b": 0,
+            "14": 31500,
+            "15": 269900,
+            "16": 40806,
+            "17": 0,
+            "18": 40806,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 40806,
+            "23": 1953,
+            "24": 42759,
+            "25a": 38483,
+            "25b": 0,
+            "25c": 0,
+            "25d": 38483,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 38483,
+            "34": 0,
+            "35a": 0,
+            "36": 0,
+            "38": 0,
+            "37": 4276
+          },
+          "forms_attached": [
+            "8949",
+            "8960",
+            "Sch 2",
+            "Sch D"
+          ],
+          "schedules": {
+            "8949": {
+              "rows": [
+                {
+                  "desc": "Main home \u2014 1418 Juniper Bluff Rd, Stillwater, MN 55082",
+                  "acq": "05/02/2004",
+                  "sold": "06/27/2025",
+                  "proceeds": 1185000,
+                  "cost": 565000,
+                  "code": "H",
+                  "adj": -500000,
+                  "gain": 120000
+                }
+              ],
+              "2_proceeds": 1185000,
+              "2_cost": 565000,
+              "2_adj": -500000,
+              "2_gain": 120000
+            },
+            "Sch D": {
+              "7": 0,
+              "10_proceeds": 1185000,
+              "10_cost": 565000,
+              "10_adj": -500000,
+              "10_gain": 120000,
+              "13": 0,
+              "15": 120000,
+              "16": 120000
+            },
+            "8960": {
+              "1": 1400,
+              "2": 0,
+              "4a": 0,
+              "5a": 120000,
+              "5b": 0,
+              "4c": 0,
+              "5d": 120000,
+              "8": 121400,
+              "12": 121400,
+              "13": 301400,
+              "14": 250000,
+              "15": 51400,
+              "16": 51400,
+              "17": 1953
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "8": 0,
+              "12": 1953,
+              "21": 1953
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Saint Croix Freightways Inc.",
+                "box1": 142000,
+                "box2": 30359,
+                "box12": {
+                  "D": 15000
+                },
+                "box13_retirement_plan": true
+              },
+              {
+                "who": "s",
+                "employer": "Lowell Park Insurance Agency LLC",
+                "box1": 38000,
+                "box2": 8124,
+                "box12": {
+                  "D": 1900
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 1400
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": [],
+            "1099_s": {
+              "box2": 1185000
+            }
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 301400.0,
+            "taxable_income": 269900.0,
+            "total_tax": 42759.2,
+            "refund": 0.0,
+            "owed": 4276.2,
+            "niit": 1953.2,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C12",
+      "folder": "C12_Reinholt_Thomas",
+      "names": [
+        "Thomas Reinholt",
+        "Carol Reinholt"
+      ],
+      "ages": [
+        63,
+        61
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 2007000,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 7170,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "aum.asset_sale_gain_100k",
+        "annuity.age_55"
+      ],
+      "narrative": "Business-sale liquidity event, near retirement",
+      "intended": {
+        "aum_fit": "high",
+        "annuity_band": "B-C",
+        "life_band": "C-D"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Carol Reinholt",
+            "dob": "1964-05-19",
+            "deceased": null
+          },
+          "dependents": [],
+          "form_1040": {
+            "1a": 0,
+            "1z": 0,
+            "2a": 0,
+            "2b": 22000,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 1840000,
+            "8": 145000,
+            "9": 2007000,
+            "10": 0,
+            "11a": 2007000,
+            "11b": 2007000,
+            "12": 31500,
+            "13a": 27100,
+            "13b": 0,
+            "14": 58600,
+            "15": 1948400,
+            "16": 357094,
+            "17": 0,
+            "18": 357094,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 357094,
+            "23": 836,
+            "24": 357930,
+            "25a": 0,
+            "25b": 0,
+            "25c": 0,
+            "25d": 0,
+            "26": 365100,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 365100,
+            "34": 7170,
+            "35a": 7170,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "8949",
+            "8960",
+            "8995",
+            "Sch 1",
+            "Sch 2",
+            "Sch B",
+            "Sch D",
+            "Sch E"
+          ],
+          "schedules": {
+            "Sch E": {
+              "props": [],
+              "28k": 145000,
+              "29a": 145000,
+              "30": 145000,
+              "32": 145000,
+              "41": 145000
+            },
+            "Sch 1": {
+              "3": 0,
+              "5": 145000,
+              "7": 0,
+              "10": 145000,
+              "13": 0,
+              "15": 0,
+              "16": 0,
+              "20": 0,
+              "26": 0
+            },
+            "Sch B": {
+              "2": 22000,
+              "4": 22000,
+              "6": 0
+            },
+            "8949": {
+              "rows": [
+                {
+                  "desc": "100% stock of Reinholt Precision Coatings Inc.",
+                  "acq": "04/01/1998",
+                  "sold": "10/31/2025",
+                  "proceeds": 2300000,
+                  "cost": 460000,
+                  "code": "",
+                  "adj": 0,
+                  "gain": 1840000
+                }
+              ],
+              "2_proceeds": 2300000,
+              "2_cost": 460000,
+              "2_adj": 0,
+              "2_gain": 1840000
+            },
+            "Sch D": {
+              "7": 0,
+              "10_proceeds": 2300000,
+              "10_cost": 460000,
+              "10_adj": 0,
+              "10_gain": 1840000,
+              "13": 0,
+              "15": 1840000,
+              "16": 1840000
+            },
+            "8995": {
+              "2": 145000,
+              "4": 145000,
+              "5": 29000,
+              "11": 1975500,
+              "12": 1840000,
+              "15": 27100,
+              "13": 135500,
+              "14": 27100,
+              "10": 29000
+            },
+            "8960": {
+              "1": 22000,
+              "2": 0,
+              "4a": 0,
+              "5a": 1840000,
+              "5b": -1840000,
+              "4c": 0,
+              "5d": 0,
+              "8": 22000,
+              "12": 22000,
+              "13": 2007000,
+              "14": 250000,
+              "15": 1757000,
+              "16": 22000,
+              "17": 836
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "8": 0,
+              "12": 836,
+              "21": 836
+            }
+          },
+          "sources": {
+            "w2": [],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 13500
+              },
+              {
+                "payer": "Cannon River Savings & Trust",
+                "box1": 8500
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": [],
+            "k1_1120s": {
+              "box1": 145000,
+              "final": true
+            }
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 2007000.0,
+            "taxable_income": 1948400.0,
+            "total_tax": 357929.5,
+            "refund": 7170.5,
+            "owed": 0.0,
+            "niit": 836.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C13",
+      "folder": "C13_Brightwater_Nathan",
+      "names": [
+        "Nathan Brightwater",
+        "Elise Brightwater"
+      ],
+      "ages": [
+        44,
+        42
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 458800,
+      "agi_2024": 428600,
+      "has_2024": true,
+      "scan": "none",
+      "refund_2025": 3323,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "aum.agi_250k",
+        "life.income_300k",
+        "aum.niit",
+        "life.dependents"
+      ],
+      "narrative": "High income, NIIT, dependents",
+      "intended": {
+        "aum_fit": "high",
+        "annuity_band": "D-F",
+        "life_band": "A-B"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Elise Brightwater",
+            "dob": "1983-07-28",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Clara Brightwater",
+              "dob": "2010-03-22",
+              "age": 15,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Jonah Brightwater",
+              "dob": "2013-08-30",
+              "age": 12,
+              "relationship": "Son"
+            },
+            {
+              "name": "Wren Brightwater",
+              "dob": "2017-11-05",
+              "age": 8,
+              "relationship": "Daughter"
+            }
+          ],
+          "form_1040": {
+            "1a": 410000,
+            "1z": 410000,
+            "2a": 0,
+            "2b": 5600,
+            "3a": 23000,
+            "3b": 28400,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 14800,
+            "8": 0,
+            "9": 458800,
+            "10": 0,
+            "11a": 458800,
+            "11b": 458800,
+            "12": 31500,
+            "13a": 0,
+            "13b": 0,
+            "14": 31500,
+            "15": 427300,
+            "16": 84844,
+            "17": 0,
+            "18": 84844,
+            "19": 3650,
+            "20": 0,
+            "21": 3650,
+            "22": 81194,
+            "23": 1854,
+            "24": 83048,
+            "25a": 86371,
+            "25b": 0,
+            "25c": 0,
+            "25d": 86371,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 86371,
+            "34": 3323,
+            "35a": 3323,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "8889",
+            "8960",
+            "Sch 2",
+            "Sch B",
+            "Sch D"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 5600,
+              "4": 5600,
+              "6": 28400
+            },
+            "Sch D": {
+              "7": 0,
+              "8a_cost": 38200,
+              "8a_proceeds": 53000,
+              "8a_gain": 14800,
+              "13": 0,
+              "15": 14800,
+              "16": 14800
+            },
+            "8960": {
+              "1": 5600,
+              "2": 28400,
+              "4a": 0,
+              "5a": 14800,
+              "5b": 0,
+              "4c": 0,
+              "5d": 14800,
+              "8": 48800,
+              "12": 48800,
+              "13": 458800,
+              "14": 250000,
+              "15": 208800,
+              "16": 48800,
+              "17": 1854
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "8": 0,
+              "12": 1854,
+              "21": 1854
+            },
+            "8889": {
+              "who": "t",
+              "2": 0,
+              "3": 8550,
+              "6": 8550,
+              "8": 8550,
+              "9": 8550,
+              "11": 8550,
+              "12": 0,
+              "13": 0
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Larkspur Orbital Foods Inc.",
+                "box1": 268000,
+                "box2": 56457,
+                "box12": {
+                  "D": 23500,
+                  "W": 8550
+                },
+                "box13_retirement_plan": true
+              },
+              {
+                "who": "s",
+                "employer": "Elm Creek Orthopedic Associates PA",
+                "box1": 142000,
+                "box2": 29914,
+                "box12": {
+                  "D": 23500
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 5600
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 28400,
+                "box1b": 23000,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 458800.0,
+            "taxable_income": 427300.0,
+            "total_tax": 83048.4,
+            "refund": 3322.6,
+            "owed": 0.0,
+            "niit": 1854.4,
+            "amt": 0.0
+          }
+        },
+        "2024": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Elise Brightwater",
+            "dob": "1983-07-28",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Clara Brightwater",
+              "dob": "2010-03-22",
+              "age": 14,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Jonah Brightwater",
+              "dob": "2013-08-30",
+              "age": 11,
+              "relationship": "Son"
+            },
+            {
+              "name": "Wren Brightwater",
+              "dob": "2017-11-05",
+              "age": 7,
+              "relationship": "Daughter"
+            }
+          ],
+          "form_1040": {
+            "1a": 390000,
+            "1z": 390000,
+            "2a": 0,
+            "2b": 4900,
+            "3a": 19500,
+            "3b": 24100,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 9600,
+            "8": 0,
+            "9": 428600,
+            "10": 0,
+            "11": 428600,
+            "12": 29200,
+            "13": 0,
+            "14": 29200,
+            "15": 399400,
+            "16": 79322,
+            "17": 0,
+            "18": 79322,
+            "19": 4550,
+            "20": 0,
+            "21": 4550,
+            "22": 74772,
+            "23": 1467,
+            "24": 76239,
+            "25a": 79288,
+            "25b": 0,
+            "25c": 0,
+            "25d": 79288,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 79288,
+            "34": 3049,
+            "35a": 3049,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "8889",
+            "8960",
+            "Sch 2",
+            "Sch B",
+            "Sch D"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 4900,
+              "4": 4900,
+              "6": 24100
+            },
+            "Sch D": {
+              "7": 0,
+              "8a_cost": 27400,
+              "8a_proceeds": 37000,
+              "8a_gain": 9600,
+              "13": 0,
+              "15": 9600,
+              "16": 9600
+            },
+            "8960": {
+              "1": 4900,
+              "2": 24100,
+              "4a": 0,
+              "5a": 9600,
+              "5b": 0,
+              "4c": 0,
+              "5d": 9600,
+              "8": 38600,
+              "12": 38600,
+              "13": 428600,
+              "14": 250000,
+              "15": 178600,
+              "16": 38600,
+              "17": 1467
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "8": 0,
+              "12": 1467,
+              "21": 1467
+            },
+            "8889": {
+              "who": "t",
+              "2": 0,
+              "3": 8300,
+              "6": 8300,
+              "8": 8300,
+              "9": 8300,
+              "11": 8300,
+              "12": 0,
+              "13": 0
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Larkspur Orbital Foods Inc.",
+                "box1": 255000,
+                "box2": 51842,
+                "box12": {
+                  "D": 23000,
+                  "W": 8300
+                },
+                "box13_retirement_plan": true
+              },
+              {
+                "who": "s",
+                "employer": "Elm Creek Orthopedic Associates PA",
+                "box1": 135000,
+                "box2": 27446,
+                "box12": {
+                  "D": 23000
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 4900
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 24100,
+                "box1b": 19500,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 428600.0,
+            "taxable_income": 399400.0,
+            "total_tax": 76238.8,
+            "refund": 3049.2,
+            "owed": 0.0,
+            "niit": 1466.8,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C14",
+      "folder": "C14_Jorgensen_Dale",
+      "names": [
+        "Dale Jorgensen",
+        "Renee Jorgensen"
+      ],
+      "ages": [
+        55,
+        54
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 132300,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "all",
+      "refund_2025": 600,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "life.single_earner"
+      ],
+      "narrative": "Real estate concentration, single W-2 earner",
+      "intended": {
+        "aum_fit": "med",
+        "annuity_band": "C-D",
+        "life_band": "C-D"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Renee Jorgensen",
+            "dob": "1971-04-17",
+            "deceased": null
+          },
+          "dependents": [],
+          "form_1040": {
+            "1a": 71000,
+            "1z": 71000,
+            "2a": 0,
+            "2b": 300,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 61000,
+            "9": 132300,
+            "10": 0,
+            "11a": 132300,
+            "11b": 132300,
+            "12": 31500,
+            "13a": 0,
+            "13b": 0,
+            "14": 31500,
+            "15": 100800,
+            "16": 12004,
+            "17": 0,
+            "18": 12004,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 12004,
+            "23": 0,
+            "24": 12004,
+            "25a": 12604,
+            "25b": 0,
+            "25c": 0,
+            "25d": 12604,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 12604,
+            "34": 600,
+            "35a": 600,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch 1",
+            "Sch E"
+          ],
+          "schedules": {
+            "Sch E": {
+              "props": [
+                {
+                  "3": 28800,
+                  "9": 1400,
+                  "12": 2600,
+                  "14": 1500,
+                  "16": 2000,
+                  "18": 2200,
+                  "20": 9700,
+                  "21": 19100
+                },
+                {
+                  "3": 21600,
+                  "9": 1100,
+                  "12": 2400,
+                  "14": 1300,
+                  "16": 1900,
+                  "18": 2200,
+                  "20": 8900,
+                  "21": 12700
+                },
+                {
+                  "3": 24000,
+                  "9": 1200,
+                  "12": 2500,
+                  "14": 1400,
+                  "16": 2000,
+                  "18": 2300,
+                  "20": 9400,
+                  "21": 14600
+                },
+                {
+                  "3": 24000,
+                  "9": 1200,
+                  "12": 2300,
+                  "14": 1600,
+                  "16": 2000,
+                  "18": 2300,
+                  "20": 9400,
+                  "21": 14600
+                }
+              ],
+              "23a": 98400,
+              "23c": 9800,
+              "23d": 9000,
+              "23e": 37400,
+              "24": 61000,
+              "25": 0,
+              "26": 61000,
+              "41": 61000
+            },
+            "Sch 1": {
+              "3": 0,
+              "5": 61000,
+              "7": 0,
+              "10": 61000,
+              "13": 0,
+              "15": 0,
+              "16": 0,
+              "20": 0,
+              "26": 0
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Crow Wing Rural Power Cooperative",
+                "box1": 71000,
+                "box2": 12604,
+                "box12": {
+                  "D": 3500
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Cuyuna Range Community Bank",
+                "box1": 300
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 132300.0,
+            "taxable_income": 100800.0,
+            "total_tax": 12004.0,
+            "refund": 600.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C15",
+      "folder": "C15_Hartwig_Eleanor",
+      "names": [
+        "Eleanor Hartwig"
+      ],
+      "ages": [
+        75
+      ],
+      "filing_status": "single",
+      "agi_2025": 88270,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 439,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "annuity.rmd_age",
+        "annuity.age_65",
+        "annuity.pension_ira_income",
+        "aum.retirement_distribution"
+      ],
+      "narrative": "RMD age, charitable giving (QCD)",
+      "intended": {
+        "aum_fit": "med",
+        "annuity_band": "A-B",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": true,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 0,
+            "1z": 0,
+            "2a": 0,
+            "2b": 4300,
+            "3a": 7000,
+            "3b": 8900,
+            "4a": 52000,
+            "4b": 46000,
+            "5a": 0,
+            "5b": 0,
+            "6a": 34200,
+            "6b": 29070,
+            "7": 0,
+            "8": 0,
+            "9": 88270,
+            "10": 0,
+            "11a": 88270,
+            "11b": 88270,
+            "12": 17750,
+            "13a": 0,
+            "13b": 5204,
+            "14": 22954,
+            "15": 65316,
+            "16": 8794,
+            "17": 0,
+            "18": 8794,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 8794,
+            "23": 0,
+            "24": 8794,
+            "25a": 0,
+            "25b": 9233,
+            "25c": 0,
+            "25d": 9233,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 9233,
+            "34": 439,
+            "35a": 439,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch 1-A",
+            "Sch B"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 4300,
+              "4": 4300,
+              "6": 8900
+            },
+            "Sch 1-A": {
+              "n": 1,
+              "34": 88270,
+              "35": 75000,
+              "36": 13270,
+              "37": 796,
+              "38": 5204
+            }
+          },
+          "sources": {
+            "w2": [],
+            "1099_int": [
+              {
+                "payer": "Bluff Country Savings Bank",
+                "box1": 4300
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Driftless Index Funds",
+                "box1a": 8900,
+                "box1b": 7000,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [
+              {
+                "who": "t",
+                "payer": "Driftless Index Funds",
+                "box1": 52000,
+                "box2a": 52000,
+                "box4": 9233,
+                "box7": "7",
+                "ira_sep_simple": true,
+                "form_1040_line": "4a"
+              }
+            ],
+            "ssa_1099": [
+              {
+                "who": "t",
+                "box5": 34200,
+                "box6": 0
+              }
+            ]
+          },
+          "itemized_charity": 0,
+          "qcd": 6000,
+          "engine": {
+            "agi": 88270.0,
+            "taxable_income": 65316.2,
+            "total_tax": 8793.56,
+            "refund": 439.44,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C16",
+      "folder": "C16_Strand_Paul",
+      "names": [
+        "Paul Strand",
+        "Kathleen Strand"
+      ],
+      "ages": [
+        60,
+        59
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 37000,
+      "agi_2024": 186000,
+      "has_2024": true,
+      "scan": "none",
+      "refund_2025": 1200,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "aum.income_drop",
+        "annuity.transition",
+        "annuity.age_55"
+      ],
+      "narrative": "Gap years (Roth conversion window), income drop year over year",
+      "intended": {
+        "aum_fit": "high",
+        "annuity_band": "B-C",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Kathleen Strand",
+            "dob": "1966-02-11",
+            "deceased": null
+          },
+          "dependents": [],
+          "form_1040": {
+            "1a": 0,
+            "1z": 0,
+            "2a": 0,
+            "2b": 3200,
+            "3a": 9600,
+            "3b": 11800,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 22000,
+            "8": 0,
+            "9": 37000,
+            "10": 0,
+            "11a": 37000,
+            "11b": 37000,
+            "12": 31500,
+            "13a": 0,
+            "13b": 0,
+            "14": 31500,
+            "15": 5500,
+            "16": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25a": 0,
+            "25b": 0,
+            "25c": 0,
+            "25d": 0,
+            "26": 1200,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 1200,
+            "34": 1200,
+            "35a": 1200,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch B",
+            "Sch D"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 3200,
+              "4": 3200,
+              "6": 11800
+            },
+            "Sch D": {
+              "7": 0,
+              "8a_cost": 61000,
+              "8a_proceeds": 83000,
+              "8a_gain": 22000,
+              "13": 0,
+              "15": 22000,
+              "16": 22000
+            }
+          },
+          "sources": {
+            "w2": [],
+            "1099_int": [
+              {
+                "payer": "Cannon River Savings & Trust",
+                "box1": 3200
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 11800,
+                "box1b": 9600,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 37000.0,
+            "taxable_income": 5500.0,
+            "total_tax": 0.0,
+            "refund": 1200.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        },
+        "2024": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Kathleen Strand",
+            "dob": "1966-02-11",
+            "deceased": null
+          },
+          "dependents": [],
+          "form_1040": {
+            "1a": 165000,
+            "1z": 165000,
+            "2a": 0,
+            "2b": 2100,
+            "3a": 8800,
+            "3b": 10900,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 8000,
+            "8": 0,
+            "9": 186000,
+            "10": 0,
+            "11": 186000,
+            "12": 29200,
+            "13": 0,
+            "14": 29200,
+            "15": 156800,
+            "16": 23426,
+            "17": 0,
+            "18": 23426,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 23426,
+            "23": 0,
+            "24": 23426,
+            "25a": 24363,
+            "25b": 0,
+            "25c": 0,
+            "25d": 24363,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 24363,
+            "34": 937,
+            "35a": 937,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch B",
+            "Sch D"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 2100,
+              "4": 2100,
+              "6": 10900
+            },
+            "Sch D": {
+              "7": 0,
+              "8a_cost": 26000,
+              "8a_proceeds": 34000,
+              "8a_gain": 8000,
+              "13": 0,
+              "15": 8000,
+              "16": 8000
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Driftwood Milling Cooperative",
+                "box1": 165000,
+                "box2": 24363,
+                "box12": {
+                  "D": 30500
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Cannon River Savings & Trust",
+                "box1": 2100
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 10900,
+                "box1b": 8800,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 186000.0,
+            "taxable_income": 156800.0,
+            "total_tax": 23426.0,
+            "refund": 937.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C17",
+      "folder": "C17_Dahl_Alicia",
+      "names": [
+        "Alicia Dahl"
+      ],
+      "ages": [
+        38
+      ],
+      "filing_status": "hoh",
+      "agi_2025": 78500,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 92,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "life.dependents"
+      ],
+      "narrative": "Single parent, dependents",
+      "intended": {
+        "aum_fit": "low",
+        "annuity_band": "D-F",
+        "life_band": "B-C"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "hoh",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [
+            {
+              "name": "Ava Dahl",
+              "dob": "2015-05-09",
+              "age": 10,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Leo Dahl",
+              "dob": "2018-10-26",
+              "age": 7,
+              "relationship": "Son"
+            }
+          ],
+          "form_1040": {
+            "1a": 78500,
+            "1z": 78500,
+            "2a": 0,
+            "2b": 0,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 78500,
+            "10": 0,
+            "11a": 78500,
+            "11b": 78500,
+            "12": 23625,
+            "13a": 0,
+            "13b": 0,
+            "14": 23625,
+            "15": 54875,
+            "16": 6245,
+            "17": 0,
+            "18": 6245,
+            "19": 4400,
+            "20": 0,
+            "21": 4400,
+            "22": 1845,
+            "23": 0,
+            "24": 1845,
+            "25a": 1937,
+            "25b": 0,
+            "25c": 0,
+            "25d": 1937,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 1937,
+            "34": 92,
+            "35a": 92,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [],
+          "schedules": {},
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Zumbro River Regional Hospital",
+                "box1": 78500,
+                "box2": 1937,
+                "box12": {
+                  "D": 3140
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 78500.0,
+            "taxable_income": 54875.0,
+            "total_tax": 1845.0,
+            "refund": 92.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C18",
+      "folder": "C18_Pike_Jordan",
+      "names": [
+        "Jordan Pike"
+      ],
+      "ages": [
+        29
+      ],
+      "filing_status": "single",
+      "agi_2025": 33178,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "all",
+      "refund_2025": 0,
+      "amount_owed_2025": 6771,
+      "designed_signals": [],
+      "narrative": "Control: low fit, cash-flow issue",
+      "intended": {
+        "aum_fit": "low",
+        "annuity_band": "D-F",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 0,
+            "1z": 0,
+            "2a": 0,
+            "2b": 0,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 35700,
+            "9": 35700,
+            "10": 2522,
+            "11a": 33178,
+            "11b": 33178,
+            "12": 15750,
+            "13a": 3486,
+            "13b": 0,
+            "14": 19236,
+            "15": 13942,
+            "16": 1435,
+            "17": 0,
+            "18": 1435,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 1435,
+            "23": 5044,
+            "24": 6479,
+            "25a": 0,
+            "25b": 0,
+            "25c": 0,
+            "25d": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35a": 0,
+            "36": 0,
+            "38": 292,
+            "37": 6771
+          },
+          "forms_attached": [
+            "8995",
+            "Sch 1",
+            "Sch 2",
+            "Sch C",
+            "Sch SE"
+          ],
+          "schedules": {
+            "Sch C": {
+              "1": 48500,
+              "7": 48500,
+              "28": 12800,
+              "29": 35700,
+              "31": 35700,
+              "9": 9100,
+              "22": 1200,
+              "25": 900,
+              "27a": 1600
+            },
+            "Sch SE": {
+              "2": 35700,
+              "3": 35700,
+              "4a": 32969,
+              "4c": 32969,
+              "6": 32969,
+              "7": 176100,
+              "8a": 0,
+              "9": 176100,
+              "10": 4088,
+              "11": 956,
+              "12": 5044,
+              "13": 2522
+            },
+            "Sch 1": {
+              "3": 35700,
+              "5": 0,
+              "7": 0,
+              "10": 35700,
+              "13": 0,
+              "15": 2522,
+              "16": 0,
+              "20": 0,
+              "26": 2522
+            },
+            "8995": {
+              "2": 33178,
+              "4": 33178,
+              "5": 6636,
+              "11": 17428,
+              "12": 0,
+              "15": 3486,
+              "13": 17428,
+              "14": 3486,
+              "10": 6636
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 5044,
+              "8": 0,
+              "12": 0,
+              "21": 5044
+            }
+          },
+          "sources": {
+            "w2": [],
+            "1099_int": [],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 33177.88,
+            "taxable_income": 13942.3,
+            "total_tax": 6478.83,
+            "refund": 0.0,
+            "owed": 6770.83,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C19",
+      "folder": "C19_Castellano_Ryan",
+      "names": [
+        "Ryan Castellano",
+        "Heather Castellano"
+      ],
+      "ages": [
+        48,
+        46
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 319000,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 1186,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "life.business_owner",
+        "life.single_earner"
+      ],
+      "narrative": "Business owner (key person, buy-sell), single earner",
+      "intended": {
+        "aum_fit": "med",
+        "annuity_band": "D-F",
+        "life_band": "A-B"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Heather Castellano",
+            "dob": "1979-09-12",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Gianna Castellano",
+              "dob": "2010-04-27",
+              "age": 15,
+              "relationship": "Daughter"
+            },
+            {
+              "name": "Luca Castellano",
+              "dob": "2014-12-18",
+              "age": 11,
+              "relationship": "Son"
+            }
+          ],
+          "form_1040": {
+            "1a": 95000,
+            "1z": 95000,
+            "2a": 0,
+            "2b": 0,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 224000,
+            "9": 319000,
+            "10": 0,
+            "11a": 319000,
+            "11b": 319000,
+            "12": 31500,
+            "13a": 44800,
+            "13b": 0,
+            "14": 76300,
+            "15": 242700,
+            "16": 43942,
+            "17": 0,
+            "18": 43942,
+            "19": 4400,
+            "20": 0,
+            "21": 4400,
+            "22": 39542,
+            "23": 0,
+            "24": 39542,
+            "25a": 12228,
+            "25b": 0,
+            "25c": 0,
+            "25d": 12228,
+            "26": 28500,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 40728,
+            "34": 1186,
+            "35a": 1186,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "8995",
+            "Sch 1",
+            "Sch E"
+          ],
+          "schedules": {
+            "Sch E": {
+              "props": [],
+              "28k": 224000,
+              "29a": 224000,
+              "30": 224000,
+              "32": 224000,
+              "41": 224000
+            },
+            "Sch 1": {
+              "3": 0,
+              "5": 224000,
+              "7": 0,
+              "10": 224000,
+              "13": 0,
+              "15": 0,
+              "16": 0,
+              "20": 0,
+              "26": 0
+            },
+            "8995": {
+              "2": 224000,
+              "4": 224000,
+              "5": 44800,
+              "11": 287500,
+              "12": 0,
+              "15": 44800,
+              "13": 287500,
+              "14": 57500,
+              "10": 44800
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Castellano Mechanical Contractors Inc.",
+                "box1": 95000,
+                "box2": 12228,
+                "box12": {},
+                "box13_retirement_plan": false
+              }
+            ],
+            "1099_int": [],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": [],
+            "k1_1120s": {
+              "box1": 224000,
+              "final": false
+            }
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 319000.0,
+            "taxable_income": 242700.0,
+            "total_tax": 39542.0,
+            "refund": 1186.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C20",
+      "folder": "C20_Engstrom_Walter",
+      "names": [
+        "Walter Engstrom"
+      ],
+      "ages": [
+        66
+      ],
+      "filing_status": "single",
+      "agi_2025": 46390,
+      "agi_2024": 74600,
+      "has_2024": true,
+      "scan": "none",
+      "refund_2025": 162,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "annuity.transition",
+        "annuity.age_65",
+        "aum.interest_10k",
+        "annuity.interest_10k"
+      ],
+      "narrative": "SS start, heavy cash",
+      "intended": {
+        "aum_fit": "med",
+        "annuity_band": "A-B",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": true,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 18000,
+            "1z": 18000,
+            "2a": 0,
+            "2b": 14200,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 26400,
+            "6b": 14190,
+            "7": 0,
+            "8": 0,
+            "9": 46390,
+            "10": 0,
+            "11a": 46390,
+            "11b": 46390,
+            "12": 17750,
+            "13a": 0,
+            "13b": 6000,
+            "14": 23750,
+            "15": 22640,
+            "16": 2478,
+            "17": 0,
+            "18": 2478,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 2478,
+            "23": 0,
+            "24": 2478,
+            "25a": 0,
+            "25b": 2640,
+            "25c": 0,
+            "25d": 2640,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 2640,
+            "34": 162,
+            "35a": 162,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch 1-A",
+            "Sch B"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 14200,
+              "4": 14200,
+              "6": 0
+            },
+            "Sch 1-A": {
+              "n": 1,
+              "34": 46390,
+              "35": 75000,
+              "36": 0,
+              "37": 0,
+              "38": 6000
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Headwaters Land Survey Co.",
+                "box1": 18000,
+                "box2": 0,
+                "box12": {
+                  "D": 900
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Paul Bunyan Lakes Savings Bank",
+                "box1": 6100
+              },
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 4900
+              },
+              {
+                "payer": "Ninebark Federal Credit Union",
+                "box1": 3200
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": [
+              {
+                "who": "t",
+                "box5": 26400,
+                "box6": 2640
+              }
+            ]
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 46390.0,
+            "taxable_income": 22640.0,
+            "total_tax": 2478.3,
+            "refund": 161.7,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        },
+        "2024": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": true,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 61000,
+            "1z": 61000,
+            "2a": 0,
+            "2b": 13600,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 74600,
+            "10": 0,
+            "11": 74600,
+            "12": 16550,
+            "13": 0,
+            "14": 16550,
+            "15": 58050,
+            "16": 7824,
+            "17": 0,
+            "18": 7824,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 7824,
+            "23": 0,
+            "24": 7824,
+            "25a": 8215,
+            "25b": 0,
+            "25c": 0,
+            "25d": 8215,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 8215,
+            "34": 391,
+            "35a": 391,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch B"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 13600,
+              "4": 13600,
+              "6": 0
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Headwaters Land Survey Co.",
+                "box1": 61000,
+                "box2": 8215,
+                "box12": {
+                  "D": 3050
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Paul Bunyan Lakes Savings Bank",
+                "box1": 5900
+              },
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 4600
+              },
+              {
+                "payer": "Ninebark Federal Credit Union",
+                "box1": 3100
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 74600.0,
+            "taxable_income": 58050.0,
+            "total_tax": 7824.0,
+            "refund": 391.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C21",
+      "folder": "C21_Grady_Michelle",
+      "names": [
+        "Michelle Grady"
+      ],
+      "ages": [
+        47
+      ],
+      "filing_status": "hoh",
+      "agi_2025": 116000,
+      "agi_2024": 205260,
+      "has_2024": true,
+      "scan": "none",
+      "refund_2025": 564,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "life.life_event_divorce"
+      ],
+      "narrative": "Divorce (filing status change), now single income",
+      "intended": {
+        "aum_fit": "low",
+        "annuity_band": "D-F",
+        "life_band": "B-C"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "hoh",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [
+            {
+              "name": "Tessa Grady",
+              "dob": "2012-02-14",
+              "age": 13,
+              "relationship": "Daughter"
+            }
+          ],
+          "form_1040": {
+            "1a": 116000,
+            "1z": 116000,
+            "2a": 0,
+            "2b": 0,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 116000,
+            "10": 0,
+            "11a": 116000,
+            "11b": 116000,
+            "12": 23625,
+            "13a": 0,
+            "13b": 0,
+            "14": 23625,
+            "15": 92375,
+            "16": 13498,
+            "17": 0,
+            "18": 13498,
+            "19": 2200,
+            "20": 0,
+            "21": 2200,
+            "22": 11298,
+            "23": 0,
+            "24": 11298,
+            "25a": 11862,
+            "25b": 0,
+            "25c": 0,
+            "25d": 11862,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 11862,
+            "34": 564,
+            "35a": 564,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [],
+          "schedules": {},
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Lake Agnes Manufacturing Inc.",
+                "box1": 116000,
+                "box2": 11862,
+                "box12": {
+                  "D": 7000
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 116000.0,
+            "taxable_income": 92375.0,
+            "total_tax": 11297.5,
+            "refund": 564.5,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        },
+        "2024": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Craig Grady",
+            "dob": "1976-10-04",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Tessa Grady",
+              "dob": "2012-02-14",
+              "age": 12,
+              "relationship": "Daughter"
+            }
+          ],
+          "form_1040": {
+            "1a": 205000,
+            "1z": 205000,
+            "2a": 0,
+            "2b": 260,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 205260,
+            "10": 0,
+            "11": 205260,
+            "12": 29200,
+            "13": 0,
+            "14": 29200,
+            "15": 176060,
+            "16": 28839,
+            "17": 0,
+            "18": 28839,
+            "19": 2000,
+            "20": 0,
+            "21": 2000,
+            "22": 26839,
+            "23": 0,
+            "24": 26839,
+            "25a": 28181,
+            "25b": 0,
+            "25c": 0,
+            "25d": 28181,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 28181,
+            "34": 1342,
+            "35a": 1342,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [],
+          "schedules": {},
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Lake Agnes Manufacturing Inc.",
+                "box1": 111000,
+                "box2": 15259,
+                "box12": {
+                  "D": 6700
+                },
+                "box13_retirement_plan": true
+              },
+              {
+                "who": "s",
+                "employer": "Runestone Equipment Supply LLC",
+                "box1": 94000,
+                "box2": 12922,
+                "box12": {
+                  "D": 4700
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 260
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 205260.0,
+            "taxable_income": 176060.0,
+            "total_tax": 26839.2,
+            "refund": 1341.8,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C22",
+      "folder": "C22_Lindgren_Ethan",
+      "names": [
+        "Ethan Lindgren",
+        "Sophie Lindgren"
+      ],
+      "ages": [
+        31,
+        30
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 163000,
+      "agi_2024": 88000,
+      "has_2024": true,
+      "scan": "none",
+      "refund_2025": 662,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "life.life_event_marriage",
+        "life.life_event_new_baby",
+        "life.dependents"
+      ],
+      "narrative": "Marriage, new baby",
+      "intended": {
+        "aum_fit": "low",
+        "annuity_band": "D-F",
+        "life_band": "A-B"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Sophie Lindgren",
+            "dob": "1995-07-21",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Nora Lindgren",
+              "dob": "2025-09-03",
+              "age": 0,
+              "relationship": "Daughter"
+            }
+          ],
+          "form_1040": {
+            "1a": 163000,
+            "1z": 163000,
+            "2a": 0,
+            "2b": 0,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 163000,
+            "10": 0,
+            "11a": 163000,
+            "11b": 163000,
+            "12": 31500,
+            "13a": 0,
+            "13b": 0,
+            "14": 31500,
+            "15": 131500,
+            "16": 18758,
+            "17": 0,
+            "18": 18758,
+            "19": 2200,
+            "20": 0,
+            "21": 2200,
+            "22": 16558,
+            "23": 0,
+            "24": 16558,
+            "25a": 17220,
+            "25b": 0,
+            "25c": 0,
+            "25d": 17220,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 17220,
+            "34": 662,
+            "35a": 662,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [],
+          "schedules": {},
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Fernhollow Interactive Inc.",
+                "box1": 92000,
+                "box2": 9719,
+                "box12": {
+                  "D": 4600
+                },
+                "box13_retirement_plan": true
+              },
+              {
+                "who": "s",
+                "employer": "Credit River Therapy Group PLLC",
+                "box1": 71000,
+                "box2": 7501,
+                "box12": {
+                  "D": 3550
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 163000.0,
+            "taxable_income": 131500.0,
+            "total_tax": 16558.0,
+            "refund": 662.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        },
+        "2024": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 88000,
+            "1z": 88000,
+            "2a": 0,
+            "2b": 0,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 88000,
+            "10": 0,
+            "11": 88000,
+            "12": 14600,
+            "13": 0,
+            "14": 14600,
+            "15": 73400,
+            "16": 11201,
+            "17": 0,
+            "18": 11201,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 11201,
+            "23": 0,
+            "24": 11201,
+            "25a": 11649,
+            "25b": 0,
+            "25c": 0,
+            "25d": 11649,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 11649,
+            "34": 448,
+            "35a": 448,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [],
+          "schedules": {},
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Fernhollow Interactive Inc.",
+                "box1": 88000,
+                "box2": 11649,
+                "box12": {
+                  "D": 4400
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": []
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 88000.0,
+            "taxable_income": 73400.0,
+            "total_tax": 11201.0,
+            "refund": 448.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C23",
+      "folder": "C23_Fenske_Dorothy",
+      "names": [
+        "Dorothy Fenske"
+      ],
+      "ages": [
+        78
+      ],
+      "filing_status": "single",
+      "agi_2025": 240,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "all",
+      "refund_2025": 0,
+      "amount_owed_2025": 0,
+      "designed_signals": [],
+      "narrative": "Control: low fit",
+      "intended": {
+        "aum_fit": "low",
+        "annuity_band": "D-F",
+        "life_band": "D-F"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "single",
+          "born_before_checkbox": {
+            "you": true,
+            "spouse": false
+          },
+          "spouse": null,
+          "dependents": [],
+          "form_1040": {
+            "1a": 0,
+            "1z": 0,
+            "2a": 0,
+            "2b": 240,
+            "3a": 0,
+            "3b": 0,
+            "4a": 0,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 21600,
+            "6b": 0,
+            "7": 0,
+            "8": 0,
+            "9": 240,
+            "10": 0,
+            "11a": 240,
+            "11b": 240,
+            "12": 17750,
+            "13a": 0,
+            "13b": 6000,
+            "14": 23750,
+            "15": 0,
+            "16": 0,
+            "17": 0,
+            "18": 0,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 0,
+            "23": 0,
+            "24": 0,
+            "25a": 0,
+            "25b": 0,
+            "25c": 0,
+            "25d": 0,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 0,
+            "34": 0,
+            "35a": 0,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "Sch 1-A"
+          ],
+          "schedules": {
+            "Sch 1-A": {
+              "n": 1,
+              "34": 240,
+              "35": 75000,
+              "36": 0,
+              "37": 0,
+              "38": 6000
+            }
+          },
+          "sources": {
+            "w2": [],
+            "1099_int": [
+              {
+                "payer": "Kandiyohi Prairie Credit Union",
+                "box1": 240
+              }
+            ],
+            "1099_div": [],
+            "1099_r": [],
+            "ssa_1099": [
+              {
+                "who": "t",
+                "box5": 21600,
+                "box6": 0
+              }
+            ]
+          },
+          "itemized_charity": 0,
+          "qcd": 0,
+          "engine": {
+            "agi": 240.0,
+            "taxable_income": 0.0,
+            "total_tax": 0.0,
+            "refund": 0.0,
+            "owed": 0.0,
+            "niit": 0.0,
+            "amt": 0.0
+          }
+        }
+      }
+    },
+    {
+      "id": "C24",
+      "folder": "C24_Adeyemi_Samuel",
+      "names": [
+        "Samuel Adeyemi",
+        "Grace Adeyemi"
+      ],
+      "ages": [
+        52,
+        50
+      ],
+      "filing_status": "mfj",
+      "agi_2025": 603300,
+      "agi_2024": null,
+      "has_2024": false,
+      "scan": "none",
+      "refund_2025": 3508,
+      "amount_owed_2025": 0,
+      "designed_signals": [
+        "aum.agi_500k",
+        "aum.niit",
+        "life.single_earner",
+        "life.dependents",
+        "life.income_300k"
+      ],
+      "narrative": "Very high income, NIIT, charitable giving, single earner with dependents",
+      "intended": {
+        "aum_fit": "high",
+        "annuity_band": "D-F",
+        "life_band": "A-B"
+      },
+      "truth": {
+        "2025": {
+          "filing_status": "mfj",
+          "born_before_checkbox": {
+            "you": false,
+            "spouse": false
+          },
+          "spouse": {
+            "name": "Grace Adeyemi",
+            "dob": "1975-02-04",
+            "deceased": null
+          },
+          "dependents": [
+            {
+              "name": "Tobi Adeyemi",
+              "dob": "2009-05-12",
+              "age": 16,
+              "relationship": "Son"
+            },
+            {
+              "name": "Ada Adeyemi",
+              "dob": "2012-09-08",
+              "age": 13,
+              "relationship": "Daughter"
+            }
+          ],
+          "form_1040": {
+            "1a": 524000,
+            "1z": 524000,
+            "2a": 0,
+            "2b": 6800,
+            "3a": 26000,
+            "3b": 31500,
+            "4a": 14000,
+            "4b": 0,
+            "5a": 0,
+            "5b": 0,
+            "6a": 0,
+            "6b": 0,
+            "7": 41000,
+            "8": 0,
+            "9": 603300,
+            "10": 0,
+            "11a": 603300,
+            "11b": 603300,
+            "12": 68400,
+            "13a": 0,
+            "13b": 0,
+            "14": 68400,
+            "15": 534900,
+            "16": 113904,
+            "17": 0,
+            "18": 113904,
+            "19": 0,
+            "20": 0,
+            "21": 0,
+            "22": 113904,
+            "23": 3013,
+            "24": 116917,
+            "25a": 120425,
+            "25b": 0,
+            "25c": 0,
+            "25d": 120425,
+            "26": 0,
+            "27": 0,
+            "28": 0,
+            "29": 0,
+            "31": 0,
+            "32": 0,
+            "33": 120425,
+            "34": 3508,
+            "35a": 3508,
+            "36": 0,
+            "38": 0,
+            "37": 0
+          },
+          "forms_attached": [
+            "8606",
+            "8960",
+            "Sch 2",
+            "Sch A",
+            "Sch B",
+            "Sch D"
+          ],
+          "schedules": {
+            "Sch B": {
+              "2": 6800,
+              "4": 6800,
+              "6": 31500
+            },
+            "Sch D": {
+              "7": 0,
+              "8a_cost": 96000,
+              "8a_proceeds": 137000,
+              "8a_gain": 41000,
+              "13": 0,
+              "15": 41000,
+              "16": 41000
+            },
+            "Sch A": {
+              "5a": 44800,
+              "5b": 13600,
+              "5d": 58400,
+              "5e": 10000,
+              "7": 10000,
+              "8a": 18400,
+              "8e": 18400,
+              "10": 18400,
+              "11": 40000,
+              "12": 0,
+              "14": 40000,
+              "17": 68400
+            },
+            "8960": {
+              "1": 6800,
+              "2": 31500,
+              "4a": 0,
+              "5a": 41000,
+              "5b": 0,
+              "4c": 0,
+              "5d": 41000,
+              "8": 79300,
+              "12": 79300,
+              "13": 603300,
+              "14": 250000,
+              "15": 353300,
+              "16": 79300,
+              "17": 3013
+            },
+            "Sch 2": {
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "8": 0,
+              "12": 3013,
+              "21": 3013
+            },
+            "8606": {
+              "t": 7000,
+              "s": 7000
+            }
+          },
+          "sources": {
+            "w2": [
+              {
+                "who": "t",
+                "employer": "Minnehaha Heart & Vascular Group PA",
+                "box1": 524000,
+                "box2": 120425,
+                "box12": {
+                  "D": 31000
+                },
+                "box13_retirement_plan": true
+              }
+            ],
+            "1099_int": [
+              {
+                "payer": "Lakehollow Savings Bank",
+                "box1": 6800
+              }
+            ],
+            "1099_div": [
+              {
+                "payer": "Kestrel Ridge Brokerage",
+                "box1a": 31500,
+                "box1b": 26000,
+                "box2a": 0
+              }
+            ],
+            "1099_r": [
+              {
+                "who": "t",
+                "payer": "Kestrel Ridge Brokerage",
+                "box1": 7000,
+                "box2a": 7000,
+                "box4": 0,
+                "box7": "2",
+                "ira_sep_simple": true,
+                "form_1040_line": "4a"
+              },
+              {
+                "who": "s",
+                "payer": "Kestrel Ridge Brokerage",
+                "box1": 7000,
+                "box2a": 7000,
+                "box4": 0,
+                "box7": "2",
+                "ira_sep_simple": true,
+                "form_1040_line": "4a"
+              }
+            ],
+            "ssa_1099": []
+          },
+          "itemized_charity": 40000,
+          "qcd": 0,
+          "engine": {
+            "agi": 603300.0,
+            "taxable_income": 534900.0,
+            "total_tax": 116917.4,
+            "refund": 3507.6,
+            "owed": 0.0,
+            "niit": 3013.4,
+            "amt": 0.0
+          }
+        }
+      }
+    }
+  ]
+}

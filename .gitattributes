@@ -1,0 +1,8 @@
+# PDFs must never have line endings rewritten (that corrupts them).
+*.pdf binary
+*.png binary
+*.zip binary
+# Windows batch files need CRLF line endings.
+*.bat text eol=crlf
+# Everything else: normalize text line endings.
+* text=auto
