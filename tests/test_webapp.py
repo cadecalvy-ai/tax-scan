@@ -50,10 +50,19 @@ def test_drop_a_folder_of_clients(client):
     url = resp.get_json()["url"]
     assert url.endswith("/summary.html")
     page = client.get(url).get_data(as_text=True)
-    assert "Kevin Marsh" in page and "Michelle Grady" in page and "Grade more clients" in page
+    assert "Kevin Marsh" in page and "Michelle Grady" in page and "Grade more" in page
+    assert "clients/C08_Marsh_Kevin.html#life" in page          # score pills link into the profile
     report = client.get(url.replace("summary.html", "clients/C08_Marsh_Kevin.html")).get_data(as_text=True)
     assert "aum.rollover_100k" in report and "000-00-0801" not in report
-    assert client.get("/").get_data(as_text=True).count("Open ranking") == 1
+    assert 'id="life"' in report or "id='life'" in report
+    run_id = url.split("/")[2]
+    home = client.get("/").get_data(as_text=True)
+    assert f"/runs/{run_id}/summary.html" in home and '"local"' in home
+
+
+def test_home_page_assets(client):
+    assert client.get("/anime.min.js").status_code == 200
+    assert client.get("/sample-clients.zip").status_code == 200
 
 
 def test_single_client_goes_straight_to_its_report(client):

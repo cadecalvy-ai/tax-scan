@@ -37,6 +37,15 @@ FIGURE_ROWS = [("agi", "Adjusted gross income"), ("total_income", "Total income"
                ("charity", "Itemized charity"), ("refund", "Refund"), ("owed", "Amount owed")]
 
 
+TITLES = {"dr", "mr", "mrs", "ms", "miss", "prof"}
+
+
+def first_name(name):
+    """'Dr. Samuel Adeyemi' -> 'Samuel' (role placeholders like 'spouse' pass through)."""
+    words = [w for w in name.split() if w.lower().strip(".") not in TITLES]
+    return words[0] if words else name
+
+
 def load_config(path=None):
     return yaml.safe_load(Path(path or DEFAULT_CONFIG).read_text(encoding="utf-8"))
 
@@ -97,6 +106,7 @@ def grade_client(folder, cfg, cache_dir=None, files=None):
         tmpl = tp.get(s.group)
         if tmpl:
             talking.append(tmpl.format(value=s.value, detail=s.detail or s.value, year=year))
+    talking = talking[:cfg.get("max_talking_points", 6)]
 
     yr = rec["years"][year]
     h = yr.get("header", {})
@@ -104,7 +114,7 @@ def grade_client(folder, cfg, cache_dir=None, files=None):
     names = [x["name"] for x in prof.get("people", [])] or [
         p["name"].value for p in (h.get("taxpayer"), h.get("spouse")) if p and p.get("name")]
     from .signals import Ctx
-    ages = [(n.split()[0] if n not in ("taxpayer", "spouse") else n, a) for _, n, a, _ in Ctx(rec, year, figs, prior, pfigs).people()]
+    ages = [(first_name(n), a) for _, n, a, _ in Ctx(rec, year, figs, prior, pfigs).people()]
     status_map = {"single": "Single", "mfj": "Married filing jointly", "mfs": "Married filing separately",
                   "hoh": "Head of household", "qss": "Qualifying surviving spouse"}
     st = h.get("status").value if h.get("status") else prof.get("filing_status")

@@ -96,6 +96,8 @@ validation:
 
 # ---------------------------------------------------------------- talking points
 # {placeholders} are filled from the signal's details. Keep them short.
+# The report shows the strongest signals' talking points first, up to this many.
+max_talking_points: 6
 talking_points:
   aum.rollover: "Rolled over {value} in {year}. Confirm where it landed and offer a full portfolio review."
   aum.retirement_distribution: "Taking {value} in retirement-account distributions. Review withdrawal strategy and tax drag."
@@ -108,7 +110,7 @@ talking_points:
   aum.no_retirement_savings: "High earner ({value}) with no retirement deferrals visible. Discuss 401(k)/SEP/solo 401(k)."
   aum.income_drop: "Income fell sharply ({detail}). Possible retirement or job change; low-bracket window for Roth conversions."
   aum.early_withdrawal: "Early retirement-plan withdrawal ({value}) with penalty. Cash-flow review; old 401(k) may be rollable."
-  aum.agi: "AGI of {value}."
+  aum.agi: "AGI of {value}: room for tax-efficient investing beyond workplace plans."
   annuity.age: "Age {value}: in the window for income planning and guarantees."
   annuity.pension_ira_income: "Living partly on pension/IRA income ({value}). Discuss guaranteed lifetime income."
   annuity.interest: "{value} of interest. CD money may fit a fixed or fixed-indexed annuity."

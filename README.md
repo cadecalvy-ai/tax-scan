@@ -194,7 +194,27 @@ each one by changing `config/grader.yaml` or the intended level, then remove the
 - Only the most recent return and the year before it are compared. Older returns in the folder are ignored.
 - Rental real estate (Schedule E) is extracted but does not drive any AUM rule today.
 
-## 8. Fictional test data
+## 8. Public demo site (Netlify)
+
+`netlify_site/` is the public Tax Scan site, built only from the fictional test clients. It contains:
+
+- the landing page with the drop box (demo mode)
+- the sample ranking and profiles in `demo/`
+- `sample-clients.zip`: all 24 fictional clients' PDFs, so anyone can try it
+
+On the public site, dropped files are never uploaded or read. Folders named like the sample clients link
+to their pre-computed results; anything else gets pointed to running Tax Scan locally. Rebuild after
+changing rules or design:
+
+```
+.venv\Scripts\python scripts\build_netlify_demo.py
+```
+
+Then commit and push. Netlify redeploys from GitHub automatically once the project is linked (Project
+configuration → Build & deploy → Link repository → `cadecalvy-ai/tax-scan`, branch `main`; leave the build
+command empty, since `netlify.toml` sets the publish folder).
+
+## 9. Fictional test data
 
 `inputs/test_clients` holds 24 fictional clients generated in Phase 1. See `inputs/test_clients/README.md`. To
 regenerate them:
