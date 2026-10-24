@@ -1,9 +1,11 @@
-"""HTML reports: a ranked summary and one profile page per client, plus summary.csv.
+"""HTML reports: a ranked summary and one conversation brief per client, plus summary.csv.
 
 Pages are self-contained (inline CSS, no external requests) and share the Tax Scan
-look. Score pills on the ranking link straight to the matching section of the
-client's profile (#aum, #annuity, #life). The top bar has a <!--NAV--> slot that
-the local web app and the Netlify build fill with navigation links.
+look. The client page leads with plain-English verdicts and a conversation brief
+(what stood out, why it matters, what to ask); the scoring evidence sits in a
+collapsible section below. Verdict pills on the ranking link straight to the
+matching card on the client page (#aum, #annuity, #life). The top bar has a
+<!--NAV--> slot that the local web app and the Netlify build fill with links.
 """
 import csv
 import html
@@ -23,7 +25,7 @@ CSS = """
 }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--ink);
-       font:15px/1.5 ui-sans-serif,-apple-system,"Segoe UI Variable Text","Segoe UI",Inter,Roboto,system-ui,sans-serif;
+       font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI Variable Text","Segoe UI",Inter,Roboto,system-ui,sans-serif;
        -webkit-font-smoothing:antialiased; }
 a { color:inherit; }
 .top { position:sticky; top:0; z-index:5; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
@@ -36,19 +38,94 @@ a { color:inherit; }
 .navlinks a { text-decoration:none; } .navlinks a:hover { color:var(--accent); }
 main { max-width:1080px; margin:0 auto; padding:28px 20px 60px; }
 h1 { font-size:clamp(28px,4vw,40px); letter-spacing:-.03em; margin:0; line-height:1.1; }
-h2 { font-size:18px; letter-spacing:-.01em; margin:36px 0 12px; }
+h2 { font-size:19px; letter-spacing:-.015em; margin:40px 0 14px; }
 .sub { color:var(--ink-2); margin-top:6px; }
 .muted { color:var(--ink-3); }
 .banner { background:var(--mid-bg); color:var(--mid); border-radius:12px; padding:10px 14px; font-size:13px; margin-bottom:18px; }
+.btn { font:inherit; font-size:14px; font-weight:600; padding:9px 16px; border-radius:12px; cursor:pointer;
+       border:1px solid var(--line); background:var(--card); color:var(--ink); }
+.btn:hover { border-color:var(--accent); }
 
-/* pills */
-.pill { display:inline-flex; align-items:center; gap:6px; padding:5px 11px; border-radius:999px; font-weight:700; font-size:13px;
-        text-decoration:none; white-space:nowrap; border:1px solid transparent; transition:transform .12s, box-shadow .15s; }
+/* verdict pills */
+.pill { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; font-weight:650; font-size:13px;
+        text-decoration:none; white-space:nowrap; transition:transform .12s, box-shadow .15s; }
 a.pill:hover { transform:translateY(-1px); box-shadow:0 6px 14px -8px rgba(0,0,0,.35); }
-.pill small { font-weight:600; opacity:.75; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
-.p-good { background:var(--good-bg); color:var(--good); } .p-mid { background:var(--mid-bg); color:var(--mid); }
-.p-low { background:var(--low-bg); color:var(--low); }
+.pill .dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
+.t-good { background:var(--good-bg); color:var(--good); } .t-mid { background:var(--mid-bg); color:var(--mid); }
+.t-low { background:var(--low-bg); color:var(--low); }
+.c-good { color:var(--good); } .c-mid { color:var(--mid); } .c-low { color:var(--low); }
 .tag { display:inline-block; padding:3px 9px; border-radius:8px; background:var(--chip); color:var(--ink-2); font-size:12px; margin:2px 4px 2px 0; }
+
+/* meter: bar with grade cut-offs */
+.meter { position:relative; margin:16px 0 30px; }
+.meter .track { height:8px; border-radius:99px; background:var(--chip); overflow:hidden; }
+.meter .fill { height:100%; border-radius:inherit; }
+.fill.good { background:linear-gradient(90deg,var(--mint),var(--good)); }
+.fill.mid { background:linear-gradient(90deg,#f5c56b,var(--mid)); }
+.fill.low { background:var(--low); opacity:.55; }
+.meter .tick { position:absolute; top:-3px; width:2px; height:14px; background:var(--card); border-radius:2px; }
+.meter .tl { position:absolute; top:14px; transform:translateX(-50%); font-size:10.5px; color:var(--ink-3); font-weight:600; }
+.mini { width:100%; max-width:120px; margin:6px 0 0; }
+.mini .track { height:5px; } .mini .tick, .mini .tl { display:none; }
+
+/* client page */
+.head { display:flex; gap:16px; align-items:center; flex-wrap:wrap; justify-content:space-between; }
+.who-h { display:flex; gap:16px; align-items:center; }
+.avatar { width:56px; height:56px; border-radius:18px; display:grid; place-items:center; color:#fff; font-weight:800; font-size:20px;
+          background:linear-gradient(135deg,var(--accent),var(--accent-2)); flex:none; }
+.meta { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+.glance { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:26px; }
+.pcard { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:18px 20px; box-shadow:var(--shadow);
+         scroll-margin-top:80px; }
+.pcard:target { outline:2px solid var(--accent); outline-offset:2px; }
+.pcard .k { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); font-weight:600; }
+.pcard .verdict { font-size:24px; font-weight:750; letter-spacing:-.02em; margin:4px 0 2px; }
+.pcard .score { font-size:13px; color:var(--ink-3); }
+.pcard .next { font-size:12.5px; color:var(--ink-3); margin:-6px 0 10px; }
+.pcard ul { margin:0; padding-left:18px; color:var(--ink-2); font-size:14px; }
+.pcard li { margin:3px 0; }
+.brief { background:var(--card); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); overflow:hidden; }
+.opener { padding:20px 22px; background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 9%, var(--card)),
+          color-mix(in srgb, var(--mint) 8%, var(--card))); border-bottom:1px solid var(--line); }
+.opener .k { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); font-weight:700; }
+.opener ol { margin:10px 0 0; padding-left:20px; font-size:16px; font-weight:600; }
+.opener li { margin:4px 0; }
+.prod { padding:20px 22px; border-top:1px solid var(--line); }
+.prod:first-of-type { border-top:0; }
+.prod-h { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.prod-h h3 { margin:0; font-size:17px; letter-spacing:-.01em; }
+.tp { display:grid; grid-template-columns:28px 1fr; gap:4px 12px; padding:12px 0; border-top:1px dashed var(--line); }
+.tp:first-of-type { border-top:0; padding-top:4px; }
+.tp .n { width:28px; height:28px; border-radius:9px; display:grid; place-items:center; font-weight:700; font-size:13px;
+         background:var(--chip); color:var(--accent); }
+.tp .hl { font-weight:650; font-size:15.5px; }
+.tp .why { color:var(--ink-2); font-size:14.5px; grid-column:2; }
+.tp .ask { grid-column:2; margin-top:6px; padding:9px 12px; border-radius:12px; background:var(--chip); font-size:14.5px; }
+.tp .ask b { color:var(--accent); font-weight:700; margin-right:6px; }
+.lowlist { padding:16px 22px; border-top:1px solid var(--line); color:var(--ink-3); font-size:14px; }
+.snap { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+.snap div { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
+.snap b { display:block; font-size:22px; letter-spacing:-.02em; }
+.snap span { color:var(--ink-3); font-size:13px; }
+details.evidence { margin-top:40px; background:var(--card); border:1px solid var(--line); border-radius:18px; }
+details.evidence > summary { cursor:pointer; padding:16px 20px; font-weight:650; list-style:none; display:flex;
+                             justify-content:space-between; align-items:center; }
+details.evidence > summary::after { content:"Show"; font-size:13px; color:var(--accent); font-weight:600; }
+details.evidence[open] > summary::after { content:"Hide"; }
+details.evidence > summary::-webkit-details-marker { display:none; }
+.ev { padding:0 20px 20px; }
+.ev h4 { margin:18px 0 8px; font-size:14px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); }
+.sig { display:grid; grid-template-columns:1fr auto; gap:4px 14px; padding:10px 0; border-top:1px solid var(--line); }
+.sig .src { color:var(--ink-3); font-size:12px; grid-column:1 / -1; }
+.warnbox li { color:var(--bad); margin:4px 0; }
+.ok { color:var(--good); }
+table { width:100%; border-collapse:collapse; }
+th, td { text-align:left; padding:9px 12px; border-top:1px solid var(--line); vertical-align:top; font-size:14px; }
+th { font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); border-top:0; background:var(--chip); }
+td.num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+td.src { color:var(--ink-3); font-size:12px; }
+.wrap { overflow-x:auto; }
+.foot { color:var(--ink-3); font-size:12px; margin-top:30px; }
 
 /* ranking */
 .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:22px 0 8px; }
@@ -56,67 +133,37 @@ a.pill:hover { transform:translateY(-1px); box-shadow:0 6px 14px -8px rgba(0,0,0
 .stat b { display:block; font-size:26px; letter-spacing:-.02em; }
 .stat span { color:var(--ink-3); font-size:13px; }
 .list { background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; margin-top:18px; }
-.lh, .row { display:grid; grid-template-columns:44px minmax(180px,1.6fr) 130px 104px 104px minmax(160px,1.4fr); gap:12px; align-items:center; padding:14px 18px; }
-.lh { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); border-bottom:1px solid var(--line); padding-top:12px; padding-bottom:12px; }
+.lh, .row { display:grid; grid-template-columns:40px minmax(170px,1.3fr) 170px 170px 170px minmax(180px,1.5fr); gap:12px;
+            align-items:start; padding:15px 18px; }
+.lh { font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); border-bottom:1px solid var(--line);
+      padding-top:12px; padding-bottom:12px; align-items:center; }
 .row { border-bottom:1px solid var(--line); }
 .row:last-child { border-bottom:0; }
-.row:hover { background:color-mix(in srgb, var(--chip) 60%, transparent); }
-.rank { font-weight:700; color:var(--ink-3); font-variant-numeric:tabular-nums; }
+.row:hover { background:color-mix(in srgb, var(--chip) 55%, transparent); }
+.rank { font-weight:700; color:var(--ink-3); font-variant-numeric:tabular-nums; padding-top:4px; }
 .who a { font-weight:650; text-decoration:none; } .who a:hover { color:var(--accent); }
 .who .muted { font-size:12px; display:block; }
-.sigs { font-size:12px; color:var(--ink-3); }
+.cell .sc { font-size:11.5px; color:var(--ink-3); margin-top:3px; }
+.why-c { font-size:13px; color:var(--ink-2); }
+.why-c div { margin:1px 0; }
 .row .lbl { display:none; }
 .skip { color:var(--bad); }
 
-/* profile */
-.head { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
-.avatar { width:56px; height:56px; border-radius:18px; display:grid; place-items:center; color:#fff; font-weight:800; font-size:20px;
-          background:linear-gradient(135deg,var(--accent),var(--accent-2)); flex:none; }
-.meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-.scores { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:24px; }
-.score { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:18px 20px; box-shadow:var(--shadow);
-         text-decoration:none; display:block; scroll-margin-top:80px; }
-.score:target, section:target .sec-card { outline:2px solid var(--accent); outline-offset:2px; }
-.score .k { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); font-weight:600; }
-.score .v { font-size:44px; font-weight:800; letter-spacing:-.04em; line-height:1.1; margin:4px 0 8px; }
-.score .v small { font-size:16px; color:var(--ink-3); font-weight:600; letter-spacing:0; }
-.bar { height:7px; border-radius:99px; background:var(--chip); overflow:hidden; margin-top:10px; }
-.bar i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--accent),var(--mint)); }
-.c-good { color:var(--good); } .c-mid { color:var(--mid); } .c-low { color:var(--low); }
-.tps { list-style:none; padding:0; margin:0; display:grid; gap:8px; }
-.tps li { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px 12px 40px; position:relative; }
-.tps li::before { content:""; position:absolute; left:16px; top:18px; width:10px; height:10px; border-radius:50%;
-                  background:linear-gradient(135deg,var(--accent),var(--mint)); }
-section { scroll-margin-top:80px; }
-.sec-card { background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); overflow:hidden; }
-.sec-head { display:flex; justify-content:space-between; align-items:center; gap:10px; }
-.sig { display:grid; grid-template-columns:1fr auto; gap:6px 14px; padding:14px 18px; border-top:1px solid var(--line); }
-.sig:first-child { border-top:0; }
-.sig .rule { font-weight:600; }
-.sig .detail { color:var(--ink-2); font-size:14px; grid-column:1 / -1; }
-.sig .src { color:var(--ink-3); font-size:12px; grid-column:1 / -1; }
-.sig .right { display:flex; gap:6px; align-items:center; }
-.empty { padding:16px 18px; color:var(--ink-3); }
-.warnbox li { color:var(--bad); margin:4px 0; }
-.ok { color:var(--good); }
-table { width:100%; border-collapse:collapse; }
-th, td { text-align:left; padding:10px 16px; border-top:1px solid var(--line); vertical-align:top; }
-th { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); border-top:0; background:var(--chip); }
-td.num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
-td.src { color:var(--ink-3); font-size:12px; }
-.wrap { overflow-x:auto; }
-.foot { color:var(--ink-3); font-size:12px; margin-top:30px; }
-
-@media (max-width: 820px) {
+@media (max-width: 900px) {
+  .glance { grid-template-columns:1fr; }
   .stats { grid-template-columns:repeat(2,1fr); }
   .lh { display:none; }
-  .row { grid-template-columns:36px 1fr; gap:8px 10px; }
+  .row { grid-template-columns:32px 1fr; gap:10px; }
   .row > :nth-child(n+3) { grid-column:2; }
-  .row .pills-m { display:flex; gap:6px; flex-wrap:wrap; }
-  .row .lbl { display:inline; }
-  .scores { grid-template-columns:1fr; }
+  .row .lbl { display:block; font-size:11.5px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.05em; margin-bottom:3px; }
 }
-@media print { .top { display:none; } body { background:#fff; } .score, .sec-card, .list { box-shadow:none; break-inside:avoid; } }
+@media print {
+  .top, .noprint, details.evidence { display:none !important; }
+  body { background:#fff; font-size:12.5px; } main { padding:0; max-width:none; }
+  .pcard, .brief, .snap div, .list, .stat { box-shadow:none; break-inside:avoid; }
+  .prod, .tp { break-inside:avoid; } h2 { margin-top:22px; }
+  .banner { display:none; }
+}
 """
 
 MARK = ("<svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='#fff' stroke-width='2.2' stroke-linecap='round' "
@@ -140,103 +187,122 @@ def page(title, body):
 
 
 # ---------------------------------------------------------------------
-# pills
+# building blocks
 # ---------------------------------------------------------------------
-def tone_fit(fit):
-    return {"high": "good", "med": "mid"}.get(fit, "low")
-
-
-def tone_grade(g):
-    return "good" if g in ("A", "B") else "mid" if g == "C" else "low"
-
-
-def aum_pill(s, href=None):
+def verdict_pill(p, href=None):
     tag = "a" if href else "span"
-    h = f" href='{href}#aum'" if href else ""
-    return (f"<{tag} class='pill p-{tone_fit(s['aum_fit'])}'{h} title='AUM fit score'>{s['aum_score']:.0f}"
-            f"<small>{s['aum_fit']}</small></{tag}>")
+    h = f" href='{href}#{p['key']}'" if href else ""
+    return f"<{tag} class='pill t-{p['tone']}'{h} title='{esc(p['score_label'])}'><span class='dot'></span>{esc(p['verdict'])}</{tag}>"
 
 
-def grade_pill(grade, pts, anchor, label, href=None):
-    tag = "a" if href else "span"
-    h = f" href='{href}#{anchor}'" if href else ""
-    return (f"<{tag} class='pill p-{tone_grade(grade)}'{h} title='{label} grade ({pts:.0f} points)'>{grade}"
-            f"<small>{pts:.0f} pts</small></{tag}>")
+def meter(p, mini=False):
+    m = p["meter"]
+    ticks = "".join(f"<span class='tick' style='left:calc({pos * 100:.1f}% - 1px)'></span>"
+                    f"<span class='tl' style='left:{pos * 100:.1f}%'>{esc(lbl)}</span>" for lbl, pos in m["ticks"])
+    return (f"<div class='meter{' mini' if mini else ''}' aria-label='{esc(p['score_label'])}'><div class='track'>"
+            f"<div class='fill {p['tone']}' style='width:{m['fill'] * 100:.1f}%'></div></div>{ticks}</div>")
+
+
+def _products(r):
+    return {p["key"]: p for p in r["brief"]["products"]}
 
 
 # ---------------------------------------------------------------------
-# client profile
+# client page: conversation brief
 # ---------------------------------------------------------------------
 def client_html(r):
     if r["status"] != "graded":
         body = (f"<h1>{esc(r['client'])}</h1><p class='sub'>Not graded</p>"
                 f"<p class='skip'>{esc(r['reason'])}</p>")
         return page(r["client"], body)
-    s = r["scores"]
+    b, prods = r["brief"], _products(r)
     names = " & ".join(r["names"]) or r["client"]
     words = [w for w in (r["names"][0] if r["names"] else r["client"]).split() if not w.endswith(".")]
     initials = (words[0][0] + words[-1][0]) if words else "?"
-    meta = [f"Tax year {r['year']}", r["filing_status"]] + [f"{n}, {a}" for n, a in r["ages"]] + \
-           [f"Prior year: {r['prior_year'] or 'none'}", f"Consent: {r['consent']}"]
-    out = [f"<div class='head'><div class='avatar'>{esc(initials.upper())}</div><div><h1>{esc(names)}</h1>"
-           f"<div class='meta'>{''.join(f'<span class=tag>{esc(m)}</span>' for m in meta)}</div></div></div>"]
+    meta = [f"Tax year {r['year']}", r["filing_status"]] + [f"{n}, {a}" for n, a in r["ages"]]
+    out = [f"<div class='head'><div class='who-h'><div class='avatar'>{esc(initials.upper())}</div><div><h1>{esc(names)}</h1>"
+           f"<div class='meta'>{''.join(f'<span class=tag>{esc(m)}</span>' for m in meta)}</div></div></div>"
+           "<button class='btn noprint' onclick='window.print()'>Print brief</button></div>"]
 
-    out.append("<div class='scores'>"
-               f"<a class='score' id='aum' href='#sig-aum'><div class='k'>AUM fit</div>"
-               f"<div class='v c-{tone_fit(s['aum_fit'])}'>{s['aum_score']:.0f}<small>/100</small></div>"
-               f"{aum_pill(s)}<div class='bar'><i style='width:{min(100, s['aum_score']):.0f}%'></i></div></a>"
-               f"<a class='score' id='annuity' href='#sig-annuity'><div class='k'>Annuity</div>"
-               f"<div class='v c-{tone_grade(s['annuity_grade'])}'>{s['annuity_grade']}</div>"
-               f"{grade_pill(s['annuity_grade'], s['annuity_points'], 'annuity', 'Annuity')}</a>"
-               f"<a class='score' id='life' href='#sig-life'><div class='k'>Life insurance</div>"
-               f"<div class='v c-{tone_grade(s['life_grade'])}'>{s['life_grade']}</div>"
-               f"{grade_pill(s['life_grade'], s['life_points'], 'life', 'Life')}</a>"
-               "</div>")
+    # at a glance
+    out.append("<div class='glance'>")
+    for key in ("aum", "annuity", "life"):
+        p = prods[key]
+        reasons = ("<ul>" + "".join(f"<li>{esc(x)}</li>" for x in p["reasons"]) + "</ul>") if p["reasons"] \
+            else "<p class='muted' style='margin:0;font-size:14px'>Nothing on the return points here.</p>"
+        out.append(f"<div class='pcard' id='{key}'><div class='k'>{esc(p['name'])}</div>"
+                   f"<div class='verdict c-{p['tone']}'>{esc(p['verdict'])}</div><div class='score'>{esc(p['score_label'])}</div>"
+                   f"{meter(p)}" + (f"<div class='next'>{esc(p['next'])}</div>" if p["next"] else "") + f"{reasons}</div>")
+    out.append("</div>")
 
-    out.append("<h2>Talking points</h2>")
-    out.append("<ul class='tps'>" + "".join(f"<li>{esc(t)}</li>" for t in r["talking_points"]) + "</ul>"
-               if r["talking_points"] else "<p class='muted'>No signals fired.</p>")
+    # conversation brief
+    out.append("<h2>Conversation brief</h2><div class='brief'>")
+    if b["opener"]:
+        out.append(f"<div class='opener'><div class='k'>What stood out on their {r['year']} return</div><ol>"
+                   + "".join(f"<li>{esc(x)}</li>" for x in b["opener"]) + "</ol></div>")
+    low = []
+    for key in b["order"]:
+        p = prods[key]
+        if not p["points"]:
+            continue
+        if p["tone"] == "low":
+            low.append(p)
+            continue
+        out.append(f"<div class='prod'><div class='prod-h'><h3>{esc(p['name'])}</h3>{verdict_pill(p)}</div>")
+        for i, t in enumerate(p["points"], 1):
+            out.append(f"<div class='tp'><div class='n'>{i}</div><div class='hl'>{esc(t['headline'])}</div>"
+                       f"<div class='why'>{esc(t['why'])}</div>"
+                       + (f"<div class='ask'><b>Ask</b>{esc(t['ask'])}</div>" if t["ask"] else "") + "</div>")
+        if p["more"]:
+            out.append(f"<div class='muted' style='font-size:13px;padding-top:6px'>+{p['more']} more in the evidence below</div>")
+        out.append("</div>")
+    if low:
+        out.append("<div class='lowlist'><b>Lower priority:</b> " + "; ".join(
+            f"{esc(p['name'])} ({esc(', '.join(t['headline'] for t in p['points'][:2]))})" for p in low) + "</div>")
+    if not b["opener"]:
+        out.append("<div class='lowlist'>Nothing on this return points to a conversation right now.</div>")
+    out.append("</div>")
 
-    for prod, title in (("aum", "AUM signals"), ("annuity", "Annuity signals"), ("life", "Life-insurance signals")):
-        sigs = [x for x in r["signals"] if x["product"] == prod]
-        total = sum(x["points"] for x in sigs)
-        note = ""
-        if prod == "aum" and total > s["aum_score"]:
-            note = f" <span class='muted' style='font-size:13px;font-weight:400'>(adds to {total:.0f}, capped)</span>"
-        out.append(f"<section id='sig-{prod}'><div class='sec-head'><h2>{title}{note}</h2>"
-                   f"<span class='pill p-low'>{total:+.0f} pts</span></div><div class='sec-card'>")
+    # household snapshot
+    if b["snapshot"]:
+        out.append("<h2>Household snapshot</h2><div class='snap'>" + "".join(
+            f"<div><b>{money(s['value'])}</b><span>{esc(s['label'])}</span></div>" for s in b["snapshot"]) + "</div>")
+
+    # evidence (collapsed)
+    n_warn = len(r["warnings"])
+    out.append(f"<details class='evidence'><summary>Evidence behind the scores <span class='muted' style='font-weight:400;"
+               f"font-size:13px'>&nbsp;rules, points, sources, {'validation &middot; ' + str(n_warn) + ' warning(s)' if n_warn else 'all checks passed'}"
+               f"</span></summary><div class='ev'>")
+    for key in ("aum", "annuity", "life"):
+        p = prods[key]
+        sigs = [x for x in r["signals"] if x["product"] == key]
+        out.append(f"<h4>{esc(p['name'])} &middot; {esc(p['score_label'])}</h4>")
         if not sigs:
-            out.append("<div class='empty'>None fired.</div>")
+            out.append("<div class='muted'>No rules fired.</div>")
         for x in sigs:
-            out.append(f"<div class='sig'><div class='rule'>{esc(x['label'])}</div>"
-                       f"<div class='right'><span class='tag'>{esc(x['value'])}</span>"
-                       f"<span class='pill {'p-good' if x['points'] > 0 else 'p-low'}'>{x['points']:+.0f}</span></div>"
-                       + (f"<div class='detail'>{esc(x['detail'])}</div>" if x["detail"] else "")
-                       + f"<div class='src'>{' &middot; '.join(esc(s_) for s_ in x['sources'])} &middot; {esc(x['id'])}</div></div>")
-        out.append("</div></section>")
-
-    out.append("<section id='warnings'><h2>Validation</h2><div class='sec-card' style='padding:14px 18px'>")
+            out.append(f"<div class='sig'><div>{esc(x['label'])} &mdash; <b>{esc(x['value'])}</b>"
+                       + (f" <span class='muted'>({esc(x['detail'])})</span>" if x["detail"] else "")
+                       + f"</div><span class='pill {'t-good' if x['points'] > 0 else 't-low'}'>{x['points']:+.0f}</span>"
+                       f"<div class='src'>{' &middot; '.join(esc(s_) for s_ in x['sources'])} &middot; {esc(x['id'])}</div></div>")
+    out.append("<h4>Validation</h4>")
     out.append("<ul class='warnbox' style='margin:0;padding-left:18px'>" + "".join(f"<li>{esc(w)}</li>" for w in r["warnings"])
                + "</ul>" if r["warnings"] else "<span class='ok'>&#10003; Every cross-check agreed.</span>")
-    out.append("</div></section>")
-
-    out.append("<section id='figures'><h2>Key figures</h2><div class='sec-card wrap'><table><tr><th>Figure</th>"
+    out.append("<h4>Key figures</h4><div class='wrap'><table><tr><th>Figure</th>"
                f"<th style='text-align:right'>{r['year']}</th>"
                + (f"<th style='text-align:right'>{r['prior_year']}</th>" if r["prior_year"] else "") + "<th>Source</th></tr>")
     for row in r["figures"]:
         out.append(f"<tr><td>{esc(row['label'])}</td><td class='num'>{money(row['value'])}</td>"
                    + (f"<td class='num'>{money(row['prior'])}</td>" if r["prior_year"] else "")
                    + f"<td class='src'>{esc(row['source'])}</td></tr>")
-    out.append("</table></div></section>")
-
-    out.append("<section id='documents'><h2>Documents read</h2><div class='sec-card wrap'><table><tr><th>File</th>"
-               "<th>Detected as</th><th style='text-align:right'>Pages</th><th>Read by</th></tr>")
+    out.append("</table></div><h4>Documents read</h4><div class='wrap'><table><tr><th>File</th><th>Detected as</th>"
+               "<th style='text-align:right'>Pages</th><th>Read by</th></tr>")
     for d in r["documents"]:
         out.append(f"<tr><td>{esc(d['doc'])}</td><td>{esc(d['kinds'])}</td><td class='num'>{d['pages']}</td>"
                    f"<td>{'OCR (scan)' if d['ocr'] else 'text'}</td></tr>")
-    out.append("</table></div></section>")
-    out.append("<p class='foot'>Generated on this computer by Tax Scan. SSNs are masked. "
-               "Scores come from config/grader.yaml.</p>")
+    out.append(f"</table></div><p class='muted' style='font-size:12px;margin-top:14px'>Consent: {esc(r['consent'])}. "
+               f"Prior-year return: {r['prior_year'] or 'none'}. Rules and wording: app/config/grader.yaml.</p></div></details>")
+    out.append("<p class='foot'>Prepared on this computer by Tax Scan from the client&rsquo;s tax documents. SSNs are masked. "
+               "A starting point for a conversation, not advice.</p>")
     return page(names, "".join(out))
 
 
@@ -250,69 +316,66 @@ def write_client(r, out_dir):
 # ---------------------------------------------------------------------
 # ranking
 # ---------------------------------------------------------------------
-SUMMARY_COLS = ["rank", "client", "names", "year", "aum_score", "aum_fit", "annuity_grade", "annuity_points",
-                "life_grade", "life_points", "signals", "warnings", "status"]
+SUMMARY_COLS = ["rank", "client", "names", "year", "aum_score", "aum_fit", "aum_verdict", "annuity_grade",
+                "annuity_points", "annuity_verdict", "life_grade", "life_points", "life_verdict", "highlights",
+                "signals", "warnings", "status"]
 
 
 def summary_rows(results):
     graded = sorted([r for r in results if r["status"] == "graded"], key=lambda r: -r["scores"]["aum_score"])
     rows = []
     for i, r in enumerate(graded, 1):
-        s = r["scores"]
+        s, p = r["scores"], _products(r)
         rows.append({"rank": i, "client": r["client"], "names": " & ".join(r["names"]), "year": r["year"],
-                     "aum_score": round(s["aum_score"]), "aum_fit": s["aum_fit"],
+                     "aum_score": round(s["aum_score"]), "aum_fit": s["aum_fit"], "aum_verdict": p["aum"]["verdict"],
                      "annuity_grade": s["annuity_grade"], "annuity_points": round(s["annuity_points"]),
+                     "annuity_verdict": p["annuity"]["verdict"],
                      "life_grade": s["life_grade"], "life_points": round(s["life_points"]),
+                     "life_verdict": p["life"]["verdict"], "highlights": "; ".join(r["brief"]["opener"]),
                      "signals": "; ".join(x["id"] for x in r["signals"]), "warnings": len(r["warnings"]),
-                     "status": "graded"})
+                     "status": "graded", "_r": r})
     for r in results:
         if r["status"] != "graded":
-            rows.append({"rank": "", "client": r["client"], "names": "", "year": "", "aum_score": "", "aum_fit": "",
-                         "annuity_grade": "", "annuity_points": "", "life_grade": "", "life_points": "",
-                         "signals": "", "warnings": "", "status": f"not graded: {r['reason']}"})
+            rows.append({c: "" for c in SUMMARY_COLS} | {"client": r["client"], "status": f"not graded: {r['reason']}"})
     return rows
-
-
-def _short_signal(sid):
-    return sid.split(".", 1)[1].replace("_", " ")
 
 
 def write_summary(results, out_dir):
     out_dir = Path(out_dir)
     rows = summary_rows(results)
     with open(out_dir / "summary.csv", "w", newline="", encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=SUMMARY_COLS)
+        w = csv.DictWriter(fh, fieldnames=SUMMARY_COLS, extrasaction="ignore")
         w.writeheader()
         w.writerows(rows)
     graded = [r for r in rows if r["status"] == "graded"]
-    n_high = sum(1 for r in graded if r["aum_fit"] == "high")
-    n_ann = sum(1 for r in graded if r["annuity_grade"] in ("A", "B"))
-    n_life = sum(1 for r in graded if r["life_grade"] in ("A", "B"))
+    strong = lambda key: sum(1 for r in graded if _products(r["_r"])[key]["tone"] == "good")  # noqa: E731
     body = ["<h1>Client ranking</h1>",
-            f"<div class='sub'>Ranked by AUM score. Click a name or any pill to open that client&rsquo;s profile.</div>",
+            "<div class='sub'>Ranked by investment-management fit. Click a name for the conversation brief, "
+            "or a verdict to jump to that product.</div>",
             "<div class='stats'>"
             f"<div class='stat'><b>{len(graded)}</b><span>clients graded</span></div>"
-            f"<div class='stat'><b class='c-good'>{n_high}</b><span>high AUM fit</span></div>"
-            f"<div class='stat'><b>{n_ann}</b><span>annuity A or B</span></div>"
-            f"<div class='stat'><b>{n_life}</b><span>life A or B</span></div></div>",
-            "<div class='list'><div class='lh'><span>#</span><span>Client</span><span>AUM</span><span>Annuity</span>"
-            "<span>Life</span><span>Top signals</span></div>"]
-    for r in rows:
-        if r["status"] != "graded":
-            body.append(f"<div class='row'><span class='rank'>&ndash;</span><div class='who'>{esc(r['client'])}"
-                        f"<span class='muted skip'>{esc(r['status'])}</span></div></div>")
+            f"<div class='stat'><b class='c-good'>{strong('aum')}</b><span>strong investment fit</span></div>"
+            f"<div class='stat'><b class='c-good'>{strong('annuity')}</b><span>strong or good annuity fit</span></div>"
+            f"<div class='stat'><b class='c-good'>{strong('life')}</b><span>strong or good life fit</span></div></div>",
+            "<div class='list'><div class='lh'><span>#</span><span>Client</span><span>Investment mgmt</span>"
+            "<span>Annuity</span><span>Life insurance</span><span>What stood out</span></div>"]
+    for row in rows:
+        if row["status"] != "graded":
+            body.append(f"<div class='row'><span class='rank'>&ndash;</span><div class='who'>{esc(row['client'])}"
+                        f"<span class='muted skip'>{esc(row['status'])}</span></div></div>")
             continue
-        href = f"clients/{esc(r['client'])}.html"
-        s = {"aum_score": r["aum_score"], "aum_fit": r["aum_fit"]}
-        sigs = [x for x in r["signals"].split("; ") if x][:4]
-        warn = f" &middot; <span class='skip'>{r['warnings']} warning{'s' if r['warnings'] != 1 else ''}</span>" if r["warnings"] else ""
-        body.append(
-            f"<div class='row'><span class='rank'>{r['rank']}</span>"
-            f"<div class='who'><a href='{href}'>{esc(r['names'] or r['client'])}</a>"
-            f"<span class='muted'>{esc(r['client'])}{warn}</span></div>"
-            f"<div><span class='lbl muted'>AUM </span>{aum_pill(s, href)}</div>"
-            f"<div><span class='lbl muted'>Annuity </span>{grade_pill(r['annuity_grade'], r['annuity_points'], 'annuity', 'Annuity', href)}</div>"
-            f"<div><span class='lbl muted'>Life </span>{grade_pill(r['life_grade'], r['life_points'], 'life', 'Life', href)}</div>"
-            f"<div class='sigs'>{''.join(f'<span class=tag>{esc(_short_signal(x))}</span>' for x in sigs)}</div></div>")
+        r = row["_r"]
+        p = _products(r)
+        href = f"clients/{esc(row['client'])}.html"
+        warn = (f" &middot; <span class='skip'>{row['warnings']} warning{'s' if row['warnings'] != 1 else ''}</span>"
+                if row["warnings"] else "")
+        cells = "".join(f"<div class='cell'><span class='lbl'>{esc(p[k]['name'])}</span>{verdict_pill(p[k], href)}"
+                        f"{meter(p[k], mini=True)}<div class='sc'>{esc(p[k]['score_label'])}</div></div>"
+                        for k in ("aum", "annuity", "life"))
+        why = "".join(f"<div>{esc(x)}</div>" for x in r["brief"]["opener"][:2]) or "<div class='muted'>Nothing notable</div>"
+        body.append(f"<div class='row'><span class='rank'>{row['rank']}</span>"
+                    f"<div class='who'><a href='{href}'>{esc(row['names'] or row['client'])}</a>"
+                    f"<span class='muted'>{esc(row['client'])}{warn}</span></div>{cells}"
+                    f"<div class='why-c'><span class='lbl'>What stood out</span>{why}</div></div>")
     body.append("</div><p class='foot'>summary.csv in this folder has the same table for Excel.</p>")
     (out_dir / "summary.html").write_text(page("Client ranking", "".join(body)), encoding="utf-8")

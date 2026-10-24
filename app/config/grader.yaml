@@ -94,32 +94,121 @@ life:
 validation:
   tolerance: 1                  # dollars of rounding allowed when comparing figures
 
-# ---------------------------------------------------------------- talking points
-# {placeholders} are filled from the signal's details. Keep them short.
-# The report shows the strongest signals' talking points first, up to this many.
-max_talking_points: 6
-talking_points:
-  aum.rollover: "Rolled over {value} in {year}. Confirm where it landed and offer a full portfolio review."
-  aum.retirement_distribution: "Taking {value} in retirement-account distributions. Review withdrawal strategy and tax drag."
-  aum.inheritance: "Signs of an inheritance ({detail}). Inherited assets often sit unmanaged; offer to review them."
-  aum.asset_sale: "Sale gain of {value} ({detail}). Large proceeds may be sitting in cash; discuss a reinvestment plan."
-  aum.interest: "{value} of taxable interest suggests a large cash/CD position. Discuss yield and allocation."
-  aum.invest_income: "{value} of dividends and capital gains. There is a taxable portfolio to review for tax efficiency."
-  aum.niit: "Paying net investment income tax ({value}). Tax-aware investing and asset location could help."
-  aum.stock_comp_amt: "Equity compensation / AMT ({detail}). Concentrated stock and exercise planning conversation."
-  aum.no_retirement_savings: "High earner ({value}) with no retirement deferrals visible. Discuss 401(k)/SEP/solo 401(k)."
-  aum.income_drop: "Income fell sharply ({detail}). Possible retirement or job change; low-bracket window for Roth conversions."
-  aum.early_withdrawal: "Early retirement-plan withdrawal ({value}) with penalty. Cash-flow review; old 401(k) may be rollable."
-  aum.agi: "AGI of {value}: room for tax-efficient investing beyond workplace plans."
-  annuity.age: "Age {value}: in the window for income planning and guarantees."
-  annuity.pension_ira_income: "Living partly on pension/IRA income ({value}). Discuss guaranteed lifetime income."
-  annuity.interest: "{value} of interest. CD money may fit a fixed or fixed-indexed annuity."
-  annuity.bracket_24: "Taxable income of {value} (24%+ bracket). Tax-deferred growth may be attractive."
-  annuity.transition: "Life transition: {detail}. A natural time to revisit income strategy."
-  annuity.rmd_age: "At RMD age ({value}). Coordinate required distributions; QCDs if charitable."
-  life.dependents: "{value} dependent(s). Confirm life coverage is sized to protect them."
-  life.single_earner: "Single-earner household ({detail}). The family depends on one income."
-  life.business_owner: "Business owner ({detail}). Key-person and buy-sell coverage conversation."
-  life.income: "Income of {value}. Coverage should keep pace with earnings."
-  life.life_event: "Life event: {detail}. Beneficiaries and coverage need a refresh."
-  life.age_over: "Age {value}. New life coverage is less likely to fit."
+# ---------------------------------------------------------------- how results are shown
+# Plain-English verdicts shown instead of bare scores/letters.
+display:
+  verdicts:
+    aum: {high: "Strong fit", med: "Worth a conversation", low: "Low priority"}
+    grades: {A: "Strong fit", B: "Good fit", C: "Worth a conversation", D: "Low priority", F: "Not a fit"}
+  product_names: {aum: "Investment management", annuity: "Annuity", life: "Life insurance"}
+  max_points_per_product: 3    # talking points shown per product in the brief
+  opener_points: 3             # items in the "what stood out" opening
+
+# ---------------------------------------------------------------- conversation brief
+# One entry per signal (the part of the signal id before the threshold, e.g. aum.rollover).
+# A full signal id (e.g. annuity.age_65) overrides its group for that tier.
+#   headline: what you noticed, in the client's terms
+#   why:      why it matters to them (one sentence)
+#   ask:      a discovery question to open the topic (leave "" to skip)
+# Placeholders: {value} the triggering amount/age, {detail} the specifics, {year} the tax year.
+conversation:
+  aum.rollover:
+    headline: "Rolled {value} out of a workplace plan in {year}"
+    why: "Money that just left a 401(k) often lands in cash or a default fund with no plan behind it."
+    ask: "Where did the rollover land, and how is it invested today?"
+  aum.retirement_distribution:
+    headline: "Drawing {value} from retirement accounts"
+    why: "Which accounts you draw from, and when, drives your taxes for years."
+    ask: "Is this a regular draw or a one-time need? Is there a withdrawal plan?"
+  aum.inheritance:
+    headline: "Signs of an inherited account"
+    why: "{detail}. Inherited IRAs come with distribution deadlines and usually no plan."
+    ask: "Did you inherit an account recently? Who is helping you manage it?"
+  aum.asset_sale:
+    headline: "Large sale gain of {value}"
+    why: "From the sale of {detail}. Proceeds like this often sit in cash waiting for a plan."
+    ask: "What's the plan for the proceeds? Any near-term needs for that money?"
+  aum.interest:
+    headline: "{value} of interest income"
+    why: "That points to a sizable savings or CD balance that may be earning less than it could."
+    ask: "How much do you keep in savings and CDs, and what is it set aside for?"
+  aum.invest_income:
+    headline: "{value} in dividends and capital gains"
+    why: "There's a taxable portfolio here worth reviewing for tax efficiency."
+    ask: "Who manages your brokerage account today, and how do you decide what to sell?"
+  aum.niit:
+    headline: "Paying {value} of net investment income tax"
+    why: "Where investments are held, and what they hold, can reduce this extra 3.8% tax."
+    ask: "Has anyone looked at your investments with taxes in mind?"
+  aum.stock_comp_amt:
+    headline: "Equity compensation"
+    why: "{detail}. Company stock can quietly become a large, concentrated position."
+    ask: "How much of your net worth is in company stock, and is there a plan for selling it?"
+  aum.no_retirement_savings:
+    headline: "High earner with no retirement contributions on the return"
+    why: "With {value} of earned income, a 401(k), SEP or solo 401(k) could cut taxes now and build savings."
+    ask: "Are you saving for retirement anywhere that doesn't show up on the return?"
+  aum.income_drop:
+    headline: "Income dropped this year"
+    why: "{detail}. Lower-income years are a window for Roth conversions and income planning."
+    ask: "What changed this year? Is this the start of retirement?"
+  aum.early_withdrawal:
+    headline: "Early retirement withdrawal of {value}"
+    why: "It came with a 10% penalty, which can signal a cash squeeze. An old 401(k) may still sit at a former employer."
+    ask: "What prompted the withdrawal? Do you still have an account at a former employer?"
+  aum.agi:
+    headline: "Household income of {value}"
+    why: "There's room to invest beyond workplace plans, and taxes are worth planning around."
+    ask: "What happens with the money left over after your workplace savings?"
+  annuity.age:
+    headline: "Age {value}: approaching or in retirement"
+    why: "This is when guaranteed income and protecting savings move up the list."
+    ask: "When do you want to stop working, and what will replace the paycheck?"
+  annuity.age_65:
+    headline: "Age {value}: in retirement"
+    why: "Making savings last, and guaranteeing income for life, become the priorities."
+    ask: "Does your guaranteed income cover your monthly essentials? How long does your savings need to last?"
+  annuity.pension_ira_income:
+    headline: "Living partly on {value} of pension and IRA income"
+    why: "Guaranteed lifetime income can cover the essentials no matter what markets do."
+    ask: "Do your guaranteed income sources cover your basic monthly expenses?"
+  annuity.interest:
+    headline: "{value} of interest from savings and CDs"
+    why: "Some CD money may earn more, tax-deferred, in a fixed or fixed-indexed annuity."
+    ask: "When do your CDs mature, and what is that money for?"
+  annuity.bracket_24:
+    headline: "In the 24% tax bracket or higher"
+    why: "With {value} of taxable income, growth that isn't taxed every year is worth more."
+    ask: "Would you like more of your savings to grow without a yearly tax bill?"
+  annuity.transition:
+    headline: "Life transition: {detail}"
+    why: "Changes like this are when income plans get rebuilt."
+    ask: "How has this changed what you need your savings to do?"
+  annuity.rmd_age:
+    headline: "Taking required minimum distributions (age {value})"
+    why: "RMDs set a floor on taxable income. Income planning and QCDs can help."
+    ask: "Do you need your RMD to live on, or does it get reinvested?"
+  life.dependents:
+    headline: "{value} dependent(s) on the return"
+    why: "Coverage should replace income and fund their future if something happens."
+    ask: "If something happened to you, how would the family's costs be covered?"
+  life.single_earner:
+    headline: "One income supports the household"
+    why: "{detail}. The family's plans depend on that paycheck continuing."
+    ask: "How long would your family be OK if that income stopped?"
+  life.business_owner:
+    headline: "Business owner"
+    why: "{detail}. Key-person and buy-sell coverage protect both the business and the family."
+    ask: "Is there a buy-sell agreement, and is it funded?"
+  life.income:
+    headline: "Household income of {value}"
+    why: "Coverage should keep pace with what the family would lose."
+    ask: "When did you last review how much life coverage you have?"
+  life.life_event:
+    headline: "Life event: {value}"
+    why: "{detail}. Beneficiaries and coverage usually need updating after a change like this."
+    ask: "Have beneficiaries been updated since this change?"
+  life.age_over:
+    headline: "Age {value}"
+    why: "New life coverage is usually less practical at this age; focus elsewhere."
+    ask: ""

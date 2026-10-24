@@ -10,7 +10,7 @@
 }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--ink);
-       font:15px/1.5 ui-sans-serif,-apple-system,"Segoe UI Variable Text","Segoe UI",Inter,Roboto,system-ui,sans-serif;
+       font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI Variable Text","Segoe UI",Inter,Roboto,system-ui,sans-serif;
        -webkit-font-smoothing:antialiased; }
 a { color:inherit; }
 .top { position:sticky; top:0; z-index:5; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
@@ -23,19 +23,94 @@ a { color:inherit; }
 .navlinks a { text-decoration:none; } .navlinks a:hover { color:var(--accent); }
 main { max-width:1080px; margin:0 auto; padding:28px 20px 60px; }
 h1 { font-size:clamp(28px,4vw,40px); letter-spacing:-.03em; margin:0; line-height:1.1; }
-h2 { font-size:18px; letter-spacing:-.01em; margin:36px 0 12px; }
+h2 { font-size:19px; letter-spacing:-.015em; margin:40px 0 14px; }
 .sub { color:var(--ink-2); margin-top:6px; }
 .muted { color:var(--ink-3); }
 .banner { background:var(--mid-bg); color:var(--mid); border-radius:12px; padding:10px 14px; font-size:13px; margin-bottom:18px; }
+.btn { font:inherit; font-size:14px; font-weight:600; padding:9px 16px; border-radius:12px; cursor:pointer;
+       border:1px solid var(--line); background:var(--card); color:var(--ink); }
+.btn:hover { border-color:var(--accent); }
 
-/* pills */
-.pill { display:inline-flex; align-items:center; gap:6px; padding:5px 11px; border-radius:999px; font-weight:700; font-size:13px;
-        text-decoration:none; white-space:nowrap; border:1px solid transparent; transition:transform .12s, box-shadow .15s; }
+/* verdict pills */
+.pill { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; font-weight:650; font-size:13px;
+        text-decoration:none; white-space:nowrap; transition:transform .12s, box-shadow .15s; }
 a.pill:hover { transform:translateY(-1px); box-shadow:0 6px 14px -8px rgba(0,0,0,.35); }
-.pill small { font-weight:600; opacity:.75; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
-.p-good { background:var(--good-bg); color:var(--good); } .p-mid { background:var(--mid-bg); color:var(--mid); }
-.p-low { background:var(--low-bg); color:var(--low); }
+.pill .dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
+.t-good { background:var(--good-bg); color:var(--good); } .t-mid { background:var(--mid-bg); color:var(--mid); }
+.t-low { background:var(--low-bg); color:var(--low); }
+.c-good { color:var(--good); } .c-mid { color:var(--mid); } .c-low { color:var(--low); }
 .tag { display:inline-block; padding:3px 9px; border-radius:8px; background:var(--chip); color:var(--ink-2); font-size:12px; margin:2px 4px 2px 0; }
+
+/* meter: bar with grade cut-offs */
+.meter { position:relative; margin:16px 0 30px; }
+.meter .track { height:8px; border-radius:99px; background:var(--chip); overflow:hidden; }
+.meter .fill { height:100%; border-radius:inherit; }
+.fill.good { background:linear-gradient(90deg,var(--mint),var(--good)); }
+.fill.mid { background:linear-gradient(90deg,#f5c56b,var(--mid)); }
+.fill.low { background:var(--low); opacity:.55; }
+.meter .tick { position:absolute; top:-3px; width:2px; height:14px; background:var(--card); border-radius:2px; }
+.meter .tl { position:absolute; top:14px; transform:translateX(-50%); font-size:10.5px; color:var(--ink-3); font-weight:600; }
+.mini { width:100%; max-width:120px; margin:6px 0 0; }
+.mini .track { height:5px; } .mini .tick, .mini .tl { display:none; }
+
+/* client page */
+.head { display:flex; gap:16px; align-items:center; flex-wrap:wrap; justify-content:space-between; }
+.who-h { display:flex; gap:16px; align-items:center; }
+.avatar { width:56px; height:56px; border-radius:18px; display:grid; place-items:center; color:#fff; font-weight:800; font-size:20px;
+          background:linear-gradient(135deg,var(--accent),var(--accent-2)); flex:none; }
+.meta { display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
+.glance { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:26px; }
+.pcard { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:18px 20px; box-shadow:var(--shadow);
+         scroll-margin-top:80px; }
+.pcard:target { outline:2px solid var(--accent); outline-offset:2px; }
+.pcard .k { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); font-weight:600; }
+.pcard .verdict { font-size:24px; font-weight:750; letter-spacing:-.02em; margin:4px 0 2px; }
+.pcard .score { font-size:13px; color:var(--ink-3); }
+.pcard .next { font-size:12.5px; color:var(--ink-3); margin:-6px 0 10px; }
+.pcard ul { margin:0; padding-left:18px; color:var(--ink-2); font-size:14px; }
+.pcard li { margin:3px 0; }
+.brief { background:var(--card); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); overflow:hidden; }
+.opener { padding:20px 22px; background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 9%, var(--card)),
+          color-mix(in srgb, var(--mint) 8%, var(--card))); border-bottom:1px solid var(--line); }
+.opener .k { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); font-weight:700; }
+.opener ol { margin:10px 0 0; padding-left:20px; font-size:16px; font-weight:600; }
+.opener li { margin:4px 0; }
+.prod { padding:20px 22px; border-top:1px solid var(--line); }
+.prod:first-of-type { border-top:0; }
+.prod-h { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+.prod-h h3 { margin:0; font-size:17px; letter-spacing:-.01em; }
+.tp { display:grid; grid-template-columns:28px 1fr; gap:4px 12px; padding:12px 0; border-top:1px dashed var(--line); }
+.tp:first-of-type { border-top:0; padding-top:4px; }
+.tp .n { width:28px; height:28px; border-radius:9px; display:grid; place-items:center; font-weight:700; font-size:13px;
+         background:var(--chip); color:var(--accent); }
+.tp .hl { font-weight:650; font-size:15.5px; }
+.tp .why { color:var(--ink-2); font-size:14.5px; grid-column:2; }
+.tp .ask { grid-column:2; margin-top:6px; padding:9px 12px; border-radius:12px; background:var(--chip); font-size:14.5px; }
+.tp .ask b { color:var(--accent); font-weight:700; margin-right:6px; }
+.lowlist { padding:16px 22px; border-top:1px solid var(--line); color:var(--ink-3); font-size:14px; }
+.snap { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+.snap div { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
+.snap b { display:block; font-size:22px; letter-spacing:-.02em; }
+.snap span { color:var(--ink-3); font-size:13px; }
+details.evidence { margin-top:40px; background:var(--card); border:1px solid var(--line); border-radius:18px; }
+details.evidence > summary { cursor:pointer; padding:16px 20px; font-weight:650; list-style:none; display:flex;
+                             justify-content:space-between; align-items:center; }
+details.evidence > summary::after { content:"Show"; font-size:13px; color:var(--accent); font-weight:600; }
+details.evidence[open] > summary::after { content:"Hide"; }
+details.evidence > summary::-webkit-details-marker { display:none; }
+.ev { padding:0 20px 20px; }
+.ev h4 { margin:18px 0 8px; font-size:14px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); }
+.sig { display:grid; grid-template-columns:1fr auto; gap:4px 14px; padding:10px 0; border-top:1px solid var(--line); }
+.sig .src { color:var(--ink-3); font-size:12px; grid-column:1 / -1; }
+.warnbox li { color:var(--bad); margin:4px 0; }
+.ok { color:var(--good); }
+table { width:100%; border-collapse:collapse; }
+th, td { text-align:left; padding:9px 12px; border-top:1px solid var(--line); vertical-align:top; font-size:14px; }
+th { font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); border-top:0; background:var(--chip); }
+td.num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+td.src { color:var(--ink-3); font-size:12px; }
+.wrap { overflow-x:auto; }
+.foot { color:var(--ink-3); font-size:12px; margin-top:30px; }
 
 /* ranking */
 .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:22px 0 8px; }
@@ -43,65 +118,35 @@ a.pill:hover { transform:translateY(-1px); box-shadow:0 6px 14px -8px rgba(0,0,0
 .stat b { display:block; font-size:26px; letter-spacing:-.02em; }
 .stat span { color:var(--ink-3); font-size:13px; }
 .list { background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; margin-top:18px; }
-.lh, .row { display:grid; grid-template-columns:44px minmax(180px,1.6fr) 130px 104px 104px minmax(160px,1.4fr); gap:12px; align-items:center; padding:14px 18px; }
-.lh { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); border-bottom:1px solid var(--line); padding-top:12px; padding-bottom:12px; }
+.lh, .row { display:grid; grid-template-columns:40px minmax(170px,1.3fr) 170px 170px 170px minmax(180px,1.5fr); gap:12px;
+            align-items:start; padding:15px 18px; }
+.lh { font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); border-bottom:1px solid var(--line);
+      padding-top:12px; padding-bottom:12px; align-items:center; }
 .row { border-bottom:1px solid var(--line); }
 .row:last-child { border-bottom:0; }
-.row:hover { background:color-mix(in srgb, var(--chip) 60%, transparent); }
-.rank { font-weight:700; color:var(--ink-3); font-variant-numeric:tabular-nums; }
+.row:hover { background:color-mix(in srgb, var(--chip) 55%, transparent); }
+.rank { font-weight:700; color:var(--ink-3); font-variant-numeric:tabular-nums; padding-top:4px; }
 .who a { font-weight:650; text-decoration:none; } .who a:hover { color:var(--accent); }
 .who .muted { font-size:12px; display:block; }
-.sigs { font-size:12px; color:var(--ink-3); }
+.cell .sc { font-size:11.5px; color:var(--ink-3); margin-top:3px; }
+.why-c { font-size:13px; color:var(--ink-2); }
+.why-c div { margin:1px 0; }
 .row .lbl { display:none; }
 .skip { color:var(--bad); }
 
-/* profile */
-.head { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
-.avatar { width:56px; height:56px; border-radius:18px; display:grid; place-items:center; color:#fff; font-weight:800; font-size:20px;
-          background:linear-gradient(135deg,var(--accent),var(--accent-2)); flex:none; }
-.meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-.scores { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:24px; }
-.score { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:18px 20px; box-shadow:var(--shadow);
-         text-decoration:none; display:block; scroll-margin-top:80px; }
-.score:target, section:target .sec-card { outline:2px solid var(--accent); outline-offset:2px; }
-.score .k { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); font-weight:600; }
-.score .v { font-size:44px; font-weight:800; letter-spacing:-.04em; line-height:1.1; margin:4px 0 8px; }
-.score .v small { font-size:16px; color:var(--ink-3); font-weight:600; letter-spacing:0; }
-.bar { height:7px; border-radius:99px; background:var(--chip); overflow:hidden; margin-top:10px; }
-.bar i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,var(--accent),var(--mint)); }
-.c-good { color:var(--good); } .c-mid { color:var(--mid); } .c-low { color:var(--low); }
-.tps { list-style:none; padding:0; margin:0; display:grid; gap:8px; }
-.tps li { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px 12px 40px; position:relative; }
-.tps li::before { content:""; position:absolute; left:16px; top:18px; width:10px; height:10px; border-radius:50%;
-                  background:linear-gradient(135deg,var(--accent),var(--mint)); }
-section { scroll-margin-top:80px; }
-.sec-card { background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); overflow:hidden; }
-.sec-head { display:flex; justify-content:space-between; align-items:center; gap:10px; }
-.sig { display:grid; grid-template-columns:1fr auto; gap:6px 14px; padding:14px 18px; border-top:1px solid var(--line); }
-.sig:first-child { border-top:0; }
-.sig .rule { font-weight:600; }
-.sig .detail { color:var(--ink-2); font-size:14px; grid-column:1 / -1; }
-.sig .src { color:var(--ink-3); font-size:12px; grid-column:1 / -1; }
-.sig .right { display:flex; gap:6px; align-items:center; }
-.empty { padding:16px 18px; color:var(--ink-3); }
-.warnbox li { color:var(--bad); margin:4px 0; }
-.ok { color:var(--good); }
-table { width:100%; border-collapse:collapse; }
-th, td { text-align:left; padding:10px 16px; border-top:1px solid var(--line); vertical-align:top; }
-th { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3); border-top:0; background:var(--chip); }
-td.num { text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
-td.src { color:var(--ink-3); font-size:12px; }
-.wrap { overflow-x:auto; }
-.foot { color:var(--ink-3); font-size:12px; margin-top:30px; }
-
-@media (max-width: 820px) {
+@media (max-width: 900px) {
+  .glance { grid-template-columns:1fr; }
   .stats { grid-template-columns:repeat(2,1fr); }
   .lh { display:none; }
-  .row { grid-template-columns:36px 1fr; gap:8px 10px; }
+  .row { grid-template-columns:32px 1fr; gap:10px; }
   .row > :nth-child(n+3) { grid-column:2; }
-  .row .pills-m { display:flex; gap:6px; flex-wrap:wrap; }
-  .row .lbl { display:inline; }
-  .scores { grid-template-columns:1fr; }
+  .row .lbl { display:block; font-size:11.5px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.05em; margin-bottom:3px; }
 }
-@media print { .top { display:none; } body { background:#fff; } .score, .sec-card, .list { box-shadow:none; break-inside:avoid; } }
-</style></head><body><header class='top'><div class='top-in'><span class='brand'><span class='mark'><svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='#fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z'/><path d='M14 3v5h5'/><path d='M3 13h18' stroke='#84f1d6'/></svg></span>Tax Scan</span><nav class='navlinks'><a href='../../index.html'>Home</a><a href='../index.html'>All clients</a></nav></div></header><main><div class='banner'><b>Demo &mdash; fictional test data.</b> These clients, returns, and numbers are invented to show what Tax Scan produces. No real client data.</div><div class='head'><div class='avatar'>GH</div><div><h1>Gerald Haugen &amp; Linda Haugen</h1><div class='meta'><span class=tag>Tax year 2025</span><span class=tag>Married filing jointly</span><span class=tag>Gerald, 68</span><span class=tag>Linda, 66</span><span class=tag>Prior year: none</span><span class=tag>Consent: fictional test client (exempt)</span></div></div></div><div class='scores'><a class='score' id='aum' href='#sig-aum'><div class='k'>AUM fit</div><div class='v c-low'>25<small>/100</small></div><span class='pill p-low' title='AUM fit score'>25<small>low</small></span><div class='bar'><i style='width:25%'></i></div></a><a class='score' id='annuity' href='#sig-annuity'><div class='k'>Annuity</div><div class='v c-good'>B</div><span class='pill p-good' title='Annuity grade (65 points)'>B<small>65 pts</small></span></a><a class='score' id='life' href='#sig-life'><div class='k'>Life insurance</div><div class='v c-low'>F</div><span class='pill p-low' title='Life grade (0 points)'>F<small>0 pts</small></span></a></div><h2>Talking points</h2><ul class='tps'><li>Age 68: in the window for income planning and guarantees.</li><li>Living partly on pension/IRA income ($78,000). Discuss guaranteed lifetime income.</li><li>Taking $78,000 in retirement-account distributions. Review withdrawal strategy and tax drag.</li><li>$6,200 of interest. CD money may fit a fixed or fixed-indexed annuity.</li><li>$6,200 of taxable interest suggests a large cash/CD position. Discuss yield and allocation.</li></ul><section id='sig-aum'><div class='sec-head'><h2>AUM signals</h2><span class='pill p-low'>+25 pts</span></div><div class='sec-card'><div class='sig'><div class='rule'>Taxable interest ≥ $2,000</div><div class='right'><span class='tag'>$6,200</span><span class='pill p-good'>+10</span></div><div class='src'>Form 1040 line 2b (2025_Form_1040_and_Schedules.pdf p1) &middot; aum.interest_2k</div></div><div class='sig'><div class='rule'>IRA / 401(k) / pension distributions present</div><div class='right'><span class='tag'>$78,000</span><span class='pill p-good'>+15</span></div><div class='src'>Form 1040 line 4a (2025_Form_1040_and_Schedules.pdf p1) &middot; Form 1040 line 5a (2025_Form_1040_and_Schedules.pdf p1) &middot; aum.retirement_distribution</div></div></div></section><section id='sig-annuity'><div class='sec-head'><h2>Annuity signals</h2><span class='pill p-low'>+65 pts</span></div><div class='sec-card'><div class='sig'><div class='rule'>Age 65+</div><div class='right'><span class='tag'>68</span><span class='pill p-good'>+30</span></div><div class='detail'>Gerald Haugen, 68</div><div class='src'>Client profile (DOB) &middot; annuity.age_65</div></div><div class='sig'><div class='rule'>Taxable pension or IRA income</div><div class='right'><span class='tag'>$78,000</span><span class='pill p-good'>+20</span></div><div class='src'>Form 1040 line 4b (2025_Form_1040_and_Schedules.pdf p1) &middot; Form 1040 line 5b (2025_Form_1040_and_Schedules.pdf p1) &middot; annuity.pension_ira_income</div></div><div class='sig'><div class='rule'>Taxable interest ≥ $2,000</div><div class='right'><span class='tag'>$6,200</span><span class='pill p-good'>+15</span></div><div class='src'>Form 1040 line 2b (2025_Form_1040_and_Schedules.pdf p1) &middot; annuity.interest_2k</div></div></div></section><section id='sig-life'><div class='sec-head'><h2>Life-insurance signals</h2><span class='pill p-low'>+0 pts</span></div><div class='sec-card'><div class='empty'>None fired.</div></div></section><section id='warnings'><h2>Validation</h2><div class='sec-card' style='padding:14px 18px'><span class='ok'>&#10003; Every cross-check agreed.</span></div></section><section id='figures'><h2>Key figures</h2><div class='sec-card wrap'><table><tr><th>Figure</th><th style='text-align:right'>2025</th><th>Source</th></tr><tr><td>Adjusted gross income</td><td class='num'>$131,160</td><td class='src'>Form 1040 line 11a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Total income</td><td class='num'>$131,160</td><td class='src'>Form 1040 line 9 (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Wages</td><td class='num'>$0</td><td class='src'>Form 1040 line 1a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Taxable interest</td><td class='num'>$6,200</td><td class='src'>Form 1040 line 2b (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Ordinary dividends</td><td class='num'>$3,100</td><td class='src'>Form 1040 line 3b (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Capital gain</td><td class='num'>$0</td><td class='src'>Form 1040 line 7 (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>IRA distributions</td><td class='num'>$30,000</td><td class='src'>Form 1040 line 4a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Pensions and annuities</td><td class='num'>$48,000</td><td class='src'>Form 1040 line 5a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Social Security benefits</td><td class='num'>$51,600</td><td class='src'>Form 1040 line 6a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Taxable income</td><td class='num'>$84,460</td><td class='src'>Form 1040 line 15 (2025_Form_1040_and_Schedules.pdf p2)</td></tr><tr><td>Total tax</td><td class='num'>$9,370</td><td class='src'>Form 1040 line 24 (2025_Form_1040_and_Schedules.pdf p2)</td></tr><tr><td>Refund</td><td class='num'>$469</td><td class='src'>Form 1040 line 34 (2025_Form_1040_and_Schedules.pdf p2)</td></tr><tr><td>Amount owed</td><td class='num'>$0</td><td class='src'>Form 1040 line 37 (2025_Form_1040_and_Schedules.pdf p2)</td></tr></table></div></section><section id='documents'><h2>Documents read</h2><div class='sec-card wrap'><table><tr><th>File</th><th>Detected as</th><th style='text-align:right'>Pages</th><th>Read by</th></tr><tr><td>00_Client_Profile_Summary.pdf</td><td>profile</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-DIV_Driftless_Index_Funds_Gerald.pdf</td><td>1099-DIV</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-INT_Cuyuna_Range_Community_Bank_Gerald.pdf</td><td>1099-INT</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-INT_Lakehollow_Savings_Bank_Gerald.pdf</td><td>1099-INT</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-R_Arrowhead_Ore_Workers_Pensio_Gerald.pdf</td><td>1099-R</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-R_Driftless_Index_Funds_Gerald.pdf</td><td>1099-R</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_Form_1040_and_Schedules.pdf</td><td>1040, 1040 p2, Sch 1-A, Sch B</td><td class='num'>4</td><td>OCR (scan)</td></tr><tr><td>2025_SSA-1099_Social_Security_Gerald.pdf</td><td>SSA-1099</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_SSA-1099_Social_Security_Linda.pdf</td><td>SSA-1099</td><td class='num'>1</td><td>OCR (scan)</td></tr></table></div></section><p class='foot'>Generated on this computer by Tax Scan. SSNs are masked. Scores come from config/grader.yaml.</p></main></body></html>
+@media print {
+  .top, .noprint, details.evidence { display:none !important; }
+  body { background:#fff; font-size:12.5px; } main { padding:0; max-width:none; }
+  .pcard, .brief, .snap div, .list, .stat { box-shadow:none; break-inside:avoid; }
+  .prod, .tp { break-inside:avoid; } h2 { margin-top:22px; }
+  .banner { display:none; }
+}
+</style></head><body><header class='top'><div class='top-in'><span class='brand'><span class='mark'><svg width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='#fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z'/><path d='M14 3v5h5'/><path d='M3 13h18' stroke='#84f1d6'/></svg></span>Tax Scan</span><nav class='navlinks'><a href='../../index.html'>Home</a><a href='../index.html'>All clients</a></nav></div></header><main><div class='banner'><b>Demo &mdash; fictional test data.</b> These clients, returns, and numbers are invented to show what Tax Scan produces. No real client data.</div><div class='head'><div class='who-h'><div class='avatar'>GH</div><div><h1>Gerald Haugen &amp; Linda Haugen</h1><div class='meta'><span class=tag>Tax year 2025</span><span class=tag>Married filing jointly</span><span class=tag>Gerald, 68</span><span class=tag>Linda, 66</span></div></div></div><button class='btn noprint' onclick='window.print()'>Print brief</button></div><div class='glance'><div class='pcard' id='aum'><div class='k'>Investment management</div><div class='verdict c-low'>Low priority</div><div class='score'>25/100</div><div class='meter' aria-label='25/100'><div class='track'><div class='fill low' style='width:25.0%'></div></div><span class='tick' style='left:calc(30.0% - 1px)'></span><span class='tl' style='left:30.0%'>30</span><span class='tick' style='left:calc(60.0% - 1px)'></span><span class='tl' style='left:60.0%'>60</span></div><div class='next'>5 points from Worth a conversation</div><ul><li>Drawing $78,000 from retirement accounts</li><li>$6,200 of interest income</li></ul></div><div class='pcard' id='annuity'><div class='k'>Annuity</div><div class='verdict c-good'>Good fit</div><div class='score'>Grade B · 65 pts</div><div class='meter' aria-label='Grade B · 65 pts'><div class='track'><div class='fill good' style='width:71.4%'></div></div><span class='tick' style='left:calc(22.0% - 1px)'></span><span class='tl' style='left:22.0%'>D</span><span class='tick' style='left:calc(38.5% - 1px)'></span><span class='tl' style='left:38.5%'>C</span><span class='tick' style='left:calc(54.9% - 1px)'></span><span class='tl' style='left:54.9%'>B</span><span class='tick' style='left:calc(76.9% - 1px)'></span><span class='tl' style='left:76.9%'>A</span></div><div class='next'>5 points from Strong fit</div><ul><li>Age 68: in retirement</li><li>Living partly on $78,000 of pension and IRA income</li><li>$6,200 of interest from savings and CDs</li></ul></div><div class='pcard' id='life'><div class='k'>Life insurance</div><div class='verdict c-low'>Not a fit</div><div class='score'>Grade F · 0 pts</div><div class='meter' aria-label='Grade F · 0 pts'><div class='track'><div class='fill low' style='width:0.0%'></div></div><span class='tick' style='left:calc(22.0% - 1px)'></span><span class='tl' style='left:22.0%'>D</span><span class='tick' style='left:calc(38.5% - 1px)'></span><span class='tl' style='left:38.5%'>C</span><span class='tick' style='left:calc(54.9% - 1px)'></span><span class='tl' style='left:54.9%'>B</span><span class='tick' style='left:calc(76.9% - 1px)'></span><span class='tl' style='left:76.9%'>A</span></div><div class='next'>35 points from Worth a conversation</div><p class='muted' style='margin:0;font-size:14px'>Nothing on the return points here.</p></div></div><h2>Conversation brief</h2><div class='brief'><div class='opener'><div class='k'>What stood out on their 2025 return</div><ol><li>Age 68: in retirement</li><li>Living partly on $78,000 of pension and IRA income</li><li>$6,200 of interest from savings and CDs</li></ol></div><div class='prod'><div class='prod-h'><h3>Annuity</h3><span class='pill t-good' title='Grade B · 65 pts'><span class='dot'></span>Good fit</span></div><div class='tp'><div class='n'>1</div><div class='hl'>Age 68: in retirement</div><div class='why'>Making savings last, and guaranteeing income for life, become the priorities.</div><div class='ask'><b>Ask</b>Does your guaranteed income cover your monthly essentials? How long does your savings need to last?</div></div><div class='tp'><div class='n'>2</div><div class='hl'>Living partly on $78,000 of pension and IRA income</div><div class='why'>Guaranteed lifetime income can cover the essentials no matter what markets do.</div><div class='ask'><b>Ask</b>Do your guaranteed income sources cover your basic monthly expenses?</div></div><div class='tp'><div class='n'>3</div><div class='hl'>$6,200 of interest from savings and CDs</div><div class='why'>Some CD money may earn more, tax-deferred, in a fixed or fixed-indexed annuity.</div><div class='ask'><b>Ask</b>When do your CDs mature, and what is that money for?</div></div></div><div class='lowlist'><b>Lower priority:</b> Investment management (Drawing $78,000 from retirement accounts, $6,200 of interest income)</div></div><h2>Household snapshot</h2><div class='snap'><div><b>$131,160</b><span>Household income (AGI)</span></div><div><b>$6,200</b><span>Interest (cash &amp; CDs)</span></div><div><b>$3,100</b><span>Dividends</span></div><div><b>$78,000</b><span>Retirement distributions</span></div><div><b>$51,600</b><span>Social Security</span></div></div><details class='evidence'><summary>Evidence behind the scores <span class='muted' style='font-weight:400;font-size:13px'>&nbsp;rules, points, sources, all checks passed</span></summary><div class='ev'><h4>Investment management &middot; 25/100</h4><div class='sig'><div>Taxable interest ≥ $2,000 &mdash; <b>$6,200</b></div><span class='pill t-good'>+10</span><div class='src'>Form 1040 line 2b (2025_Form_1040_and_Schedules.pdf p1) &middot; aum.interest_2k</div></div><div class='sig'><div>IRA / 401(k) / pension distributions present &mdash; <b>$78,000</b></div><span class='pill t-good'>+15</span><div class='src'>Form 1040 line 4a (2025_Form_1040_and_Schedules.pdf p1) &middot; Form 1040 line 5a (2025_Form_1040_and_Schedules.pdf p1) &middot; aum.retirement_distribution</div></div><h4>Annuity &middot; Grade B · 65 pts</h4><div class='sig'><div>Age 65+ &mdash; <b>68</b> <span class='muted'>(Gerald Haugen, 68)</span></div><span class='pill t-good'>+30</span><div class='src'>Client profile (DOB) &middot; annuity.age_65</div></div><div class='sig'><div>Taxable pension or IRA income &mdash; <b>$78,000</b></div><span class='pill t-good'>+20</span><div class='src'>Form 1040 line 4b (2025_Form_1040_and_Schedules.pdf p1) &middot; Form 1040 line 5b (2025_Form_1040_and_Schedules.pdf p1) &middot; annuity.pension_ira_income</div></div><div class='sig'><div>Taxable interest ≥ $2,000 &mdash; <b>$6,200</b></div><span class='pill t-good'>+15</span><div class='src'>Form 1040 line 2b (2025_Form_1040_and_Schedules.pdf p1) &middot; annuity.interest_2k</div></div><h4>Life insurance &middot; Grade F · 0 pts</h4><div class='muted'>No rules fired.</div><h4>Validation</h4><span class='ok'>&#10003; Every cross-check agreed.</span><h4>Key figures</h4><div class='wrap'><table><tr><th>Figure</th><th style='text-align:right'>2025</th><th>Source</th></tr><tr><td>Adjusted gross income</td><td class='num'>$131,160</td><td class='src'>Form 1040 line 11a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Total income</td><td class='num'>$131,160</td><td class='src'>Form 1040 line 9 (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Wages</td><td class='num'>$0</td><td class='src'>Form 1040 line 1a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Taxable interest</td><td class='num'>$6,200</td><td class='src'>Form 1040 line 2b (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Ordinary dividends</td><td class='num'>$3,100</td><td class='src'>Form 1040 line 3b (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Capital gain</td><td class='num'>$0</td><td class='src'>Form 1040 line 7 (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>IRA distributions</td><td class='num'>$30,000</td><td class='src'>Form 1040 line 4a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Pensions and annuities</td><td class='num'>$48,000</td><td class='src'>Form 1040 line 5a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Social Security benefits</td><td class='num'>$51,600</td><td class='src'>Form 1040 line 6a (2025_Form_1040_and_Schedules.pdf p1)</td></tr><tr><td>Taxable income</td><td class='num'>$84,460</td><td class='src'>Form 1040 line 15 (2025_Form_1040_and_Schedules.pdf p2)</td></tr><tr><td>Total tax</td><td class='num'>$9,370</td><td class='src'>Form 1040 line 24 (2025_Form_1040_and_Schedules.pdf p2)</td></tr><tr><td>Refund</td><td class='num'>$469</td><td class='src'>Form 1040 line 34 (2025_Form_1040_and_Schedules.pdf p2)</td></tr><tr><td>Amount owed</td><td class='num'>$0</td><td class='src'>Form 1040 line 37 (2025_Form_1040_and_Schedules.pdf p2)</td></tr></table></div><h4>Documents read</h4><div class='wrap'><table><tr><th>File</th><th>Detected as</th><th style='text-align:right'>Pages</th><th>Read by</th></tr><tr><td>00_Client_Profile_Summary.pdf</td><td>profile</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-DIV_Driftless_Index_Funds_Gerald.pdf</td><td>1099-DIV</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-INT_Cuyuna_Range_Community_Bank_Gerald.pdf</td><td>1099-INT</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-INT_Lakehollow_Savings_Bank_Gerald.pdf</td><td>1099-INT</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-R_Arrowhead_Ore_Workers_Pensio_Gerald.pdf</td><td>1099-R</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_1099-R_Driftless_Index_Funds_Gerald.pdf</td><td>1099-R</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_Form_1040_and_Schedules.pdf</td><td>1040, 1040 p2, Sch 1-A, Sch B</td><td class='num'>4</td><td>OCR (scan)</td></tr><tr><td>2025_SSA-1099_Social_Security_Gerald.pdf</td><td>SSA-1099</td><td class='num'>1</td><td>OCR (scan)</td></tr><tr><td>2025_SSA-1099_Social_Security_Linda.pdf</td><td>SSA-1099</td><td class='num'>1</td><td>OCR (scan)</td></tr></table></div><p class='muted' style='font-size:12px;margin-top:14px'>Consent: fictional test client (exempt). Prior-year return: none. Rules and wording: app/config/grader.yaml.</p></div></details><p class='foot'>Prepared on this computer by Tax Scan from the client&rsquo;s tax documents. SSNs are masked. A starting point for a conversation, not advice.</p></main></body></html>

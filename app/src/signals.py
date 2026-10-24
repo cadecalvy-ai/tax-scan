@@ -184,9 +184,9 @@ def evaluate(rec, year, figs, prior_year, prior_figs, cfg):
     if death or jump:
         why = []
         if death:
-            why.append("1099-R code 4 (death) from " + ", ".join(r.get("payer", "") for r in death))
+            why.append("A death-benefit payment from " + ", ".join(r.get("payer", "") for r in death))
         if jump:
-            why.append(f"dividends {money(prior_figs.get('dividends'))} → {money(f.get('dividends'))}")
+            why.append(f"Dividends jumped from {money(prior_figs.get('dividends'))} to {money(f.get('dividends'))}")
         add("aum.inheritance", "aum", "aum.inheritance", inh["points"], "Inheritance indicator",
             money(sum(r["box1"].value or 0 for r in death)) if death else money(f.get("dividends")), "; ".join(why),
             [r["box7"].where() for r in death] + (where(f.fact("dividends"), prior_figs.fact("dividends")) if jump else []))
@@ -195,7 +195,11 @@ def evaluate(rec, year, figs, prior_year, prior_figs, cfg):
     if sale >= A["asset_sale"]["min_gain"]:
         best = max(gains, key=lambda g: g[0])[1] if gains else None
         s1099 = c.src.get("1099-S", [])
-        detail = (best["desc"] if best else "Schedule D line 10") + (" (1099-S on file)" if s1099 else "")
+        desc = (best["desc"] if best else "an asset reported on Schedule D").rstrip(". ")
+        desc = re.sub(r"[,\s]*[^\w\s,.#&%()/-]+$", "", desc).rstrip(", ")   # drop a truncation mark ("…") at the end
+        if desc.lower().startswith("main home"):
+            desc = "their home at " + desc.split("—", 1)[-1].strip()      # "Main home — 1418 Juniper..." (8949)
+        detail = desc
         add(f"aum.asset_sale_gain_{k(A['asset_sale']['min_gain'])}", "aum", "aum.asset_sale", A["asset_sale"]["points"],
             f"Home or business sale gain ≥ {money(A['asset_sale']['min_gain'])}", money(sale), detail,
             where(best["gain"] if best else f.fact("sch_d_8949")) + [s["box2"].where() for s in s1099])

@@ -21,6 +21,7 @@ from pathlib import Path
 import yaml
 
 from . import paths, report
+from .brief import build_brief
 from .privacy import consent_from_file, mask_ssn
 from .record import build_record
 from .signals import evaluate, score
@@ -98,16 +99,11 @@ def grade_client(folder, cfg, cache_dir=None, files=None):
     if not with_1040:
         warnings.append("No Form 1040 found; grading from source documents only.")
 
-    tp = cfg.get("talking_points", {})
-    talking, seen = [], set()
-    for s in sorted(sigs, key=lambda s: -s.points):
-        if s.group in seen or s.points <= 0 and s.group != "life.age_over":
-            continue
-        seen.add(s.group)
-        tmpl = tp.get(s.group)
-        if tmpl:
-            talking.append(tmpl.format(value=s.value, detail=s.detail or s.value, year=year))
-    talking = talking[:cfg.get("max_talking_points", 6)]
+    figures = [{"key": k, "label": lbl, "value": figs.get(k, None),
+                "source": figs.fact(k).where() if figs.fact(k) else "",
+                "prior": pfigs.get(k, None) if pfigs else None}
+               for k, lbl in FIGURE_ROWS if figs.fact(k) is not None]
+    brief = build_brief(sigs, scores, cfg, year, figures)
 
     yr = rec["years"][year]
     h = yr.get("header", {})
@@ -131,12 +127,10 @@ def grade_client(folder, cfg, cache_dir=None, files=None):
         "names": names, "ages": ages, "filing_status": status_map.get(st, st or "unknown"),
         "scores": scores,
         "signals": [s.__dict__ for s in sigs],
-        "talking_points": talking,
+        "brief": brief,
+        "talking_points": brief["opener"],
         "warnings": [mask_ssn(w) for w in warnings],
-        "figures": [{"key": k, "label": lbl, "value": figs.get(k, None),
-                     "source": figs.fact(k).where() if figs.fact(k) else "",
-                     "prior": pfigs.get(k, None) if pfigs else None}
-                    for k, lbl in FIGURE_ROWS if figs.fact(k) is not None],
+        "figures": figures,
         "documents": [{**d, "kinds": ", ".join(d["kinds"])} for d in docs.values()],
         "_record": rec, "_figs": figs, "_pfigs": pfigs,
     }
