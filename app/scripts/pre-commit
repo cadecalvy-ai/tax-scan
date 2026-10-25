@@ -25,4 +25,25 @@ if [ -n "$ssn" ]; then
   echo "BLOCKED: staged changes contain SSN-like numbers: $ssn"
   exit 1
 fi
+
+# 4. Names of private client folders on this computer ("Smith_John" -> Smith, John).
+#    The fictional sample clients and the public demo are exempt (they reuse some common names).
+names=""
+for d in "test clients from ria"/clients/*/ inputs/clients/*/; do
+  [ -d "$d" ] || continue
+  names="$names
+$(basename "$d" | tr '_-' '\n\n' | grep -E '^[A-Za-z]{4,}$')"
+done
+names=$(printf '%s\n' "$names" | grep . | sort -u)
+if [ -n "$names" ]; then
+  added=$(git diff --cached -U0 --diff-filter=ACMR -- . ':(exclude)*.pdf' ':(exclude)*.zip' \
+          ':(exclude)inputs/sample_clients/**' ':(exclude)netlify_site/**' ':(exclude)app/scripts/testgen/**' \
+          | grep -E '^\+[^+]')
+  hit=$(printf '%s\n' "$names" | while read -r n; do printf '%s\n' "$added" | grep -qiw -- "$n" && echo "$n"; done)
+  if [ -n "$hit" ]; then
+    echo "BLOCKED: staged changes mention private client names:" $hit
+    echo "Keep client-specific values in the client's own (git-ignored) folder instead."
+    exit 1
+  fi
+fi
 exit 0
