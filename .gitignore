@@ -18,3 +18,9 @@ __pycache__/
 
 # --- build artifacts ---
 netlify_site/tax-scan-site.zip
+
+# Netlify CLI link (site id for deploys from this computer)
+.netlify/
+
+# Client documents received from the RIA: private, never committed
+test clients from ria/

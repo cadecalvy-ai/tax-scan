@@ -34,8 +34,16 @@ def build_record(folder, cache_dir=None, files=None):
                 rec["warnings"].append(f"{pdf.name}: could not tell which tax year this document is for")
                 continue
             yr = rec["years"].setdefault(year, new_year())
+            # A brokerage consolidated statement repeats its DIV/INT/B figures on detail pages;
+            # take them once, from the summary table.
+            covered = set()
             for p, k in zip(pages, kinds):
-                if k in SOURCE_KINDS:
+                if k == "1099-CONSOL":
+                    for kind, d in ex.parse_consolidated(p).items():
+                        yr["sources"][kind].append(d)
+                        covered.add(kind)
+            for p, k in zip(pages, kinds):
+                if k in SOURCE_KINDS and k != "1099-CONSOL" and k not in covered:
                     yr["sources"][k].append(ex.parse_source(p, k))
         elif "profile" in kinds:
             rec["profile"] = ex.parse_profile(pages[kinds.index("profile")])
@@ -67,6 +75,9 @@ def _read_return(rec, pdf, pages, kinds):
             ex.parse_pairs(p, yr["f1040"])
         elif k == "1040 p2":
             ex.parse_lines(p, "1040", ex.f1040_specs(year, k), yr["f1040"])
+            bb = ex.parse_born_before(p)       # the final 2025 form has the 65+ boxes on page 2
+            if bb:
+                yr["header"].setdefault("born_before", {}).update(bb)
         elif k in ex.SCHEDULE_LINES or k in ("8949",):
             form = yr["forms"].setdefault(k, {})
             found = {}

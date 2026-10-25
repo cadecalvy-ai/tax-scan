@@ -40,7 +40,7 @@ TITLE_KINDS = [  # matched against the top ~13% of the page; first match wins
 ALL_KEYS = {"1040 p2"}
 
 BODY_KINDS = [  # matched against the whole page
-    ("profile",  ["clientprofilesummary"]),
+    ("profile",  ["clientprofilesummary", "clientinformationsheet"]),
     ("K-1",      ["shareholdersshareofincome", "schedulek1form1120s"]),
     ("W-2",      ["wageandtaxstatement"]),
     ("SSA-1099", ["socialsecuritybenefitstatement", "formssa1099"]),
@@ -62,19 +62,33 @@ FILENAME_HINTS = [("W-2", "w2"), ("1099-R", "1099r"), ("1099-INT", "1099int"), (
                   ("profile", "profile")]
 
 SOURCE_KINDS = {"W-2", "SSA-1099", "1099-R", "1099-INT", "1099-DIV", "1099-B", "1099-G", "1099-S", "1099-NEC",
-                "1099-K", "K-1", "3921", "1098"}
+                "1099-K", "K-1", "3921", "1098", "1099-CONSOL"}
 RETURN_KINDS = {k for k, _ in TITLE_KINDS}
 
 
 def classify_page(page, filename=""):
     body = norm(page.text)
-    if "clientprofilesummary" in body:
+    if "clientprofilesummary" in body or "clientinformationsheet" in body:
         return "profile"
-    top = norm(" ".join(w.text for w in page.words if w.top < page.height * 0.13))
+    top_text = " ".join(w.text for w in page.words if w.top < page.height * 0.13)
+    top = norm(top_text)
+    # State returns (e.g. Missouri MO-1040) share federal wording; skip them.
+    if "departmentofrevenue" in top or "departmentofrevenue" in body[:600]:
+        return "state"
+    # Continuation pages of schedules: "Schedule D (Form 1040) 2025 ... Page 2"
+    m = re.match(r"\s*Schedule\s+(1-A|SE|[123ABCDE])\s*\(Form 1040\)", top_text, re.I)
+    if m:
+        kind = f"Sch {m.group(1).upper()}"
+        return kind if kind in RETURN_KINDS else "unknown"
     for kind, keys in TITLE_KINDS:
         hit = all(k in top for k in keys) if kind in ALL_KEYS else any(k in top for k in keys)
+        if kind == "1040 p2" and not re.match(r"\s*Form\s+1040\s*\(", top_text):
+            hit = False                  # e.g. "Schedule 8812 (Form 1040) 2025 ... Page 2"
         if hit:
             return kind
+    # Brokerage "consolidated 1099" summary: DIV, INT and B in one table
+    if "consolidated" in body and ("form1099taxreportingstatement" in body or "consolidatedform1099" in body):
+        return "1099-CONSOL"
     for kind, keys in BODY_KINDS:
         if any(k in body for k in keys):
             return kind
@@ -98,11 +112,20 @@ def page_year(page):
 
 
 def doc_year(pages):
-    """Year for an information return: most common standalone year token in the document."""
+    """Year for an information return.
+
+    An explicit "Tax Year 2025" / "calendar year 2025" wins. Otherwise the most common
+    standalone year, ignoring form revision dates such as "(Rev. January 2024)".
+    """
+    text = " ".join(w.text for p in pages for w in p.words)
+    m = re.search(r"(?:tax\s*year|calendar\s*year)\s*(20[12]\d)", text, re.I)
+    if m:
+        return int(m.group(1))
     years = Counter()
     for p in pages:
-        for w in p.words:
+        ws = p.words
+        for i, w in enumerate(ws):
             m = re.fullmatch(r"\(?(20[12]\d)\)?", w.text)
-            if m:
+            if m and not any("rev" in x.text.lower() for x in ws[max(0, i - 3):i]):
                 years[int(m.group(1))] += 1
     return max(years.items(), key=lambda kv: (kv[1], kv[0]))[0] if years else None

@@ -219,7 +219,15 @@ def evaluate(rec, year, figs, prior_year, prior_figs, cfg):
     earned = f.get("wages") + max(0, f.get("sch_c_net")) + max(0, f.get("k1_ordinary"))
     basis = agi if nrs["income_basis"] == "agi" else earned
     deferrals = [cd for w in c.src.get("W-2", []) for cd in w["box12"] if cd in nrs["deferral_codes"]]
-    if basis >= nrs["min_income"] and not deferrals and f.get("sep") == 0 and f.get("ira_deduction") == 0:
+    # Box 12 is only on the W-2s. If the W-2s weren't read (missing or unreadable), we can't tell
+    # whether they save, so the rule stays silent rather than guessing.
+    w2_read = sum(w["box1"].value or 0 for w in c.src.get("W-2", []))
+    w2_known = f.get("wages") == 0 or w2_read >= 0.9 * f.get("wages")
+    if not w2_known and basis >= nrs["min_income"]:
+        f.warnings.append("Retirement-savings check skipped: the W-2s (box 12) couldn't be read for all "
+                          f"{money(f.get('wages'))} of wages, so 401(k) contributions are unknown.")
+    if (basis >= nrs["min_income"] and w2_known and not deferrals and f.get("sep") == 0
+            and f.get("ira_deduction") == 0):
         add("aum.no_retirement_savings", "aum", "aum.no_retirement_savings", nrs["points"],
             f"Income ≥ {money(nrs['min_income'])} with no retirement savings visible", money(basis),
             "no W-2 box 12 deferral codes, no SEP/SIMPLE or IRA deduction on Schedule 1",

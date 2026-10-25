@@ -55,8 +55,8 @@ def amount(tok):
     if re.fullmatch(r"0\d{1,2}", t):
         return 0          # printed amounts never start with 0; "07" is a zero plus a box-border speck
     m = AMOUNT_RE.match(t)
-    if not m:
-        return None
+    if not m or bool(m.group(1)) != bool(m.group(4)):
+        return None                      # "1040)" from "(Form 1040)" is not an amount
     whole = int(re.sub(r"[.,]", "", m.group(2)))
     val = whole + (int(m.group(3)) / 100 if m.group(3) else 0)
     return -val if (m.group(1) and m.group(4)) or t.startswith("-") else val
@@ -249,6 +249,7 @@ def _label_norm(tok):
 
 
 GENERIC = ("addlines", "subtractline", "combinelines", "amountfrom", "addtheamounts", "enterthesmaller")
+LABEL_ALIASES = {"12": "12e", "27": "27a"}     # the final 2025 Form 1040 prints these line numbers
 
 
 def match_lines(page, specs, threshold=0.78):
@@ -263,17 +264,22 @@ def match_lines(page, specs, threshold=0.78):
     for r_i, row in enumerate(rows(page.words)):
         if not row:
             continue
-        lab = _label_norm(row[0].text)
-        desc = norm(" ".join(w.text for w in row[1:]))
+        # Real returns often print margin text ("Qualifying", "Tax and") before the line number,
+        # so also try starting at a line-number-looking word among the first few on the left.
+        starts = [0] + [i for i, w in enumerate(row[1:5], 1)
+                        if w.x0 < page.width * 0.3 and re.fullmatch(r"\d{1,2}[a-z]?", _label_norm(w.text))]
         desc_all = norm(" ".join(w.text for w in row))
-        for line, phrase in specs:
-            key = norm(phrase)
-            sim = max(similar(desc[:len(key) + 2], key), similar(desc_all[:len(key) + 2], key) - 0.05)
-            label_ok = lab == line.lower()
-            s = sim + (0.15 if label_ok else 0)
-            need = 0.93 if key.startswith(GENERIC) and not label_ok else threshold
-            if sim >= need or (label_ok and s >= threshold):
-                candidates.append((s, r_i, line, row))
+        for st in starts:
+            lab = _label_norm(row[st].text)
+            desc = norm(" ".join(w.text for w in row[st + 1:]))
+            for line, phrase in specs:
+                key = norm(phrase)
+                sim = max(similar(desc[:len(key) + 2], key), similar(desc_all[:len(key) + 2], key) - 0.05)
+                label_ok = lab == line.lower() or lab == LABEL_ALIASES.get(line.lower())
+                s = sim + (0.15 if label_ok else 0)
+                need = 0.93 if key.startswith(GENERIC) and not label_ok else threshold
+                if sim >= need or (label_ok and s >= threshold):
+                    candidates.append((s, r_i, line, row))
     for s, r_i, line, row in sorted(candidates, key=lambda c: -c[0]):
         if line in found or r_i in used:
             continue
@@ -290,9 +296,46 @@ def row_amount(page, row, min_x_frac=0.80):
 
 
 def parse_lines(page, kind, specs, out):
-    """Fill out[line] = Fact for every spec line found on the page."""
+    """Fill out[line] = Fact for every spec line found on the page.
+
+    Rows are matched by their wording first. As a fallback, a line can be found by the
+    line number printed just left of its amount box ("25a  10,630."), which helps when
+    the wording sits on a different row (as with 1040 line 25a on the real form).
+    """
     for line, row in match_lines(page, specs).items():
         out[line] = fact(page, f"{form_name(kind)} line {line}", row_amount(page, row))
+    boxed = _boxed_labels(page)
+    for line, _ in specs:
+        hit = boxed.get(line.lower()) or boxed.get(LABEL_ALIASES.get(line.lower(), ""))
+        if hit is None:
+            continue
+        v = reocr_amount(page, *hit)
+        if line not in out or (not out[line].value and v):
+            out[line] = fact(page, f"{form_name(kind)} line {line}", v)
+
+
+def _boxed_labels(page):
+    """{line number: (amount word, value)} where a line number is printed right before its amount.
+
+    Covers both the main amount column and the inner column used by sub-lines (1040 25a-25c).
+    """
+    out = {}
+    for row in rows(page.words):
+        for i, w in enumerate(row[:-1]):
+            if not page.width * 0.55 <= w.x0 <= page.width * 0.86:
+                continue
+            lab = _label_norm(w.text)
+            if not re.fullmatch(r"\d{1,2}[a-z]?", w.text.strip()) or lab in out:
+                continue                 # a clean line number only (OCR junk like "20." doesn't count)
+            if i and row[i - 1].text.lower().strip("(") in ("schedule", "form", "line", "box", "lines"):
+                continue                 # "Schedule 2 (Form 1040)" is a title, not line 2
+            nxt = row[i + 1]
+            v = amount(nxt.text)
+            looks_like_money = re.search(r"[.,]", nxt.text) or len(re.sub(r"\D", "", nxt.text)) >= 3
+            if (v is not None and not is_year(v) and nxt.x0 - w.x1 < 120 and looks_like_money
+                    and nxt.x1 >= page.width * 0.70):
+                out[lab] = (nxt, v)
+    return out
 
 
 def parse_pairs(page, out):
@@ -319,26 +362,19 @@ STATUS_WORDS = [("single", "Single", None), ("mfj", "Married", "jointly"), ("mfs
 def parse_1040_header(page):
     h = {"taxpayer": {}, "spouse": None, "dependents": [], "born_before": {}}
     all_rows = rows(page.words)
-    # filing status: find the row with "Filing Status", look at each status label's checkbox
-    fs_row = next((r for r in all_rows if "filingstatus" in norm(" ".join(w.text for w in r))), None)
-    if fs_row:
+    # filing status: the "Filing Status" row and the few rows under it (the real form spreads the
+    # five boxes over three rows); look at each status label's checkbox
+    fs_i = next((i for i, r in enumerate(all_rows) if "filingstatus" in norm(" ".join(w.text for w in r))), None)
+    if fs_i is not None:
+        top = all_rows[fs_i][0].top
+        block = [r for r in all_rows[fs_i:fs_i + 5] if r[0].top - top < 40]
         for code, first, second in STATUS_WORDS:
-            for i, w in enumerate(fs_row):
-                if similar(norm(w.text), norm(first)) < 0.7:
-                    continue
-                if second and not any(similar(norm(x.text), second) > 0.7 for x in fs_row[i + 1:i + 4]):
-                    continue
-                if checked_before(page, w):
+            for r in block:
+                hit = next((i for i, w in enumerate(r) if similar(norm(w.text), norm(first)) >= 0.7 and (
+                    not second or any(similar(norm(x.text), second) > 0.7 for x in r[i + 1:i + 4]))), None)
+                if hit is not None and checked_before(page, r[hit]):
                     h["status"] = fact(page, "Form 1040 filing status", code)
-                break
-    # 65+ ("born before January 2, ...") boxes: the word right before each "born"
-    for r in all_rows:
-        t = norm(" ".join(w.text for w in r))
-        if "bornbefore" in t or "bombefore" in t:
-            borns = [i for i, w in enumerate(r) if norm(w.text) in ("born", "bom")]
-            for who, i in zip(("you", "spouse"), borns):
-                if i > 0:
-                    h["born_before"][who] = fact(page, f"Form 1040 born-before box ({who})", checked_before(page, r[i - 1]))
+    h["born_before"] = parse_born_before(page)
     # names and SSNs: value rows under "Your first name" and "spouse's first name" labels
     for i, r in enumerate(all_rows):
         t = norm(" ".join(w.text for w in r))
@@ -362,7 +398,12 @@ def parse_1040_header(page):
         if dec:
             person["deceased"] = fact(page, "Form 1040 spouse deceased", dec.group(1) or "yes")
         h[target] = person
-    # dependents: rows between "Dependents" and "Income" containing an SSN
+    # dependents: the final 2025 form lists them in columns ("Dependent 1", "Dependent 2", ...);
+    # older layouts use one row per dependent
+    cols = parse_dependent_columns(page, all_rows)
+    if cols is not None:
+        h["dependents"] = cols
+        return h
     in_deps = False
     for r in all_rows:
         t = " ".join(w.text for w in r)
@@ -381,6 +422,53 @@ def parse_1040_header(page):
                 h["dependents"].append({"name": name, "ssn": "-".join(m.groups()), "relationship": rel,
                                         "fact": fact(page, "Form 1040 dependents table", name)})
     return h
+
+
+def parse_born_before(page):
+    """65+ boxes ("Were born before January 2, ..."): the word right before each "born" has the checkbox.
+
+    On the final 2025 Form 1040 these sit on page 2, so this runs on both pages.
+    """
+    out = {}
+    for r in rows(page.words):
+        t = norm(" ".join(w.text for w in r))
+        if "bornbefore" in t or "bombefore" in t:
+            borns = [i for i, w in enumerate(r) if norm(w.text) in ("born", "bom")]
+            if len(borns) == 1:            # one row per person ("You: ... / Spouse: ...")
+                who = "spouse" if "spouse" in t[:t.find("born")] else "you"
+                pairs = [(who, borns[0])]
+            else:
+                pairs = list(zip(("you", "spouse"), borns))
+            for who, i in pairs:
+                if i > 0 and who not in out:
+                    out[who] = fact(page, f"Form 1040 born-before box ({who})", checked_before(page, r[i - 1]))
+    return out
+
+
+def parse_dependent_columns(page, all_rows):
+    """Dependents table laid out in columns. Returns a list, or None if this layout isn't used."""
+    head = next((r for r in all_rows if sum(1 for w in r if w.text == "Dependent") >= 2), None)
+    if not head:
+        return None
+    xs = [w.x0 for w in head if w.text == "Dependent"]
+    bounds = [x - 12 for x in xs] + [page.width]
+
+    def row_for(tag):
+        return next((r for r in all_rows if r[0].top > head[0].top and r[0].top - head[0].top < 120
+                     and any(w.text == tag for w in r[:3])), [])
+
+    def col(r, k):
+        return " ".join(w.text for w in r if bounds[k] <= w.x0 < bounds[k + 1])
+
+    first, last, ssn_r, rel = row_for("(1)"), row_for("(2)"), row_for("(3)"), row_for("(4)")
+    deps = []
+    for k in range(len(xs)):
+        m = SSN_RE.search(col(ssn_r, k))
+        name = f"{col(first, k)} {col(last, k)}".strip()
+        if m or name:
+            deps.append({"name": name, "ssn": "-".join(m.groups()) if m else "", "relationship": col(rel, k),
+                         "fact": fact(page, "Form 1040 dependents table", name)})
+    return deps
 
 
 # ---------------------------------------------------------------------
@@ -436,6 +524,9 @@ def cell_value(page, label, kind="money", down=34, width=None, min_ratio=0.8, nt
                       key=lambda w: w.x0)
     nxt = [w.x0 for i, w in enumerate(same_row) if BOXNUM_RE.match(w.text) and w.x0 - last.x1 > 12
            and not (i and same_row[i - 1].text.lower().strip(".()") in ("box", "line"))]
+    # "Box 6. Voluntary..." style labels (SSA-1099) also start the next box
+    nxt += [w.x0 for i, w in enumerate(same_row[:-1]) if w.text == "Box" and w.x0 - last.x1 > 12
+            and re.fullmatch(r"\d{1,2}\.", same_row[i + 1].text)]
     right = min(nxt) - 2 if nxt else first.x0 + (width or 230)
     if width:
         right = min(right, first.x0 + width)
@@ -460,18 +551,34 @@ def cell_value(page, label, kind="money", down=34, width=None, min_ratio=0.8, nt
     return v, w
 
 
+PIECE_RE = re.compile(r"[\d,.'’]+")
+
+
 def _join_split_numbers(words):
-    """OCR sometimes splits '7,000' into '7,' and '000' (even on slightly different lines)."""
+    """OCR sometimes splits one amount into pieces: '7,' + '000', or '6' + "'" + '418' + '.' + '52'.
+
+    Runs of number fragments sitting side by side (even slightly off the line) are joined
+    into one word; a stray apostrophe is read as a comma.
+    """
     from .ingest import Word
-    joined, used = [], set()
-    for a in words:
-        if not re.fullmatch(r"\d{1,3}[,.]", a.text):
+    pieces = sorted((w for w in words if PIECE_RE.fullmatch(w.text)), key=lambda w: w.x0)
+    used, joined = set(), []
+    for a in pieces:
+        if id(a) in used:
             continue
-        b = next((b for b in words if id(b) not in used and b is not a and re.fullmatch(r"\d{3}", b.text)
-                  and b.x0 > a.x0 and -9 < b.x0 - a.x1 < 4 and abs(b.mid_y - a.mid_y) < 11), None)
-        if b:
-            used |= {id(a), id(b)}
-            joined.append(Word(a.text + b.text, a.x0, min(a.top, b.top), b.x1, max(a.bottom, b.bottom)))
+        run = [a]
+        while True:
+            last = run[-1]
+            nxt = next((b for b in pieces if id(b) not in used and b not in run and b.x0 > last.x0
+                        and -9 < b.x0 - last.x1 < 4 and abs(b.mid_y - a.mid_y) < 11), None)
+            if not nxt:
+                break
+            run.append(nxt)
+        if len(run) > 1:
+            text = "".join(w.text for w in run).replace("'", ",").replace("’", ",")
+            if re.search(r"\d", text):
+                used |= {id(w) for w in run}
+                joined.append(Word(text, run[0].x0, min(w.top for w in run), run[-1].x1, max(w.bottom for w in run)))
     return [w for w in words if id(w) not in used] + joined
 
 
@@ -587,10 +694,14 @@ def w2_box12(page, pitch_default=19.5, cell_w=135):
             continue
         aw, av = max(amts, key=lambda a: a[0].x1)
         av = reocr_amount(page, aw, av)
-        code = next((c for c in (_as_kind(w.text, "code") for w in cell if x0 + 25 <= w.x0 <= x0 + 80)
-                     if c and not c.isdigit()), None)
+        # the code letter sits between the label and the amount; where exactly varies by form vendor
+        code_w = next((w for w in cell if x0 - 2 <= w.x0 <= x0 + 80 and w.top > top + 2
+                       and (_as_kind(w.text, "code") or "").isalpha()), None)
+        code = _as_kind(code_w.text, "code") if code_w else None
         if page.ocr:
-            code = _read_code(page, x0 + 43, top - 4, x0 + 55, top + 16) or code
+            spot = (code_w.x0 - 1, code_w.top - 3, code_w.x1 + 1, code_w.bottom + 3) if code_w else \
+                   (x0 + 43, top - 4, x0 + 55, top + 16)
+            code = _read_code(page, *spot) or code
         if code:
             codes[code] = fact(page, f"W-2 box {lab} code {code}", av)
     return codes
@@ -636,8 +747,8 @@ def parse_source(page, kind):
     """Return a dict of Facts for one information-return page."""
     d = {"kind": kind, "doc": page.doc, "ssn": recipient_ssn(page)}
     if kind == "W-2":
-        d["box1"] = money(page, "W-2", "1", "1 Wages, tips, other compensation", down=17, width=133)
-        d["box2"] = money(page, "W-2", "2", "2 Federal income tax withheld", down=17, width=133)
+        d["box1"] = money(page, "W-2", "1", "1 Wages, tips, other compensation", down=17)
+        d["box2"] = money(page, "W-2", "2", "2 Federal income tax withheld", down=17)
         d["employer"] = first_line_below(page, "c Employer's name, address, and ZIP code", width=260, down=24)
         d["box12"] = w2_box12(page)
         ret = find_phrase(page, "Retirement plan", min_ratio=0.75) or find_phrase(page, "Retirement", min_ratio=0.75)
@@ -667,12 +778,15 @@ def parse_source(page, kind):
         d["ira"] = fact(page, "1099-R IRA/SEP/SIMPLE box", ira)
         d["payer"] = first_line_below(page, "PAYER'S name, street address", down=22)
     elif kind == "SSA-1099":
-        d["box5"] = money(page, "SSA-1099", "5", "Box 5. Net Benefits", down=32, width=200)
+        d["box5"] = money(page, "SSA-1099", "5", "Box 5. Net Benefits", down=32)
         d["box6"] = money(page, "SSA-1099", "6", "Box 6. Voluntary Federal Income Tax Withheld", down=28, width=360)
         v, _ = cell_value(page, "Box 2. Beneficiary", kind="ssn", down=28)
         d["ssn"] = v or d["ssn"]
     elif kind == "1099-INT":
         d["box1"] = money(page, "1099-INT", "1", "1 Interest income", down=30, width=195)
+        d["box3"] = money(page, "1099-INT", "3", "3 Interest on U.S. Savings Bonds", down=30, width=98)
+        d["taxable"] = Fact((d["box1"].value or 0) + (d["box3"].value or 0), page.doc, page.number,
+                            "1099-INT boxes 1 + 3")
         d["payer"] = first_line_below(page, "PAYER'S name, street address", down=22)
     elif kind == "1099-DIV":
         d["box1a"] = money(page, "1099-DIV", "1a", "1a Total ordinary dividends", down=30, width=195)
@@ -714,10 +828,100 @@ def parse_source(page, kind):
     return d
 
 
+def parse_consolidated(page):
+    """Brokerage 'Consolidated Form 1099' summary table -> {kind: source dict}.
+
+    Rows look like "1a Total ordinary dividends   41,860.32" under section headers
+    "FORM 1099-DIV ...", "FORM 1099-INT ...", "FORM 1099-B ...".
+    """
+    section, vals = None, {}
+    for r in rows(page.words):
+        nt = norm(" ".join(w.text for w in r))
+        for key, kind in (("form1099div", "1099-DIV"), ("form1099int", "1099-INT"), ("form1099b", "1099-B")):
+            if nt.startswith(key):
+                section = kind
+        if not section:
+            continue
+        nums = [(w, amount(w.text)) for w in r if w.x0 > page.width * 0.6]
+        nums = [(w, v) for w, v in nums if v is not None and not is_year(v)]
+        if not nums:
+            continue
+        w, v = nums[-1]
+        v = reocr_amount(page, w, v)
+        box = next((_label_norm(x.text) for x in r[:4] if re.fullmatch(r"\d{1,2}[a-z]?", _label_norm(x.text))), None)
+        term = "st" if nt.startswith("shortterm") else "lt" if nt.startswith("longterm") else ""
+        if box:
+            vals[(section, term + box)] = fact(page, f"{section} box {box}" + (f" ({term.upper()})" if term else "")
+                                               + " (consolidated statement)", v)
+    zero = lambda kind, box: vals.get((kind, box), fact(page, f"{kind} box {box}", 0))  # noqa: E731
+    out = {}
+    if any(k[0] == "1099-DIV" for k in vals):
+        out["1099-DIV"] = {"kind": "1099-DIV", "doc": page.doc, "ssn": recipient_ssn(page), "payer": "",
+                           "box1a": zero("1099-DIV", "1a"), "box1b": zero("1099-DIV", "1b"),
+                           "box2a": zero("1099-DIV", "2a")}
+    if any(k[0] == "1099-INT" for k in vals):
+        b1, b3 = zero("1099-INT", "1"), zero("1099-INT", "3")
+        out["1099-INT"] = {"kind": "1099-INT", "doc": page.doc, "ssn": recipient_ssn(page), "payer": "",
+                           "box1": b1, "box3": b3,
+                           "taxable": Fact((b1.value or 0) + (b3.value or 0), page.doc, page.number,
+                                           "1099-INT boxes 1 + 3 (consolidated statement)")}
+    if any(k[0] == "1099-B" for k in vals):
+        g = sum((zero("1099-B", t + "1d").value or 0) - (zero("1099-B", t + "1e").value or 0)
+                + (zero("1099-B", t + "1g").value or 0) for t in ("st", "lt"))
+        out["1099-B"] = {"kind": "1099-B", "doc": page.doc, "ssn": recipient_ssn(page),
+                         "gain": fact(page, "1099-B gain (consolidated statement)", g)}
+    return out
+
+
 # ---------------------------------------------------------------------
 # Client profile summary (practice-management export)
 # ---------------------------------------------------------------------
+def _iso(m):
+    return f"{m.group(3)}-{int(m.group(1)):02d}-{int(m.group(2)):02d}"
+
+
+def parse_info_sheet(page):
+    """'Client Information Sheet' (practice intake form): taxpayer/spouse rows and a dependents table."""
+    p = {"people": [], "dependents": [], "test_client": False, "source": "Client information sheet"}
+    all_rows = rows(page.words)
+    text = norm(page.text)
+    if "fictitious" in text and "training" in text:
+        p["test_client"] = True
+    section = None
+    for i, r in enumerate(all_rows):
+        nt = norm(" ".join(w.text for w in r))
+        if nt in ("taxpayer", "spouse"):
+            section = nt
+            continue
+        if nt.startswith("dependents"):
+            section = "dependents"
+            continue
+        if nt.startswith(("questions", "notes", "mailing", "lastyear")):
+            section = None if not nt.startswith("mailing") else section
+            if not nt.startswith("mailing"):
+                continue
+        line = " ".join(w.text for w in r)
+        dm = DATE_RE.search(line)
+        if not dm or nt.startswith(("fullname", "name")):
+            continue
+        dob_w = next(w for w in r if DATE_RE.search(w.text))
+        ssn_w = next((w for w in r if SSN_RE.search(w.text)), None)
+        cut = ssn_w.x0 if ssn_w and ssn_w.x0 < dob_w.x0 else dob_w.x0
+        name = " ".join(w.text for w in r if w.x1 <= cut)
+        if section in ("taxpayer", "spouse"):
+            occ = " ".join(w.text for w in r if w.x0 > dob_w.x1 + 20)
+            p["people"].append({"role": section, "name": name, "dob": _iso(dm), "occupation": occ})
+            section = None
+        elif section == "dependents":
+            after = ssn_w.x1 if ssn_w and ssn_w.x0 > dob_w.x0 else dob_w.x1
+            rel = " ".join(w.text for w in r if after < w.x0 < page.width * 0.68 and len(w.text) > 1)
+            p["dependents"].append({"name": name, "relationship": rel, "dob": _iso(dm)})
+    return p
+
+
 def parse_profile(page):
+    if "clientinformationsheet" in norm(page.text):
+        return parse_info_sheet(page)
     p = {"people": [], "dependents": [], "test_client": False}
     section, person = None, None
     for r in rows(page.words):

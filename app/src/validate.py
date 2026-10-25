@@ -87,19 +87,37 @@ def analyze_year(year, yr, tol=1):
     w2, r1099 = src.get("W-2", []), src.get("1099-R", [])
 
     reconcile("wages", "Wages (line 1a)",
-              [line("1a"), line("1z"), _sum_fact(w2, "box1", "W-2 box 1")], figs, tol)
+              [line("1a"), _sum_fact(w2, "box1", "W-2 box 1")], figs, tol)
     reconcile("interest", "Taxable interest (line 2b)",
-              [line("2b"), form("Sch B", "4"), form("Sch B", "2"), _sum_fact(src.get("1099-INT", []), "box1", "1099-INT box 1")],
+              [line("2b"), form("Sch B", "4"), form("Sch B", "2"), _sum_fact(src.get("1099-INT", []), "taxable", "1099-INT boxes 1 + 3")],
               figs, tol)
     reconcile("dividends", "Ordinary dividends (line 3b)",
               [line("3b"), form("Sch B", "6"), _sum_fact(src.get("1099-DIV", []), "box1a", "1099-DIV box 1a")], figs, tol)
     reconcile("qual_div", "Qualified dividends (line 3a)",
               [line("3a"), _sum_fact(src.get("1099-DIV", []), "box1b", "1099-DIV box 1b")], figs, tol)
-    reconcile("ira_gross", "IRA distributions (line 4a)",
-              [line("4a"), _sum_fact(r1099, "box1", "1099-R box 1 (IRA box checked)", lambda s: s["ira"].value)], figs, tol)
+    def gross(a, b):
+        """IRS instructions: when the whole distribution is taxable, only line 4b/5b is filled in."""
+        fa, fb = line(a), line(b)
+        if (fa is None or not fa.value) and fb is not None and fb.value:
+            return _derived(fb.value, f"line {b} (line {a} left blank: fully taxable)")
+        return fa
+
+    ira_1099 = _sum_fact(r1099, "box1", "1099-R box 1 (IRA box checked)", lambda s: s["ira"].value)
+    plan_1099 = _sum_fact(r1099, "box1", "1099-R box 1 (plans)", lambda s: not s["ira"].value)
+    g4, g5 = gross("4a", "4b"), gross("5a", "5b")
+    total_1040 = (g4.value if g4 else 0) + (g5.value if g5 else 0)
+    total_1099 = (ira_1099.value if ira_1099 else 0) + (plan_1099.value if plan_1099 else 0)
+    if r1099 and total_1040 and abs(total_1040 - total_1099) <= tol and (
+            ira_1099 and g4 is not None and abs(g4.value - ira_1099.value) > tol):
+        # The return puts IRA and plan distributions on one line; the total agrees with the
+        # 1099-Rs, so take the split from them (not a discrepancy).
+        figs.facts["ira_gross"], figs.facts["pen_gross"] = ira_1099, plan_1099 or _derived(0, "no plan 1099-R")
+        figs.warnings.append(f"Note: the return reports IRA and pension distributions together (lines 4-5 total "
+                             f"${total_1040:,.0f}, matching the 1099-Rs). The IRA/pension split comes from the 1099-Rs.")
+    else:
+        reconcile("ira_gross", "IRA distributions (line 4a)", [g4, ira_1099], figs, tol)
+        reconcile("pen_gross", "Pensions and annuities (line 5a)", [g5, plan_1099], figs, tol)
     reconcile("ira_taxable", "Taxable IRA distributions (line 4b)", [line("4b")], figs, tol)
-    reconcile("pen_gross", "Pensions and annuities (line 5a)",
-              [line("5a"), _sum_fact(r1099, "box1", "1099-R box 1 (plans)", lambda s: not s["ira"].value)], figs, tol)
     reconcile("pen_taxable", "Taxable pensions (line 5b)", [line("5b")], figs, tol)
     reconcile("ss", "Social Security (line 6a)",
               [line("6a"), _sum_fact(src.get("SSA-1099", []), "box5", "SSA-1099 box 5")], figs, tol)
