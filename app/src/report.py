@@ -115,6 +115,9 @@ a.pill:hover { transform:translateY(-1px); box-shadow:0 6px 14px -8px rgba(0,0,0
 .cnotes .src { color:var(--ink-3); font-size:12px; margin-top:10px; }
 .tp .cn { grid-column:2; margin-top:6px; font-size:14px; color:var(--ink-2); font-style:italic; }
 .tp .cn b { font-style:normal; color:var(--mint); font-weight:700; margin-right:6px; }
+.tp .cx { grid-column:2; margin-top:6px; font-size:14px; color:var(--ink-2); }
+.tp .cx b { color:var(--accent); font-weight:700; margin-right:6px; }
+.snap .tsub { display:block; color:var(--ink-3); font-size:12px; margin-top:2px; }
 .snap { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
 .snap div { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
 .snap b { display:block; font-size:22px; letter-spacing:-.02em; }
@@ -276,6 +279,7 @@ def client_html(r):
         for i, t in enumerate(p["points"], 1):
             out.append(f"<div class='tp'><div class='n'>{i}</div><div class='hl'>{esc(t['headline'])}</div>"
                        f"<div class='why'>{esc(t['why'])}</div>"
+                       + "".join(f"<div class='cx'><b>From the return</b>{esc(c)}</div>" for c in t.get("context", []))
                        + "".join(f"<div class='cn'><b>Client note</b>&ldquo;{esc(n)}&rdquo;</div>"
                                  for n in t.get("client_notes", []))
                        + (f"<div class='ask'><b>Ask</b>{esc(t['ask'])}</div>" if t["ask"] else "") + "</div>")
@@ -293,6 +297,11 @@ def client_html(r):
     if b["snapshot"]:
         out.append("<h2>Household snapshot</h2><div class='snap'>" + "".join(
             f"<div><b>{money(s['value'])}</b><span>{esc(s['label'])}</span></div>" for s in b["snapshot"]) + "</div>")
+    if b.get("tax_picture"):
+        out.append("<h2>Tax picture <span class='muted' style='font-size:13px;font-weight:400'>from the preparer&rsquo;s "
+                   "pages &middot; context only, not scored</span></h2><div class='snap'>" + "".join(
+                       f"<div><b>{esc(c['value'])}</b><span>{esc(c['label'])}</span>"
+                       f"<span class='tsub'>{esc(c['sub'])}</span></div>" for c in b["tax_picture"]) + "</div>")
 
     # evidence (collapsed)
     n_warn = len(r["warnings"])

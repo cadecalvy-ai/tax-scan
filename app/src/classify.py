@@ -36,6 +36,7 @@ TITLE_KINDS = [  # matched against the top ~13% of the page; first match wins
     ("8606",     ["nondeductibleiras"]),
     ("8889",     ["healthsavingsaccounts"]),
     ("8995",     ["qualifiedbusinessincomededuction"]),
+    ("2441",     ["childanddependentcareexpenses"]),
 ]
 ALL_KEYS = {"1040 p2"}
 
@@ -80,6 +81,14 @@ def classify_page(page, filename=""):
     if m:
         kind = f"Sch {m.group(1).upper()}"
         return kind if kind in RETURN_KINDS else "unknown"
+    if re.match(r"\s*Form\s*2441\s*\(", top_text):
+        return "2441"                    # page 2 of Form 2441
+    # Preparer software pages (context only, never scored)
+    if "generalinformation" in top and "taxrates" in body:
+        return "Prep summary"
+    sm = re.search(r"20\d\d\s+([A-Z][a-zA-Z ]+?)\s+Income Tax Summary", top_text)
+    if sm and sm.group(1).strip().lower() != "federal":
+        return "State summary"
     for kind, keys in TITLE_KINDS:
         hit = all(k in top for k in keys) if kind in ALL_KEYS else any(k in top for k in keys)
         if kind == "1040 p2" and not re.match(r"\s*Form\s+1040\s*\(", top_text):

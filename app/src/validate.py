@@ -162,3 +162,29 @@ def analyze_year(year, yr, tol=1):
     if not L:
         figs.warnings.append(f"No {year} Form 1040 found; figures come from source documents only")
     return figs
+
+
+def check_context(yr, figs, signal_ids, tol=1):
+    """Cross-check the preparer's pages against the 1040. Warnings only; these never change a score."""
+    ctx, L = yr.get("context") or {}, yr["f1040"]
+
+    def v(k):
+        f = ctx.get(k)
+        return f.value if hasattr(f, "value") else None
+
+    m = v("federal_marginal")
+    if m is not None and figs.get("taxable_income"):
+        fired = "annuity.bracket_24" in signal_ids
+        if (m >= 24) != fired:
+            figs.warnings.append(
+                f"Tax bracket: the preparer's summary shows a {m:g}% federal marginal rate, but the 24%-bracket check "
+                f"{'fired' if fired else 'did not fire'} from taxable income of ${figs.get('taxable_income'):,.0f}. "
+                "Worth a look (capital gains and qualified dividends are taxed separately).")
+    fa = v("federal_agi")
+    if fa is not None and figs.fact("agi") is not None and abs(fa - figs.get("agi")) > tol:
+        figs.warnings.append(f"State return: starts from federal AGI of ${fa:,.0f}, but the 1040 shows "
+                             f"${figs.get('agi'):,.0f}.")
+    f2441 = (yr.get("forms") or {}).get("2441") or {}
+    if f2441.get("26") is not None and L.get("1e") is not None and abs(f2441["26"].value - L["1e"].value) > tol:
+        figs.warnings.append(f"Dependent care: Form 2441 line 26 shows ${f2441['26'].value:,.0f} of taxable benefits, "
+                             f"but 1040 line 1e shows ${L['1e'].value:,.0f}.")

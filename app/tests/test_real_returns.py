@@ -41,3 +41,28 @@ def test_figures_match_printed_1040(graded, client):
 @pytest.mark.parametrize("client", [d.name for d in CLIENTS])
 def test_ages_come_from_information_sheet(graded, client):
     assert graded[client]["ages"], "no ages found"
+
+
+EXPECTED_CONTEXT = {   # from each return's General Information page, state summary, and Form 2441
+    "RIA01_Whitfield_Raymond": {"federal_marginal": 24.0, "state_name": "Kansas", "state_tax": 18441},
+    "RIA03_Lindqvist_Patricia": {"federal_marginal": 22.0, "state_name": "Kansas", "state_tax": 5106},
+    "RIA04_Boyle_Jared": {"federal_marginal": 22.0, "state_name": "Missouri", "state_tax": 4558},
+    "RIA05_Brennan_Walter": {"federal_marginal": 12.0, "state_name": "Missouri", "state_tax": 891},
+}
+
+
+@pytest.mark.parametrize("client", sorted(EXPECTED_CONTEXT))
+def test_preparer_pages(graded, client):
+    if client not in graded:
+        pytest.skip("client folder not present")
+    ctx = graded[client]["_record"]["years"][2025]["context"]
+    got = {k: ctx[k].value for k in EXPECTED_CONTEXT[client] if k in ctx}
+    assert got == EXPECTED_CONTEXT[client]
+
+
+def test_child_care_from_2441(graded):
+    if "RIA04_Boyle_Jared" not in graded:
+        pytest.skip("client folder not present")
+    yr = graded["RIA04_Boyle_Jared"]["_record"]["years"][2025]
+    assert [(p["name"], p["paid"].value) for p in yr["context"]["care_providers"]] == [("Little Acorns Learning", 9600)]
+    assert yr["forms"]["2441"]["26"].value == yr["f1040"]["1e"].value == 5000

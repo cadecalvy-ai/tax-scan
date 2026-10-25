@@ -160,7 +160,8 @@ def find_phrase(page, phrase, min_ratio=0.82, region=None, nth=0):
 # ---------------------------------------------------------------------
 # (line, description) as printed. Only lines the grader uses or validates.
 F1040_2025 = [
-    ("1a", "Total amount from Form(s) W-2"), ("1z", "Add lines 1a through 1h"),
+    ("1a", "Total amount from Form(s) W-2"), ("1e", "Taxable dependent care benefits from Form 2441"),
+    ("1z", "Add lines 1a through 1h"),
     ("7", "Capital gain or (loss)"), ("8", "Additional income from Schedule 1"),
     ("9", "Add lines 1z, 2b, 3b, 4b, 5b, 6b, 7, and 8"), ("10", "Adjustments to income from Schedule 1"),
     ("11a", "Subtract line 10 from line 9. This is your adjusted gross income"),
@@ -185,7 +186,7 @@ F1040_2024 = [x for x in F1040_2025 if x[0] not in ("11a", "11b", "13a", "13b", 
     ("11", "Subtract line 10 from line 9. This is your adjusted gross income"),
     ("13", "Qualified business income deduction from Form 8995"), ("14", "Add lines 12 and 13"),
     ("15", "Subtract line 14 from line 11")]
-PAGE1_LINES = {"1a", "1z", "7", "8", "9", "10", "11a", "11"}     # the rest are on page 2
+PAGE1_LINES = {"1a", "1e", "1z", "7", "8", "9", "10", "11a", "11"}     # the rest are on page 2
 
 
 def f1040_specs(year, page_kind):
@@ -228,6 +229,7 @@ SCHEDULE_LINES = {
     "8889": [("2", "HSA contributions you made"), ("9", "Employer contributions made to your HSAs"),
              ("13", "HSA deduction. Enter the smaller")],
     "8995": [("15", "Qualified business income deduction. Enter the smaller")],
+    "2441": None,                     # filled in below (F2441_LINES)
 }
 FORM_NAMES = {"Sch 1": "Schedule 1", "Sch 1-A": "Schedule 1-A", "Sch 2": "Schedule 2", "Sch A": "Schedule A",
               "Sch B": "Schedule B", "Sch C": "Schedule C", "Sch D": "Schedule D", "Sch E": "Schedule E",
@@ -878,6 +880,91 @@ def parse_consolidated(page):
 # ---------------------------------------------------------------------
 def _iso(m):
     return f"{m.group(3)}-{int(m.group(1)):02d}-{int(m.group(2)):02d}"
+
+
+# ---------------------------------------------------------------------
+# Preparer pages: "General Information" (tax rates), state summary, Form 2441
+# Used for cross-checks and talking points only, never for scores.
+# ---------------------------------------------------------------------
+PCT_RE = re.compile(r"^(\d{1,2}(?:\.\d*)?)%$")
+
+
+def _pct(tok):
+    m = PCT_RE.match(tok.strip())
+    return float(m.group(1)) if m else None
+
+
+def parse_prep_info(page):
+    """Preparer 'General Information' page: federal and state marginal/effective rates."""
+    out, in_rates = {}, False
+    for r in rows(page.words):
+        nt = norm(" ".join(w.text for w in r))
+        if nt.startswith("taxrates"):
+            in_rates = True
+            continue
+        if in_rates and nt.startswith("marginal"):
+            continue
+        if in_rates:
+            pcts = [_pct(w.text) for w in r if _pct(w.text) is not None]
+            label = " ".join(w.text for w in r if _pct(w.text) is None).strip()
+            if len(pcts) < 2 or not label:
+                in_rates = False
+                continue
+            who = "federal" if label.lower().startswith("federal") else "state"
+            out[f"{who}_marginal"] = fact(page, f"Preparer summary: {label} marginal rate", pcts[0])
+            out[f"{who}_effective"] = fact(page, f"Preparer summary: {label} effective rate", pcts[1])
+            if who == "state":
+                out["state_name"] = fact(page, "Preparer summary: state", label)
+    return out
+
+
+STATE_SUMMARY_RE = re.compile(r"(20\d\d)\s+([A-Z][a-zA-Z ]+?)\s+Income Tax Summary")
+
+
+def parse_state_summary(page):
+    """Preparer's '<State> Income Tax Summary' page: state tax, withholding, refund/owed, rates."""
+    m = STATE_SUMMARY_RE.search(page.text)
+    out = {"state_name": fact(page, "State summary", m.group(2).strip() if m else "")}
+    want = {"federaladjustedgrossincome": "federal_agi", "totaltax": "state_tax", "totalincometax": "state_tax",
+            "totaltaxbalance": "state_tax", "incometaxwithheld": "state_withheld", "amountyouowe": "state_owed",
+            "amountrefunded": "state_refund", "marginaltaxrate": "state_marginal", "effectivetaxrate": "state_effective"}
+    for r in rows(page.words):
+        label = norm(" ".join(w.text for w in r if not re.fullmatch(r"[\d,.%$()]+", w.text)))
+        key = next((v for k, v in want.items() if label.startswith(k) or (k == "incometaxwithheld" and k in label)), None)
+        if not key or key in out:
+            continue
+        last = r[-1].text
+        val = _pct(last) if key.endswith(("marginal", "effective")) else amount(last)
+        if val is not None:
+            out[key] = fact(page, f"{out['state_name'].value or 'State'} summary: {' '.join(w.text for w in r[:4])}", val)
+    return out
+
+
+F2441_LINES = [("11", "Credit for child and dependent care expenses"),
+               ("12", "Enter the total amount of dependent care benefits"),
+               ("16", "Enter the total amount of qualified expenses incurred"),
+               ("26", "Taxable benefits. Subtract line 25 from line 23")]
+
+
+def parse_2441_providers(page):
+    """Care providers (name, amount paid) from Form 2441 Part I."""
+    out, on = [], False
+    for r in rows(page.words):
+        nt = norm(" ".join(w.text for w in r))
+        if "careprovider" in nt and "amountpaid" in nt:
+            on = True
+            continue
+        if on:
+            if nt.startswith(("dependentcarebenefits", "caution", "2information", "did")) or len(out) >= 3:
+                break
+            amt = amount(r[-1].text)
+            if amt:
+                name = " ".join(w.text for w in r if w.x1 < page.width * 0.3)
+                out.append({"name": name, "paid": fact(page, "Form 2441 line 1(e)", amt)})
+    return out
+
+
+SCHEDULE_LINES["2441"] = F2441_LINES
 
 
 NOTES_END = ("documentsprovided", "signature", "sampletraining", "preparerusesonly", "foroffice")

@@ -10,7 +10,8 @@ from .ingest import read_pdf
 
 def new_year():
     return {"f1040": {}, "header": {}, "forms": {}, "sch_e_nets": [], "f8949": [],
-            "sources": defaultdict(list), "sch_c_owner_ssn": ""}
+            "sources": defaultdict(list), "sch_c_owner_ssn": "",
+            "context": {"care_providers": []}}   # preparer pages: cross-checks and talking points only
 
 
 def build_record(folder, cache_dir=None, files=None):
@@ -90,6 +91,8 @@ def _read_return(rec, pdf, pages, kinds):
                 yr["sch_e_nets"] += ex.sch_e_property_nets(p)
             if k == "8949":
                 yr["f8949"] += ex.f8949_rows(p)
+            if k == "2441":
+                yr["context"]["care_providers"] += ex.parse_2441_providers(p)
             if k == "Sch C":
                 for r in ex.rows(p.words):
                     t = " ".join(w.text for w in r)
@@ -97,5 +100,9 @@ def _read_return(rec, pdf, pages, kinds):
                         m = ex.SSN_RE.search(t)
                         if m:
                             yr["sch_c_owner_ssn"] = "-".join(m.groups())
+        elif k == "Prep summary":
+            yr["context"].update(ex.parse_prep_info(p))
+        elif k == "State summary":
+            yr["context"].update(ex.parse_state_summary(p))
         elif k in RETURN_KINDS:
             yr["forms"].setdefault(k, {})              # present, nothing to read (e.g. 8949 continuation)

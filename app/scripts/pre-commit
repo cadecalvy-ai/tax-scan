@@ -1,0 +1,28 @@
+#!/bin/sh
+# Tax Scan safety check: block client data from ever being committed (the GitHub repo is public).
+# Installed as .git/hooks/pre-commit. To reinstall:  copy app\scripts\pre-commit .git\hooks\pre-commit
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+# 1. Client folders, outputs, consent files, truth data, deploy links
+bad=$(printf '%s\n' "$staged" | grep -iE '^(test clients from ria/|inputs/clients/|outputs/|\.netlify/)|truth\.json$|client\.ya?ml$' \
+      | grep -vE '^(inputs/clients/README\.txt|outputs/README\.md)$')
+
+# 2. PDFs anywhere except the fictional sample clients and the public demo site
+pdfs=$(printf '%s\n' "$staged" | grep -iE '\.pdf$' | grep -vE '^(inputs/sample_clients/|netlify_site/site/)')
+
+if [ -n "$bad$pdfs" ]; then
+  echo "BLOCKED: these look like client files and must not be committed:"
+  printf '%s\n' "$bad" "$pdfs" | grep .
+  echo "(Unstage them with: git restore --staged <file>)"
+  exit 1
+fi
+
+# 3. Real-looking SSNs in staged text (only the fictional 000-00-#### pattern is allowed)
+ssn=$(git diff --cached -U0 --diff-filter=ACMR -- . ':(exclude)*.pdf' ':(exclude)*.zip' \
+      | grep -E '^\+' | grep -oE '\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b' | grep -vE '^000-00-' | head -3)
+if [ -n "$ssn" ]; then
+  echo "BLOCKED: staged changes contain SSN-like numbers: $ssn"
+  exit 1
+fi
+exit 0

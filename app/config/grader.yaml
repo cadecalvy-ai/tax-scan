@@ -126,6 +126,21 @@ display:
     home:
       keywords: ["home", "house", "roof", "mortgage"]
       groups: [aum.asset_sale]
+  # Facts from the preparer's pages (tax rates, state return, Form 2441), when the documents include
+  # them. Shown under the first matching talking point and in the "Tax picture" strip. Never scored.
+  # Placeholders: {federal_marginal} {federal_effective} {state_name} {state_tax} {state_marginal}
+  #               {care_paid} {care_provider} {care_benefits}
+  context_lines:
+    tax_rate:
+      text: "Preparer's summary: {federal_marginal}% federal marginal rate, {federal_effective}% effective."
+      groups: [annuity.bracket_24, aum.niit, aum.invest_income, aum.interest, annuity.interest, aum.agi, life.income,
+               annuity.pension_ira_income]
+    state_tax:
+      text: "Lives in {state_name}: {state_tax} of state income tax ({state_marginal}% marginal), so state-tax-free income is worth more."
+      groups: [aum.interest, annuity.interest, aum.invest_income, aum.niit]
+    child_care:
+      text: "Pays {care_paid} a year for child care ({care_provider}, Form 2441), a cost that continues if an income stops."
+      groups: [life.dependents, life.single_earner]
 
 # ---------------------------------------------------------------- conversation brief
 # One entry per signal (the part of the signal id before the threshold, e.g. aum.rollover).

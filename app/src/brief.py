@@ -92,7 +92,64 @@ def link_notes(products, order, notes, links):
                 break
 
 
-def build_brief(signals, scores, cfg, year, figures, notes=None):
+def context_values(ctx):
+    """Plain values from the preparer pages (tax rates, state summary, Form 2441); {} when absent."""
+    if not ctx:
+        return {}
+    v = {k: f.value for k, f in ctx.items() if hasattr(f, "value") and f.value not in (None, "")}
+    fmt_pct = lambda x: f"{x:g}"  # noqa: E731
+    out = {}
+    for k in ("federal_marginal", "federal_effective", "state_marginal", "state_effective"):
+        if k in v:
+            out[k] = fmt_pct(v[k])
+    if v.get("state_name"):
+        out["state_name"] = v["state_name"]
+    if v.get("state_tax"):
+        out["state_tax"] = f"${v['state_tax']:,.0f}"
+    provs = ctx.get("care_providers") or []
+    paid = sum(p["paid"].value or 0 for p in provs)
+    if paid:
+        out["care_paid"] = f"${paid:,.0f}"
+        out["care_provider"] = ", ".join(p["name"] for p in provs if p["name"]) or "provider"
+    return out
+
+
+def tax_picture(vals, forms):
+    """Short label/value chips for the brief's Tax picture strip."""
+    chips = []
+    if "federal_marginal" in vals:
+        chips.append({"label": "Federal marginal rate", "value": f"{vals['federal_marginal']}%",
+                      "sub": f"{vals.get('federal_effective', '?')}% effective"})
+    if "state_tax" in vals:
+        chips.append({"label": f"{vals.get('state_name', 'State')} income tax", "value": vals["state_tax"],
+                      "sub": f"{vals.get('state_marginal', '?')}% marginal"})
+    elif "state_name" in vals:
+        chips.append({"label": "State", "value": vals["state_name"], "sub": "no state tax due"})
+    if "care_paid" in vals:
+        b = (forms.get("2441") or {}).get("12")
+        chips.append({"label": "Child care paid", "value": vals["care_paid"],
+                      "sub": vals["care_provider"] + (f" · ${b.value:,.0f} employer benefits" if b and b.value else "")})
+    return chips
+
+
+def link_context(products, order, vals, lines):
+    for spec in lines.values():
+        if spec.get("only_if") and not vals.get(spec["only_if"]):
+            continue
+        try:
+            text = spec["text"].format(**vals)
+        except KeyError:
+            continue                     # the documents didn't include what this line needs
+        if "federal_marginal" in spec["text"] and vals.get("federal_marginal") in ("0", None) \
+                and vals.get("federal_effective") in ("0", None):
+            continue                     # nothing to say about a 0% bracket
+        # groups are listed in order of preference; strongest product first within each
+        tp = next((t for g in spec["groups"] for key in order for t in products[key]["points"] if t["group"] == g), None)
+        if tp is not None:
+            tp.setdefault("context", []).append(text)
+
+
+def build_brief(signals, scores, cfg, year, figures, notes=None, context=None, forms=None):
     disp = cfg.get("display", {})
     conv = cfg.get("conversation", {})
     names = disp.get("product_names", {"aum": "Investment management", "annuity": "Annuity", "life": "Life insurance"})
@@ -169,5 +226,8 @@ def build_brief(signals, scores, cfg, year, figures, notes=None):
     order = [p["key"] for p in ranked]
     if notes:
         link_notes({p["key"]: p for p in products}, order, notes, disp.get("note_links", {}))
+    vals = context_values(context)
+    if vals:
+        link_context({p["key"]: p for p in products}, order, vals, disp.get("context_lines", {}))
     return {"products": products, "order": order, "opener": opener, "snapshot": snapshot[:6],
-            "client_notes": notes}
+            "client_notes": notes, "tax_picture": tax_picture(vals, forms or {})}

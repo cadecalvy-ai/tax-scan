@@ -25,7 +25,7 @@ from .brief import build_brief
 from .privacy import consent_from_file, mask_ssn
 from .record import build_record
 from .signals import evaluate, score
-from .validate import analyze_year
+from .validate import analyze_year, check_context
 
 DEFAULT_CONFIG = paths.CONFIG
 log = logging.getLogger("grader")
@@ -103,7 +103,12 @@ def grade_client(folder, cfg, cache_dir=None, files=None):
                 "source": figs.fact(k).where() if figs.fact(k) else "",
                 "prior": pfigs.get(k, None) if pfigs else None}
                for k, lbl in FIGURE_ROWS if figs.fact(k) is not None]
-    brief = build_brief(sigs, scores, cfg, year, figures, (rec.get("profile") or {}).get("notes"))
+    yr0 = rec["years"][year]
+    n_before = len(figs.warnings)
+    check_context(yr0, figs, {s.id for s in sigs}, tol)
+    warnings += figs.warnings[n_before:]
+    brief = build_brief(sigs, scores, cfg, year, figures, (rec.get("profile") or {}).get("notes"),
+                        yr0.get("context"), yr0.get("forms"))
 
     yr = rec["years"][year]
     h = yr.get("header", {})
