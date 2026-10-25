@@ -107,8 +107,12 @@ def read_pdf(path, cache_dir=None):
     with pdfplumber.open(path) as pdf:
         for i, pg in enumerate(pdf.pages, 1):
             if len(pg.chars) >= MIN_TEXT_CHARS:
+                # Diagonal watermarks ("SAMPLE", "DRAFT", "COPY") are drawn as rotated characters and
+                # would otherwise glue stray letters onto real words; keep upright text only.
+                upright = pg.filter(lambda o: o.get("object_type") != "char" or (
+                    abs(o["matrix"][1]) < 1e-3 and abs(o["matrix"][2]) < 1e-3))
                 words = [Word(w["text"], w["x0"], w["top"], w["x1"], w["bottom"])
-                         for w in pg.extract_words(x_tolerance=1.5, y_tolerance=2)]
+                         for w in upright.extract_words(x_tolerance=1.5, y_tolerance=2)]
                 pages.append(Page(path.name, i, words, False, float(pg.width), float(pg.height)))
             else:
                 pages.append(ocr_page(path, i, float(pg.width), float(pg.height)))
@@ -222,8 +226,11 @@ def skew_angle(img, limit=2.5, step=0.1):
 # Optional on-disk cache of OCR results (off by default; tests turn it on).
 # It holds extracted text, so only point it at a local, private folder.
 # ---------------------------------------------------------------------
+CACHE_VERSION = 2          # bump when reading logic changes so cached pages are re-read
+
+
 def _key(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:32]
+    return f"v{CACHE_VERSION}_" + hashlib.sha256(Path(path).read_bytes()).hexdigest()[:32]
 
 
 def _cache_load(path, cache_dir):

@@ -62,7 +62,37 @@ def _amounts(text):
     return set(re.findall(r"\$[\d,]+", text))
 
 
-def build_brief(signals, scores, cfg, year, figures):
+def _note_items(notes):
+    """Client notes as short strings: free-text sentences, then answered questions with comments."""
+    if not notes:
+        return []
+    items = list(notes.get("notes", []))
+    for a in notes.get("answers", []):
+        if a["answer"] == "Yes" or a["comment"]:
+            items.append(f"{a['question']} {a['answer']}" + (f" ({a['comment']})" if a["comment"] else ""))
+    return items
+
+
+def _mentions(text, keyword):
+    import re
+    return re.search(r"(?<![a-z0-9])" + re.escape(keyword) + r"(?![a-z0-9])", text.lower()) is not None
+
+
+def link_notes(products, order, notes, links):
+    """Attach each client note to the first talking point (strongest product first) whose topic it mentions."""
+    for item in _note_items(notes):
+        groups = [g for topic in links.values() if any(_mentions(item, k) for k in topic["keywords"])
+                  for g in topic["groups"]]
+        if not groups:
+            continue
+        for key in order:
+            tp = next((t for t in products[key]["points"] if t["group"] in groups), None)
+            if tp is not None:
+                tp.setdefault("client_notes", []).append(item)
+                break
+
+
+def build_brief(signals, scores, cfg, year, figures, notes=None):
     disp = cfg.get("display", {})
     conv = cfg.get("conversation", {})
     names = disp.get("product_names", {"aum": "Investment management", "annuity": "Annuity", "life": "Life insurance"})
@@ -136,4 +166,8 @@ def build_brief(signals, scores, cfg, year, figures):
     fig = {f["key"]: f["value"] for f in figures}
     fig["retirement"] = (fig.get("ira_gross") or 0) + (fig.get("pen_gross") or 0)
     snapshot = [{"label": lbl, "value": fig[k]} for k, lbl in SNAPSHOT if fig.get(k)]
-    return {"products": products, "order": [p["key"] for p in ranked], "opener": opener, "snapshot": snapshot[:6]}
+    order = [p["key"] for p in ranked]
+    if notes:
+        link_notes({p["key"]: p for p in products}, order, notes, disp.get("note_links", {}))
+    return {"products": products, "order": order, "opener": opener, "snapshot": snapshot[:6],
+            "client_notes": notes}

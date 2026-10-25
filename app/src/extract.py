@@ -880,6 +880,49 @@ def _iso(m):
     return f"{m.group(3)}-{int(m.group(1)):02d}-{int(m.group(2)):02d}"
 
 
+NOTES_END = ("documentsprovided", "signature", "sampletraining", "preparerusesonly", "foroffice")
+
+
+def parse_client_notes(page):
+    """Client-written notes and yes/no answers on an intake form. None when the form has neither.
+
+    Layout: a "Questions" table (question | Y/N | comments) and a free-text "Notes" box.
+    """
+    all_rows = rows(page.words)
+    answers, notes, mode, ans_x, com_x = [], [], None, None, None
+    for r in all_rows:
+        nt = norm(" ".join(w.text for w in r))
+        if nt.startswith(NOTES_END):
+            mode = None
+            continue
+        if nt.startswith("questions"):
+            mode = "questions"
+            continue
+        if nt.startswith(("notesfromclient", "clientnotes", "notes")) and len(nt) < 30:
+            mode = "notes"
+            continue
+        if mode == "questions":
+            if "comments" in nt and any(w.text in ("Y", "Y/N") for w in r):
+                ans_x = min(w.x0 for w in r if w.text in ("Y", "Y/N"))
+                com_x = next(w.x0 for w in r if w.text.lower().startswith("comment"))
+                continue
+            if ans_x is None:
+                continue
+            q = " ".join(w.text for w in r if w.x1 < ans_x - 2)
+            a = next((w.text for w in r if ans_x - 8 <= w.x0 < com_x - 3 and w.text.upper() in
+                      ("Y", "N", "YES", "NO")), "")
+            c = " ".join(w.text for w in r if w.x0 >= com_x - 2)
+            if q and (a or c):
+                answers.append({"question": q, "answer": {"Y": "Yes", "N": "No"}.get(a.upper()[:1], a), "comment": c})
+        elif mode == "notes":
+            notes.append(" ".join(w.text for w in r))
+    text = " ".join(notes).strip()
+    if not answers and not text:
+        return None
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
+    return {"answers": answers, "notes": sentences, "where": f"{page.doc} p{page.number}"}
+
+
 def parse_info_sheet(page):
     """'Client Information Sheet' (practice intake form): taxpayer/spouse rows and a dependents table."""
     p = {"people": [], "dependents": [], "test_client": False, "source": "Client information sheet"}
@@ -916,6 +959,7 @@ def parse_info_sheet(page):
             after = ssn_w.x1 if ssn_w and ssn_w.x0 > dob_w.x0 else dob_w.x1
             rel = " ".join(w.text for w in r if after < w.x0 < page.width * 0.68 and len(w.text) > 1)
             p["dependents"].append({"name": name, "relationship": rel, "dob": _iso(dm)})
+    p["notes"] = parse_client_notes(page)
     return p
 
 

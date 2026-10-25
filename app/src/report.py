@@ -103,6 +103,18 @@ a.pill:hover { transform:translateY(-1px); box-shadow:0 6px 14px -8px rgba(0,0,0
 .tp .ask { grid-column:2; margin-top:6px; padding:9px 12px; border-radius:12px; background:var(--chip); font-size:14.5px; }
 .tp .ask b { color:var(--accent); font-weight:700; margin-right:6px; }
 .lowlist { padding:16px 22px; border-top:1px solid var(--line); color:var(--ink-3); font-size:14px; }
+.cnotes { padding:18px 22px; border-bottom:1px solid var(--line); }
+.cnotes .k { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); font-weight:700; }
+.cnotes blockquote { margin:10px 0 12px; padding:10px 14px; border-left:3px solid var(--mint); background:var(--chip);
+                     border-radius:0 12px 12px 0; font-size:15px; font-style:italic; }
+.cnotes .qa { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:6px 18px; font-size:13.5px; }
+.cnotes .qa div { display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; }
+.cnotes .q { color:var(--ink-2); }
+.cnotes .a { font-weight:700; } .cnotes .a.y { color:var(--good); } .cnotes .a.n { color:var(--ink-3); }
+.cnotes .c { color:var(--ink-3); font-size:12.5px; }
+.cnotes .src { color:var(--ink-3); font-size:12px; margin-top:10px; }
+.tp .cn { grid-column:2; margin-top:6px; font-size:14px; color:var(--ink-2); font-style:italic; }
+.tp .cn b { font-style:normal; color:var(--mint); font-weight:700; margin-right:6px; }
 .snap { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
 .snap div { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
 .snap b { display:block; font-size:22px; letter-spacing:-.02em; }
@@ -240,6 +252,18 @@ def client_html(r):
     if b["opener"]:
         out.append(f"<div class='opener'><div class='k'>What stood out on their {r['year']} return</div><ol>"
                    + "".join(f"<li>{esc(x)}</li>" for x in b["opener"]) + "</ol></div>")
+    notes = b.get("client_notes")
+    if notes:
+        out.append("<div class='cnotes'><div class='k'>In the client&rsquo;s own words</div>")
+        if notes.get("notes"):
+            out.append("<blockquote>" + " ".join(esc(s) for s in notes["notes"]) + "</blockquote>")
+        if notes.get("answers"):
+            out.append("<div class='qa'>" + "".join(
+                f"<div><span class='q'>{esc(a['question'])}</span><span class='a {'y' if a['answer'] == 'Yes' else 'n'}'>"
+                f"{esc(a['answer'] or '?')}</span>{('<span class=c>' + esc(a['comment']) + '</span>') if a['comment'] else ''}</div>"
+                for a in notes["answers"]) + "</div>")
+        out.append(f"<div class='src'>From {esc(notes['where'])}. Client-written and not verified; "
+                   "notes don&rsquo;t change any score.</div></div>")
     low = []
     for key in b["order"]:
         p = prods[key]
@@ -252,6 +276,8 @@ def client_html(r):
         for i, t in enumerate(p["points"], 1):
             out.append(f"<div class='tp'><div class='n'>{i}</div><div class='hl'>{esc(t['headline'])}</div>"
                        f"<div class='why'>{esc(t['why'])}</div>"
+                       + "".join(f"<div class='cn'><b>Client note</b>&ldquo;{esc(n)}&rdquo;</div>"
+                                 for n in t.get("client_notes", []))
                        + (f"<div class='ask'><b>Ask</b>{esc(t['ask'])}</div>" if t["ask"] else "") + "</div>")
         if p["more"]:
             out.append(f"<div class='muted' style='font-size:13px;padding-top:6px'>+{p['more']} more in the evidence below</div>")

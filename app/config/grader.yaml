@@ -103,6 +103,29 @@ display:
   product_names: {aum: "Investment management", annuity: "Annuity", life: "Life insurance"}
   max_points_per_product: 3    # talking points shown per product in the brief
   opener_points: 3             # items in the "what stood out" opening
+  # Client-written notes and intake answers (when the documents include them) are shown in the
+  # brief as written. A note is also attached to the first talking point whose topic it mentions.
+  # Notes never change a score.
+  note_links:
+    retirement:
+      keywords: ["401(k)", "403(b)", "ira", "roth", "pension", "retire", "retired", "rmd"]
+      groups: [aum.no_retirement_savings, aum.retirement_distribution, aum.rollover, aum.early_withdrawal,
+               annuity.pension_ira_income, annuity.rmd_age, annuity.age, aum.agi]
+    cash:
+      keywords: ["cd", "cds", "savings", "money market", "credit union", "cu", "bank account"]
+      groups: [aum.interest, annuity.interest]
+    investments:
+      keywords: ["brokerage", "stock", "stocks", "fund", "funds", "bond", "dividend", "etf"]
+      groups: [aum.invest_income, aum.niit, aum.stock_comp_amt, aum.interest]
+    family:
+      keywords: ["husband", "wife", "spouse", "passed", "lost my", "died", "widow", "divorce", "married", "baby"]
+      groups: [life.life_event, annuity.transition, annuity.age, life.single_earner]
+    children:
+      keywords: ["child", "children", "daycare", "kids", "college"]
+      groups: [life.dependents]
+    home:
+      keywords: ["home", "house", "roof", "mortgage"]
+      groups: [aum.asset_sale]
 
 # ---------------------------------------------------------------- conversation brief
 # One entry per signal (the part of the signal id before the threshold, e.g. aum.rollover).

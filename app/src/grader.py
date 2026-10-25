@@ -103,7 +103,7 @@ def grade_client(folder, cfg, cache_dir=None, files=None):
                 "source": figs.fact(k).where() if figs.fact(k) else "",
                 "prior": pfigs.get(k, None) if pfigs else None}
                for k, lbl in FIGURE_ROWS if figs.fact(k) is not None]
-    brief = build_brief(sigs, scores, cfg, year, figures)
+    brief = build_brief(sigs, scores, cfg, year, figures, (rec.get("profile") or {}).get("notes"))
 
     yr = rec["years"][year]
     h = yr.get("header", {})
