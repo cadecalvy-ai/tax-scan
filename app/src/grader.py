@@ -7,7 +7,8 @@ Easiest: double-click "Grade My Clients.bat" in the main folder.
 <folder> is either one client folder (PDFs inside) or a folder of client
 folders. For each client: read the PDFs (OCR for scans), extract the figures,
 cross-check them, evaluate the signal rules in config/grader.yaml, and write
-an HTML report. A ranked summary.csv / summary.html covers the batch.
+an HTML report. A ranked summary.csv / summary.html covers the batch, and
+export.html (printable) / results.xlsx (Excel) put everything in one place.
 
 Runs entirely on this computer. No client data is sent anywhere.
 """
@@ -20,7 +21,7 @@ from pathlib import Path
 
 import yaml
 
-from . import paths, report
+from . import export, paths, report
 from .brief import build_brief
 from .privacy import consent_from_file, mask_ssn
 from .record import build_record
@@ -174,6 +175,7 @@ def run(input_path, out_dir, config=None, cache_dir=None, workers=1):
     for r in results:
         report.write_client(r, out_dir)
     report.write_summary(results, out_dir)
+    export.write_export(results, out_dir)
     (out_dir / "results.json").write_text(mask_ssn(json.dumps(results, indent=2, default=str)), encoding="utf-8")
     return results
 

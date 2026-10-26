@@ -87,7 +87,8 @@ From the `app` folder:
 ..\.venv\Scripts\python -m src.grader ..\inputs\clients --out ..\outputs\my_run --workers 4
 ```
 
-- `summary.csv` opens in Excel. `results.json` has everything in machine-readable form, with SSNs masked.
+- `export.html` puts the ranking and every client's brief on one printable page (Print / save as PDF), and `results.xlsx` has the same results as an Excel workbook (Ranking, Talking points, Key figures, Evidence, Warnings). Both are linked from the bottom of `summary.html`.
+- `summary.csv` is the ranking as plain CSV. `results.json` has everything in machine-readable form, with SSNs masked.
 - `--cache <folder>` keeps OCR results between runs. The cache contains text read from client documents, so
   point it only at a private local folder.
 
@@ -150,6 +151,7 @@ app/src/record.py    assemble one record per client per tax year
 app/src/validate.py  cross-check (AGI = line 9 - line 10, W-2 total = line 1a, ...); use the best-supported value
 app/src/signals.py   evaluate the rules in grader.yaml; score and grade
 app/src/report.py    ranking and client profiles (HTML), summary.csv
+app/src/export.py    printable export page and results.xlsx
 app/src/grader.py    command line, consent gate
 app/src/webapp.py    the local drag-and-drop page;  app/src/web/landing.html is its design
 ```

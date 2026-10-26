@@ -62,10 +62,15 @@ def main():
 
         summary = (out / "summary.html").read_text(encoding="utf-8")
         summary = summary.replace("<!--NAV-->", "<a href='../index.html'>Home</a>"
-                                  "<a href='../sample-clients.zip'>Sample files</a><a href='summary.csv'>summary.csv</a>", 1)
+                                  "<a href='../sample-clients.zip'>Sample files</a><a href='export.html'>Export</a>", 1)
         summary = summary.replace("<main>", "<main>" + BANNER, 1).replace("<title>", NOINDEX + "<title>", 1)
         (SITE / "demo" / "index.html").write_text(summary, encoding="utf-8")
         shutil.copy(out / "summary.csv", SITE / "demo" / "summary.csv")
+        shutil.copy(out / "results.xlsx", SITE / "demo" / "results.xlsx")
+        export = (out / "export.html").read_text(encoding="utf-8")
+        export = export.replace("<!--NAV-->", "<a href='../index.html'>Home</a><a href='index.html'>All clients</a>", 1)
+        export = export.replace("<main>", "<main>" + BANNER, 1).replace("<title>", NOINDEX + "<title>", 1)
+        (SITE / "demo" / "export.html").write_text(export, encoding="utf-8")
         for f in (out / "clients").glob("*.html"):
             page = f.read_text(encoding="utf-8")
             page = page.replace("<!--NAV-->", "<a href='../../index.html'>Home</a><a href='../index.html'>All clients</a>", 1)

@@ -156,10 +156,10 @@ def run_file(run_id, fname):
     if folder.resolve() not in f.parents or not f.exists():
         abort(404)
     links = ["<a href='/'>Grade more</a>"]
-    if fname.startswith("clients/"):
+    if fname != "summary.html":
         links.append(f"<a href='/runs/{run_id}/summary.html'>All clients</a>")
-    else:
-        links.append(f"<a href='/runs/{run_id}/summary.csv'>summary.csv</a>")
+    if fname != "export.html":
+        links.append(f"<a href='/runs/{run_id}/export.html'>Export</a>")
     return f.read_text(encoding="utf-8").replace("<!--NAV-->", "".join(links), 1)
 
 

@@ -163,6 +163,12 @@ td.src { color:var(--ink-3); font-size:12px; }
 .why-c div { margin:1px 0; }
 .row .lbl { display:none; }
 .skip { color:var(--bad); }
+.btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+a.btn { text-decoration:none; display:inline-block; }
+.export { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-top:22px;
+          background:var(--card); border:1px solid var(--line); border-radius:18px; padding:18px 20px; box-shadow:var(--shadow); }
+.export span { display:block; color:var(--ink-3); font-size:13.5px; margin-top:2px; }
+.export .ex-btns { display:flex; gap:10px; flex-wrap:wrap; }
 
 @media (max-width: 900px) {
   .glance { grid-template-columns:1fr; }
@@ -412,5 +418,8 @@ def write_summary(results, out_dir):
                     f"<div class='who'><a href='{href}'>{esc(row['names'] or row['client'])}</a>"
                     f"<span class='muted'>{esc(row['client'])}{warn}</span></div>{cells}"
                     f"<div class='why-c'><span class='lbl'>What stood out</span>{why}</div></div>")
-    body.append("</div><p class='foot'>summary.csv in this folder has the same table for Excel.</p>")
+    body.append("</div><div class='export noprint'><div><b>Export these results</b><span>Every client&rsquo;s brief on one "
+                "printable page, or the whole run as an Excel workbook.</span></div><div class='ex-btns'>"
+                "<a class='btn primary' href='export.html'>Printable page</a>"
+                "<a class='btn' href='results.xlsx' download>Download Excel</a></div></div>")
     (out_dir / "summary.html").write_text(page("Client ranking", "".join(body)), encoding="utf-8")

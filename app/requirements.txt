@@ -16,5 +16,6 @@ pypdf>=4.0
 pdf2image>=1.17
 pytesseract>=0.3.10
 PyYAML>=6.0
+openpyxl>=3.1       # results.xlsx export
 Flask>=3.0          # optional local upload page (python -m src.webapp)
 pytest>=8.0
