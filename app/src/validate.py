@@ -148,8 +148,38 @@ def analyze_year(year, yr, tol=1):
         if line(k) is not None:
             figs.facts[name] = line(k)
 
+    # Farm income: the 1099-PATR, 1099-MISC (crop insurance) and USDA 1099-G each feed one Schedule F line.
+    patr, misc, g1099 = src.get("1099-PATR", []), src.get("1099-MISC", []), src.get("1099-G", [])
+    farm_checks = [("coop_distributions", "Cooperative distributions (Sch F line 3a)", "3a",
+                    _sum_fact(patr, "taxable", "1099-PATR boxes 1 + 2 + 3 + 5")),
+                   ("crop_insurance", "Crop insurance proceeds (Sch F line 6a)", "6a",
+                    _sum_fact(misc, "box9", "1099-MISC box 9")),
+                   ("ag_payments", "Agricultural program payments (Sch F line 4a)", "4a",
+                    _sum_fact(g1099, "box7", "1099-G box 7"))]
+    for name, label, k, docs_total in farm_checks:
+        if form("Sch F", k) is None and not (docs_total and docs_total.value):
+            continue                     # nothing on either side
+        if "Sch F" not in forms and docs_total and docs_total.value:
+            figs.warnings.append(f"{label.split(' (')[0]}: {docs_total.ref} shows ${docs_total.value:,.0f}, "
+                                 "but the return has no Schedule F.")
+        reconcile(name, label, [form("Sch F", k), docs_total], figs, tol)
+    for field, what in (("box1", "rents"), ("box2", "royalties")):
+        t = _sum_fact(misc, field, f"1099-MISC {field.replace('box', 'box ')}")
+        if t and t.value and "Sch E" not in forms:
+            figs.warnings.append(f"1099-MISC {what}: {t.ref} shows ${t.value:,.0f}, but the return has no Schedule E.")
+    # A business's own profit and loss statement: its sales should match Schedule C gross receipts.
+    pnl = [d for d in (yr.get("context") or {}).get("pnl", []) if d["income"].value is not None]
+    if pnl:
+        books = _sum_fact(pnl, "income", "P&L total income")
+        if "Sch C" not in forms and "Sch F" not in forms:
+            figs.warnings.append(f"Business books: {books.ref} shows ${books.value:,.0f} of sales, "
+                                 "but the return has no Schedule C or F.")
+        if form("Sch C", "1") is not None:
+            reconcile("sch_c_gross", "Gross receipts (Sch C line 1)", [form("Sch C", "1"), books], figs, tol)
+
     # Schedules / forms the signals use directly
-    for name, f, k in [("sch_c_net", "Sch C", "31"), ("sch_e_total", "Sch E", "41"), ("sch_e_scorp", "Sch E", "32"),
+    for name, f, k in [("sch_c_net", "Sch C", "31"), ("sch_f_net", "Sch F", "34"), ("sch_f_gross", "Sch F", "9"),
+                       ("sch_e_total", "Sch E", "41"), ("sch_e_scorp", "Sch E", "32"),
                        ("niit", "8960", "17"), ("niit_sch2", "Sch 2", "12"), ("amt", "6251", "11"),
                        ("amt_sch2", "Sch 2", "2"), ("early_penalty", "5329", "4"), ("sep", "Sch 1", "16"),
                        ("ira_deduction", "Sch 1", "20"), ("charity", "Sch A", "14"), ("sch_d_8949", "Sch D", "10")]:

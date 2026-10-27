@@ -66,3 +66,9 @@ IRS form and a real Canopy export. To be safe, the extractor should accept eithe
 - **SSA-1099:** 3 benefits paid, 4 repaid, 5 net, 6 voluntary withholding.
 - **Others:** 1099-INT 1; 1099-DIV 1a/1b/2a; 1099-B summary (1d proceeds, 1e basis); 1099-G 1/4; 1099-S 1/2/3;
   1099-NEC 1; 1099-K 1a; K-1 (1120-S) box 1, 16D, 17V, Final K-1 checkbox; Form 3921 1–5; Form 1098 1, 2, 10.
+- **Farm:** 1099-PATR 1, 2, 3, 4, 5, 7 (1 + 2 + 3 + 5 feed Schedule F line 3a); 1099-MISC 1, 2, 3, 4, 9, 10
+  (9 = crop insurance, Schedule F line 6a; 1, 2 = rents and royalties, Schedule E); USDA 1099-G 7 (Schedule F
+  line 4a). Schedule F lines read: 1c, 2, 3a/3b, 4a/4b, 6a/6b, 7, 9, 33, 34.
+- **Supporting papers (context only):** profit and loss statement (total income, cost of goods sold, gross
+  profit, total expenses, net income; total income is cross-checked with Schedule C line 1) and bill of sale
+  (description, seller, buyer, date, placed-in-service date, price, sales tax, down payment, amount financed).

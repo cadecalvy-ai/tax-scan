@@ -35,6 +35,7 @@ FIGURE_ROWS = [("agi", "Adjusted gross income"), ("total_income", "Total income"
                ("interest", "Taxable interest"), ("dividends", "Ordinary dividends"), ("cap_gain", "Capital gain"),
                ("ira_gross", "IRA distributions"), ("pen_gross", "Pensions and annuities"),
                ("ss", "Social Security benefits"), ("sch_c_net", "Schedule C net profit"),
+               ("sch_f_net", "Schedule F net farm profit"),
                ("k1_ordinary", "S-corp K-1 income"), ("sch_e_total", "Schedule E total"),
                ("taxable_income", "Taxable income"), ("total_tax", "Total tax"), ("niit", "NIIT"), ("amt", "AMT"),
                ("charity", "Itemized charity"), ("refund", "Refund"), ("owed", "Amount owed")]

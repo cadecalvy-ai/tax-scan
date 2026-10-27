@@ -219,6 +219,9 @@ SCHEDULE_LINES = {
               ("16", "Combine lines 7 and 15")],
     "Sch E": [("23a", "Total of all amounts reported on line 3"), ("26", "Total rental real estate and royalty income"),
               ("32", "Total partnership and S corporation income"), ("41", "Total income or (loss). Combine lines 26")],
+    "Sch F": [("1c", "Subtract line 1b from line 1a"), ("2", "Sales of livestock, produce, grains"),
+              ("7", "Custom hire (machine work) income"), ("9", "Gross income. Add amounts in the right column"),
+              ("33", "Total expenses. Add lines 10 through 32f"), ("34", "Net farm profit or (loss). Subtract line 33")],
     "Sch SE": [("12", "Self-employment tax. Add lines 10 and 11"), ("13", "Deduction for one-half of self-employment")],
     "8960": [("12", "Net investment income. Subtract Part II"), ("17", "Net investment income tax for individuals")],
     "6251": [("2i", "Exercise of incentive stock options"), ("4", "Alternative minimum taxable income"),
@@ -233,7 +236,10 @@ SCHEDULE_LINES = {
 }
 FORM_NAMES = {"Sch 1": "Schedule 1", "Sch 1-A": "Schedule 1-A", "Sch 2": "Schedule 2", "Sch A": "Schedule A",
               "Sch B": "Schedule B", "Sch C": "Schedule C", "Sch D": "Schedule D", "Sch E": "Schedule E",
-              "Sch SE": "Schedule SE"}
+              "Sch F": "Schedule F", "Sch SE": "Schedule SE"}
+# Schedule F prints "received" and "taxable" side by side, like the 1040's 2a/2b.
+SCHF_PAIRS = [("3a", "Cooperative distributions", "3b"), ("4a", "Agricultural program payments", "4b"),
+              ("6a", "Amount received in 2025", "6b")]
 
 
 def form_name(kind):
@@ -340,18 +346,23 @@ def _boxed_labels(page):
     return out
 
 
-def parse_pairs(page, out):
-    """1040 lines 2a/2b ... 6a/6b printed side by side on one row."""
-    for a, phrase, b in PAIRS:
+def parse_pairs(page, out, pairs=PAIRS, kind="1040"):
+    """Lines printed side by side on one row: 1040 2a/2b ... 6a/6b, Schedule F 3a/3b, 4a/4b, 6a/6b."""
+    for a, phrase, b in pairs:
         hit = match_lines(page, [(a, phrase)], threshold=0.72)
         if a not in hit:
             continue
         row = hit[a]
-        left = [w for w in row if page.width * 0.42 <= w.x1 <= page.width * 0.64]
+        # The "a" amount sits left of the printed "b" line number; without one, use the 1040's column.
+        b_lab = next((w for w in row if _label_norm(w.text) == b.lower() and w.x0 > page.width * 0.35), None)
+        if b_lab is not None:
+            left = [w for w in row if w.x1 <= b_lab.x0 and w.x0 > page.width * 0.3]
+        else:
+            left = [w for w in row if page.width * 0.42 <= w.x1 <= page.width * 0.64]
         av = [(w, amount(w.text)) for w in left]
-        av = [(w, v) for w, v in av if v is not None]
-        out[a] = fact(page, f"Form 1040 line {a}", reocr_amount(page, *av[-1]) if av else 0)
-        out[b] = fact(page, f"Form 1040 line {b}", row_amount(page, row))
+        av = [(w, v) for w, v in av if v is not None and not is_year(v) and not _is_label_number(page, w)]
+        out[a] = fact(page, f"{form_name(kind)} line {a}", reocr_amount(page, *av[-1]) if av else 0)
+        out[b] = fact(page, f"{form_name(kind)} line {b}", row_amount(page, row))
 
 
 # ---------------------------------------------------------------------
@@ -739,10 +750,12 @@ def first_line_below(page, label, width=230, down=30):
         return ""
     first = hit[0]
     below = [w for w in page.words if first.x0 - 4 <= w.x0 <= first.x0 + width and first.bottom < w.top < first.top + down]
-    if not below:
-        return ""
-    top_row = min(round(w.top) for w in below)
-    return " ".join(w.text for w in sorted(below, key=lambda w: w.x0) if abs(round(w.top) - top_row) <= 3)
+    for top_row in sorted({round(w.top) for w in below}):
+        line = " ".join(w.text for w in sorted(below, key=lambda w: w.x0) if abs(round(w.top) - top_row) <= 3)
+        # Real forms wrap the label itself ("... ZIP or / foreign postal code, and telephone no."): skip that line.
+        if not re.search(r"postal code|telephone no|^foreign\b", line, re.I):
+            return line
+    return ""
 
 
 def parse_source(page, kind):
@@ -806,6 +819,27 @@ def parse_source(page, kind):
     elif kind == "1099-G":
         d["box1"] = money(page, "1099-G", "1", "1 Unemployment compensation", down=30, width=195)
         d["box4"] = money(page, "1099-G", "4", "4 Federal income tax", down=30, width=98)
+        d["box7"] = money(page, "1099-G", "7", "7 Agriculture payments", down=40, width=120)   # USDA / FSA
+        d["payer"] = first_line_below(page, "PAYER'S name, street address", down=48)
+    elif kind == "1099-PATR":
+        # Cooperative distributions (farm co-ops): boxes 1, 2, 3 and 5 go to Schedule F line 3a.
+        d["box1"] = money(page, "1099-PATR", "1", "1 Patronage dividends", down=40, width=120)
+        d["box2"] = money(page, "1099-PATR", "2", "2 Nonpatronage distributions", down=40, width=120)
+        d["box3"] = money(page, "1099-PATR", "3", "3 Per-unit retain allocations", down=40, width=120)
+        d["box4"] = money(page, "1099-PATR", "4", "4 Federal income tax withheld", down=40, width=120)
+        d["box5"] = money(page, "1099-PATR", "5", "5 Redemption of nonqualified notices", down=52, width=120)
+        d["box7"] = money(page, "1099-PATR", "7", "7 Qualified payments", down=40, width=120)
+        d["taxable"] = Fact(sum(d[b].value or 0 for b in ("box1", "box2", "box3", "box5")), page.doc, page.number,
+                            "1099-PATR boxes 1 + 2 + 3 + 5")
+        d["payer"] = first_line_below(page, "PAYER'S name, street address", down=48)
+    elif kind == "1099-MISC":
+        d["box1"] = money(page, "1099-MISC", "1", "1 Rents", down=40, width=120)
+        d["box2"] = money(page, "1099-MISC", "2", "2 Royalties", down=40, width=120)
+        d["box3"] = money(page, "1099-MISC", "3", "3 Other income", down=40, width=120)
+        d["box4"] = money(page, "1099-MISC", "4", "4 Federal income tax withheld", down=40, width=120)
+        d["box9"] = money(page, "1099-MISC", "9", "9 Crop insurance proceeds", down=40, width=120)
+        d["box10"] = money(page, "1099-MISC", "10", "10 Gross proceeds paid to an attorney", down=40, width=120)
+        d["payer"] = first_line_below(page, "PAYER'S name, street address", down=48)
     elif kind == "1099-S":
         d["box2"] = money(page, "1099-S", "2", "2 Gross proceeds", down=30, width=195)
         date, _ = cell_value(page, "1 Date of closing", kind="date", down=30)
@@ -827,6 +861,125 @@ def parse_source(page, kind):
         d["spread"] = fact(page, "Form 3921 (box 4 - box 3) x box 5", round(spread))
     elif kind == "1098":
         d["box1"] = money(page, "1098", "1", "1 Mortgage interest received", down=30, width=195)
+    return d
+
+
+MONTHS = "january|february|march|april|may|june|july|august|september|october|november|december"
+LONG_DATE_RE = re.compile(r"\b(" + MONTHS + r")\.?\s+(\d{1,2}),?\s+(20\d\d)\b", re.I)
+
+
+def _row_amount_any(row):
+    """Right-most printed amount in a row (None if there is none)."""
+    vals = [(w, amount(w.text)) for w in row]
+    vals = [(w, v) for w, v in vals if v is not None and not is_year(v)]
+    return vals[-1][1] if vals else None
+
+
+def _long_date(m):
+    months = MONTHS.split("|")
+    return f"{int(m.group(3)):04d}-{months.index(m.group(1).lower()) + 1:02d}-{int(m.group(2)):02d}"
+
+
+def _any_date(text):
+    """First date in text, as ISO. Accepts 'March 22, 2025' and '3/22/2025'."""
+    hits = [(m.start(), _long_date(m)) for m in LONG_DATE_RE.finditer(text)]
+    hits += [(m.start(), f"{int(m.group(3)):04d}-{int(m.group(1)):02d}-{int(m.group(2)):02d}")
+             for m in DATE_RE.finditer(text)]
+    return min(hits)[1] if hits else ""
+
+
+PNL_ROWS = [   # (field, regex on the row's normalized text)
+    ("income", r"^(totalincome|totalrevenue|totalsales|grossreceipts|grosssales|totalgrossreceipts)"),
+    ("cogs", r"^(totalcostofgoodssold|totalcogs|totalcostofsales)"),
+    ("gross_profit", r"^grossprofit"),
+    ("expenses", r"^(totalexpenses|totaloperatingexpenses)"),
+    ("net_operating", r"^(netoperatingincome|operatingincome)"),
+    ("net", r"^(netincome|netprofit|netearnings|netordinaryincome)"),
+]
+
+
+def parse_pnl(page):
+    """A business's profit and loss statement (QuickBooks-style): totals and the period's year.
+
+    Returns {"doc", "business", "year", "income", "cogs", "gross_profit", "expenses", "net"} with Facts
+    (value None when a total isn't printed). Book net income normally differs from Schedule C net
+    profit (depreciation, meals, owner items), so it is context for the brief, not a cross-check.
+    """
+    found = {}
+    page_rows = rows(page.words)
+    for row in page_rows:
+        t = norm(" ".join(w.text for w in row))
+        v = _row_amount_any(row)
+        if v is None:
+            continue
+        for key, rx in PNL_ROWS:
+            if key not in found and re.match(rx, t):
+                found[key] = v
+    title_i = next((i for i, r in enumerate(page_rows) if "profitandloss" in norm(" ".join(w.text for w in r))
+                    or "profitloss" in norm(" ".join(w.text for w in r))), None)
+    name_rows = [r for i, r in enumerate(page_rows[:max(title_i or 0, 3) + 1]) if i != title_i
+                 and not re.match(r"(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|total|asof|forthe|yearend|period|"
+                                  r"cash|accrual|\d)", norm(" ".join(w.text for w in r)))]
+    business = " ".join(w.text for w in name_rows[0]) if name_rows else ""
+    text = page.text
+    m = re.search(r"\b(?:jan(?:uary)?)\b[^\n]{0,24}?\b(?:dec(?:ember)?)\b[^\d\n]{0,12}(20\d\d)", text, re.I) \
+        or re.search(r"(?:year|period)\s+end(?:ed|ing)\b[^\n]{0,30}?(20\d\d)", text, re.I) \
+        or re.search(r"(?:fiscal|tax|calendar)\s+year\s+(20\d\d)", text, re.I)
+    year = int(m.group(1)) if m else None
+    if year is None:                     # a year in the title area (not the "printed on" timestamp at the foot)
+        tops = [int(y) for w in page.words if w.top < page.height * 0.2 for y in re.findall(r"\b(20[12]\d)\b", w.text)]
+        year = min(tops) if tops else None
+    net = found.get("net", found.get("net_operating"))
+    if net is None and all(k in found for k in ("income", "expenses")):
+        net = found["income"] - found.get("cogs", 0) - found["expenses"]
+    d = {"kind": "P&L", "doc": page.doc, "business": business, "year": year}
+    for k in ("income", "cogs", "gross_profit", "expenses"):
+        d[k] = fact(page, f"P&L {k.replace('_', ' ')}", found.get(k), "" if k in found else "not printed")
+    d["net"] = fact(page, "P&L net income", net, "" if net is not None else "not printed")
+    return d
+
+
+BILL_ROWS = [("price", r"^(purchaseprice|salesprice|saleprice|totalpurchaseprice|price)"),
+             ("sales_tax", r"salestax"), ("down_payment", r"^downpayment"),
+             ("financed", r"^(amountfinanced|balancefinanced|financed)")]
+
+
+def parse_bill_of_sale(page):
+    """A vehicle or equipment bill of sale: what was bought, when, for how much, and how much was financed."""
+    found = {}
+    page_rows = rows(page.words)
+    for row in page_rows:
+        t = norm(" ".join(w.text for w in row))
+        v = _row_amount_any(row)
+        if v is None:
+            continue
+        for key, rx in BILL_ROWS:
+            if key not in found and re.search(rx, t):
+                found[key] = v
+    text = page.text
+    desc, seller, buyer = "", "", ""
+    for i, row in enumerate(page_rows):
+        t = norm(" ".join(w.text for w in row))
+        if t.startswith("descriptionofproperty") or t.startswith("propertydescription") or t == "description":
+            for nxt in page_rows[i + 1:i + 4]:
+                line = " ".join(w.text for w in nxt)
+                if not re.match(r"(vin|serial|odometer|terms)\b", line, re.I) and len(nxt) > 1:
+                    desc = line
+                    break
+        if not seller and "seller" in t[:12] and "buyer" in t:
+            b = next((w for w in row if w.text.lower().startswith("buyer")), None)
+            if b is not None and i + 1 < len(page_rows):
+                nxt = page_rows[i + 1]
+                seller = " ".join(w.text for w in nxt if w.x0 < b.x0)
+                buyer = " ".join(w.text for w in nxt if w.x0 >= b.x0)
+    m = re.search(r"\bdate[d]?:?\s*((?:" + MONTHS + r")\.?\s+\d{1,2},?\s+20\d\d|\d{1,2}/\d{1,2}/\d{4})", text, re.I)
+    date = _any_date(m.group(1)) if m else _any_date(text)
+    m = re.search(r"placed in service\s+(?:on\s+)?([A-Za-z]+\.?\s+\d{1,2},?\s+20\d\d|\d{1,2}/\d{1,2}/\d{4})", text, re.I)
+    in_service = _any_date(m.group(1)) if m else ""
+    d = {"kind": "Bill of sale", "doc": page.doc, "description": desc, "seller": seller, "buyer": buyer,
+         "date": date, "in_service": in_service, "year": int(date[:4]) if date else None}
+    for k in ("price", "sales_tax", "down_payment", "financed"):
+        d[k] = fact(page, f"Bill of sale {k.replace('_', ' ')}", found.get(k), "" if k in found else "not printed")
     return d
 
 

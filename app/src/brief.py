@@ -37,7 +37,8 @@ def _lead_order(products, ranked):
 SNAPSHOT = [("agi", "Household income (AGI)"), ("interest", "Interest (cash & CDs)"),
             ("dividends", "Dividends"), ("cap_gain", "Capital gains"),
             ("retirement", "Retirement distributions"), ("ss", "Social Security"),
-            ("sch_c_net", "Business income (Sch C)"), ("k1_ordinary", "S-corp income (K-1)")]
+            ("sch_c_net", "Business income (Sch C)"), ("sch_f_net", "Farm income (Sch F)"),
+            ("k1_ordinary", "S-corp income (K-1)")]
 
 
 class _Blank(dict):
@@ -129,7 +130,32 @@ def context_values(ctx):
     if paid:
         out["care_paid"] = f"${paid:,.0f}"
         out["care_provider"] = ", ".join(p["name"] for p in provs if p["name"]) or "provider"
+    pnl = [d for d in ctx.get("pnl") or [] if d["net"].value is not None or d["income"].value is not None]
+    if pnl:
+        d = pnl[0]
+        out["pnl_business"] = d["business"] or "the business"
+        if d["income"].value is not None:
+            out["pnl_income"] = f"${d['income'].value:,.0f}"
+        if d["net"].value is not None:
+            out["pnl_net"] = f"${d['net'].value:,.0f}"
+    buys = [d for d in ctx.get("asset_purchases") or [] if d["price"].value]
+    if buys:
+        d = buys[0]
+        out["asset_desc"] = d["description"] or "business equipment"
+        out["asset_price"] = f"${d['price'].value:,.0f}"
+        out["asset_date"] = _long_date(d["date"]) if d["date"] else ""
+        out["asset_financed"] = f"${d['financed'].value:,.0f}" if d["financed"].value else ""
+        out["asset_financed_note"] = f", {out['asset_financed']} of it financed" if d["financed"].value else ""
     return out
+
+
+def _long_date(iso):
+    """'2025-03-22' -> 'March 22, 2025'."""
+    import datetime
+    try:
+        return datetime.date.fromisoformat(iso).strftime("%B %d, %Y").replace(" 0", " ")
+    except ValueError:
+        return iso
 
 
 def tax_picture(vals, forms):
@@ -147,6 +173,22 @@ def tax_picture(vals, forms):
         b = (forms.get("2441") or {}).get("12")
         chips.append({"label": "Child care paid", "value": vals["care_paid"],
                       "sub": vals["care_provider"] + (f" · ${b.value:,.0f} employer benefits" if b and b.value else "")})
+    if "pnl_net" in vals or "pnl_income" in vals:
+        sc = (forms.get("Sch C") or {}).get("31")
+        sub = f"{vals['pnl_business']} P&L"
+        if "pnl_income" in vals:
+            sub += f" · {vals['pnl_income']} of sales"
+        if sc is not None and sc.value is not None:
+            sub += f" · Schedule C net ${sc.value:,.0f}"
+        chips.append({"label": "Business books (net income)", "value": vals.get("pnl_net", vals.get("pnl_income")),
+                      "sub": sub})
+    if "asset_price" in vals:
+        sub = vals["asset_desc"]
+        if vals["asset_date"]:
+            sub += f" · {vals['asset_date']}"
+        if vals["asset_financed"]:
+            sub += f" · {vals['asset_financed']} financed"
+        chips.append({"label": "Equipment purchase", "value": vals["asset_price"], "sub": sub})
     return chips
 
 

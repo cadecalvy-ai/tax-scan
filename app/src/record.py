@@ -4,14 +4,14 @@ from collections import defaultdict
 from pathlib import Path
 
 from . import extract as ex
-from .classify import RETURN_KINDS, SOURCE_KINDS, classify_page, doc_year, page_year
+from .classify import CONTEXT_KINDS, RETURN_KINDS, SOURCE_KINDS, classify_page, doc_year, page_year
 from .ingest import read_pdf
 
 
 def new_year():
     return {"f1040": {}, "header": {}, "forms": {}, "sch_e_nets": [], "f8949": [],
             "sources": defaultdict(list), "sch_c_owner_ssn": "",
-            "context": {"care_providers": []}}   # preparer pages: cross-checks and talking points only
+            "context": {"care_providers": [], "pnl": [], "asset_purchases": []}}   # cross-checks and talking points only
 
 
 def build_record(folder, cache_dir=None, files=None):
@@ -48,9 +48,33 @@ def build_record(folder, cache_dir=None, files=None):
                     yr["sources"][k].append(ex.parse_source(p, k))
         elif "profile" in kinds:
             rec["profile"] = ex.parse_profile(pages[kinds.index("profile")])
+        elif any(k in CONTEXT_KINDS for k in kinds):
+            _read_context(rec, pdf, pages, kinds)
         else:
             rec["warnings"].append(f"{pdf.name}: document type not recognized; skipped")
     return rec
+
+
+def _read_context(rec, pdf, pages, kinds):
+    """Supporting papers (a P&L, a bill of sale): kept with the year they describe, for cross-checks and talking points."""
+    for p, k in zip(pages, kinds):
+        if k == "P&L":
+            d = ex.parse_pnl(p)
+            if d["income"].value is None and d["net"].value is None:
+                continue                                 # a detail page with no totals
+            slot = "pnl"
+        elif k == "Bill of sale":
+            d = ex.parse_bill_of_sale(p)
+            if d["price"].value is None:
+                continue
+            slot = "asset_purchases"
+        else:
+            continue
+        year = d["year"] or doc_year(pages) or _year_from_name(pdf.name)
+        if not year:
+            rec["warnings"].append(f"{pdf.name}: could not tell which year this document is for")
+            continue
+        rec["years"].setdefault(year, new_year())["context"][slot].append(d)
 
 
 def _year_from_name(name):
@@ -89,6 +113,8 @@ def _read_return(rec, pdf, pages, kinds):
                     form[line] = f
             if k == "Sch E":
                 yr["sch_e_nets"] += ex.sch_e_property_nets(p)
+            if k == "Sch F":
+                ex.parse_pairs(p, form, ex.SCHF_PAIRS, "Sch F")
             if k == "8949":
                 yr["f8949"] += ex.f8949_rows(p)
             if k == "2441":

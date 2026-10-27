@@ -141,6 +141,12 @@ display:
     child_care:
       text: "Pays {care_paid} a year for child care ({care_provider}, Form 2441), a cost that continues if an income stops."
       groups: [life.dependents, life.single_earner]
+    business_books:
+      text: "Their own books ({pnl_business} P&L) show {pnl_net} of net income on {pnl_income} of sales."
+      groups: [life.business_owner, aum.no_retirement_savings, life.single_earner, life.dependents, life.income]
+    equipment_purchase:
+      text: "Bought {asset_desc} for {asset_price} on {asset_date}{asset_financed_note}: a business that is investing in itself."
+      groups: [life.business_owner, aum.no_retirement_savings, life.single_earner, life.dependents, life.income]
 
 # ---------------------------------------------------------------- conversation brief
 # One entry per signal (the part of the signal id before the threshold, e.g. aum.rollover).

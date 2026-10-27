@@ -137,6 +137,8 @@ Signal IDs (like `aum.rollover_100k`) include the threshold, so the reports stay
 | No retirement savings | W-2 box 12 deferral codes, Schedule 1 lines 16 and 20 |
 | Ages | Profile summary DOBs, then the 1040 "born before" boxes, then SSA-1099 |
 | Single earner | W-2 box 1 by employee SSN, plus Schedule C owner |
+| Farm income (shown, not scored) | Schedule F lines 3a, 4a, 6a and 34, cross-checked against 1099-PATR, the USDA 1099-G (box 7) and 1099-MISC crop insurance (box 9) |
+| Business books (shown, not scored) | A profit and loss statement's total income vs. Schedule C line 1; its net income and any equipment purchase (bill of sale) appear in the brief |
 | Life events | Filing status, spouse deceased marker, and dependents vs. the prior-year return; new baby from dependent DOBs |
 
 ## 5. How it works
@@ -145,7 +147,8 @@ Signal IDs (like `aum.rollover_100k`) include the threshold, so the reports stay
 app/src/paths.py     where every folder lives (change locations here only)
 app/src/ingest.py    read PDFs: pdfplumber for text, Poppler + Tesseract for scans
                      (straighten, erase form rules, two OCR passes merged)
-app/src/classify.py  identify each page: 1040 page 1/2, schedules, W-2, 1099s, SSA-1099, K-1, 3921, 1098, profile
+app/src/classify.py  identify each page: 1040 page 1/2, schedules, W-2, 1099s (INT, DIV, B, R, G, S, NEC, K, PATR,
+                     MISC), SSA-1099, K-1, 3921, 1098, profile; P&L statements and bills of sale as context
 app/src/extract.py   pull values: form lines matched by their printed wording; information-return boxes by label
 app/src/record.py    assemble one record per client per tax year
 app/src/validate.py  cross-check (AGI = line 9 - line 10, W-2 total = line 1a, ...); use the best-supported value

@@ -29,6 +29,7 @@ TITLE_KINDS = [  # matched against the top ~13% of the page; first match wins
     ("Sch C",    ["profitorlossfrombusiness"]),
     ("Sch D",    ["capitalgainsandlosses"]),
     ("Sch E",    ["supplementalincomeandloss"]),
+    ("Sch F",    ["profitorlossfromfarming"]),
     ("Sch SE",   ["selfemploymenttax"]),
     ("8949",     ["salesandotherdispositions"]),
     ("8960",     ["netinvestmentincometax"]),
@@ -50,6 +51,8 @@ BODY_KINDS = [  # matched against the whole page
     ("1099-DIV", ["form1099div"]),
     ("1099-B",   ["form1099b", "proceedsfrombroker"]),
     ("1099-G",   ["form1099g"]),
+    ("1099-PATR", ["form1099patr", "taxabledistributionsreceivedfromcooperatives"]),
+    ("1099-MISC", ["form1099misc", "miscellaneousinformation"]),
     ("1099-NEC", ["form1099nec", "nonemployeecompensation"]),
     ("1099-K",   ["form1099k", "thirdpartynetwork"]),
     ("1099-S",   ["form1099s", "realestatetransactions"]),
@@ -57,13 +60,22 @@ BODY_KINDS = [  # matched against the whole page
     ("1098",     ["form1098", "mortgageintereststatement"]),
 ]
 
+# Supporting papers that are not tax forms: read for context (cross-checks and talking points), never scored.
+CONTEXT_KINDS_KEYS = [
+    ("P&L",          ["profitandloss", "profitlossstatement"]),      # a business's profit and loss statement
+    ("Bill of sale", ["billofsale"]),                                  # an equipment or vehicle purchase
+]
+
 FILENAME_HINTS = [("W-2", "w2"), ("1099-R", "1099r"), ("1099-INT", "1099int"), ("1099-DIV", "1099div"),
-                  ("1099-B", "1099b"), ("1099-G", "1099g"), ("1099-S", "1099s"), ("1099-NEC", "1099nec"),
+                  ("1099-B", "1099b"), ("1099-G", "1099g"), ("1099-PATR", "1099patr"), ("1099-MISC", "1099misc"),
+                  ("1099-S", "1099s"), ("1099-NEC", "1099nec"),
                   ("1099-K", "1099k"), ("SSA-1099", "ssa1099"), ("K-1", "k1"), ("3921", "3921"), ("1098", "1098"),
-                  ("profile", "profile")]
+                  ("profile", "profile"), ("P&L", "profitandloss"), ("P&L", "profitloss"), ("P&L", "pnl"),
+                  ("P&L", "pandl"), ("Bill of sale", "billofsale")]
 
 SOURCE_KINDS = {"W-2", "SSA-1099", "1099-R", "1099-INT", "1099-DIV", "1099-B", "1099-G", "1099-S", "1099-NEC",
-                "1099-K", "K-1", "3921", "1098", "1099-CONSOL"}
+                "1099-K", "K-1", "3921", "1098", "1099-CONSOL", "1099-PATR", "1099-MISC"}
+CONTEXT_KINDS = {k for k, _ in CONTEXT_KINDS_KEYS}
 RETURN_KINDS = {k for k, _ in TITLE_KINDS}
 
 
@@ -77,7 +89,7 @@ def classify_page(page, filename=""):
     if "departmentofrevenue" in top or "departmentofrevenue" in body[:600]:
         return "state"
     # Continuation pages of schedules: "Schedule D (Form 1040) 2025 ... Page 2"
-    m = re.match(r"\s*Schedule\s+(1-A|SE|[123ABCDE])\s*\(Form 1040\)", top_text, re.I)
+    m = re.match(r"\s*Schedule\s+(1-A|SE|[123ABCDEF])\s*\(Form 1040\)", top_text, re.I)
     if m:
         kind = f"Sch {m.group(1).upper()}"
         return kind if kind in RETURN_KINDS else "unknown"
@@ -98,7 +110,7 @@ def classify_page(page, filename=""):
     # Brokerage "consolidated 1099" summary: DIV, INT and B in one table
     if "consolidated" in body and ("form1099taxreportingstatement" in body or "consolidatedform1099" in body):
         return "1099-CONSOL"
-    for kind, keys in BODY_KINDS:
+    for kind, keys in BODY_KINDS + CONTEXT_KINDS_KEYS:
         if any(k in body for k in keys):
             return kind
     if "taxandcredits" in body or "thisisyourtotaltax" in body:
