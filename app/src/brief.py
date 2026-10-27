@@ -11,11 +11,29 @@ ORDER = {"good": 0, "mid": 1, "low": 2}
 # Talking-point order: concrete events first (best conversation openers), background facts last.
 EVENT_GROUPS = {"aum.rollover", "aum.asset_sale", "aum.inheritance", "aum.early_withdrawal", "aum.income_drop",
                 "aum.stock_comp_amt", "annuity.transition", "life.life_event", "aum.no_retirement_savings"}
-CONTEXT_GROUPS = {"aum.agi", "life.income", "annuity.bracket_24"}
+CONTEXT_GROUPS = {"aum.agi", "life.income", "annuity.bracket_24", "annuity.age"}
 
 
 def _rank(group, points):
     return (0 if group in EVENT_GROUPS else 2 if group in CONTEXT_GROUPS else 1, -points)
+
+
+def _lead_rank(t, pos):
+    """Order for "what stood out": the strongest product first (pos = its place in the ranking), then
+    concrete events, then points backed by a dollar figure from the return, then rule weight."""
+    kind, pts = _rank(t["group"], t["points"])
+    return (pos[t["group"].split(".")[0]], kind, 0 if _amounts(t["headline"]) else 1, pts)
+
+
+def _lead_order(products, ranked):
+    """Each worthwhile product's best point, strongest product first; then everything else."""
+    pos = {p["key"]: i for i, p in enumerate(ranked)}
+    tps = sorted((t for p in products for t in p["points"]), key=lambda t: _lead_rank(t, pos))
+    firsts = []
+    for p in ranked:
+        if p["tone"] != "low":
+            firsts += [t for t in tps if t["group"].split(".")[0] == p["key"]][:1]
+    return firsts + [t for t in tps if not any(t is f for f in firsts)]
 SNAPSHOT = [("agi", "Household income (AGI)"), ("interest", "Interest (cash & CDs)"),
             ("dividends", "Dividends"), ("cap_gain", "Capital gains"),
             ("retirement", "Retirement distributions"), ("ss", "Social Security"),
@@ -200,24 +218,35 @@ def build_brief(signals, scores, cfg, year, figures, notes=None, context=None, f
 
     ranked = sorted(products, key=lambda p: (ORDER[p["tone"]], -p["value"] / (100 if p["key"] == "aum" else
                                                                              bands["grades"]["A"])))
-    all_tps = sorted((t for p in products for t in p["points"]), key=lambda t: _rank(t["group"], t["points"]))
-    # A "transition" restates other signals (widowhood, income drop, rollover); skip it in the opener
-    # when those signals are already there.
-    groups = {t["group"] for t in all_tps}
+    all_tps = _lead_order(products, ranked)
+    # A "transition" restates other signals (widowhood, income drop, rollover). When those signals are
+    # there, say them in their own words ("Rolled $418,000 out of a workplace plan") at the transition's
+    # place, which reflects the stronger product.
     covered = {"widowhood": "life.life_event", "income drop": "aum.income_drop", "early retirement": "aum.income_drop",
                "rollover": "aum.rollover"}
     opener, used = [], set()
     for t in all_tps:
-        amts = _amounts(t["headline"])
-        if t["headline"] in opener or (amts and amts <= used):
-            continue                     # same fact told twice (e.g. a rollover as AUM and as a transition)
+        lines = [t["headline"]]
         if t["group"] == "annuity.transition":
             reasons = [x.strip().lower() for x in t["headline"].split(":", 1)[-1].split(";")]
-            if all(any(r.startswith(k) and covered[k] in groups for k in covered) for r in reasons):
-                continue
-        opener.append(t["headline"])
-        used |= amts
+            subs = []
+            for r in reasons:
+                k = next((k for k in covered if r.startswith(k)), None)
+                same = [x for x in all_tps if k and x["group"] == covered[k]]
+                sub = next((x for x in same if k in x["headline"].lower()), same[0] if same else None)
+                if sub is None:
+                    break
+                subs.append(sub["headline"])
+            else:
+                lines = subs
+        for line in lines:
+            amts = _amounts(line)
+            if line in opener or (amts and amts <= used):
+                continue                 # same fact told twice (e.g. a rollover as AUM and as a transition)
+            opener.append(line)
+            used |= amts
         if len(opener) >= disp.get("opener_points", 3):
+            opener = opener[:disp.get("opener_points", 3)]
             break
 
     fig = {f["key"]: f["value"] for f in figures}
