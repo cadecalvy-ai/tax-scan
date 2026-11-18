@@ -90,6 +90,14 @@ def anime_js():
     return send_from_directory(WEB, "anime.min.js")
 
 
+@app.get("/launch.mp4")
+@app.get("/launch-poster.jpg")
+@app.get("/film.html")
+def launch_film():
+    """The launch film, its poster frame and its own page (same files the public site serves)."""
+    return send_from_directory(WEB, request.path.lstrip("/"))
+
+
 @app.get("/sample-clients.zip")
 def sample_zip():
     z = RUNS.parent / "sample-clients.zip"

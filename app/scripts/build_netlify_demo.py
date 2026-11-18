@@ -6,6 +6,7 @@
 Output in netlify_site/site/, zipped as netlify_site/tax-scan-site.zip for uploading:
   index.html            landing page (hero + drop box, demo mode: nothing is uploaded or read)
   anime.min.js          animation library (MIT), served locally
+  launch.mp4, film.html the 24-second launch film, its poster, and a page that plays it
   sample-clients.zip    the 24 fictional clients' PDFs, to try the drop box / the local grader
   demo/index.html       ranking of the sample clients
   demo/clients/*.html   one profile per sample client
@@ -80,6 +81,8 @@ def main():
     landing = render_landing("demo", sample_url="demo/index.html", sample_names=sample_names())
     (SITE / "index.html").write_text(landing.replace("<title>", NOINDEX + "<title>", 1), encoding="utf-8")
     shutil.copy(WEB / "anime.min.js", SITE / "anime.min.js")
+    for name in ("launch.mp4", "launch-poster.jpg", "film.html"):       # the launch film and its own page
+        shutil.copy(WEB / name, SITE / name)
     build_sample_zip(SITE / "sample-clients.zip")
     (SITE / "_headers").write_text(HEADERS, encoding="utf-8")
 

@@ -1,0 +1,12 @@
+node_modules/
+frames/
+video.mp4
+audio.wav
+metrics.json
+# the 25 MB master stays on this PC; the web copy is app/src/web/launch.mp4
+tax-scanner-launch.mp4
+# Mixkit audio is not redistributed (see README.md)
+assets/song.mp3
+assets/sfx/
+# full-size stills; the contact sheet is kept
+stills/*.png

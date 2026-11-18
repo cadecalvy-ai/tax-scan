@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>tax scanner. launch film</title>
+<style>
+  @font-face { font-family: "Geist"; src: url("assets/Geist-Variable.woff2") format("woff2"); font-weight: 100 900; }
+  @font-face { font-family: "Geist Mono"; src: url("assets/GeistMono-Variable.woff2") format("woff2"); font-weight: 100 900; }
+  html, body { margin: 0; background: #000; height: 100%; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { display: block; width: min(100vw, 100vh); height: min(100vw, 100vh); }
+  svg { position: absolute; width: 0; height: 0; }
+</style>
+</head>
+<body>
+<svg aria-hidden="true">
+  <filter id="goo" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="b"/>
+    <feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 26 -12"/>
+  </filter>
+</svg>
+<canvas id="c" width="1440" height="1440"></canvas>
+<script src="scene.js"></script>
+</body>
+</html>
