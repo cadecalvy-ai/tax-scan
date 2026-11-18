@@ -10,3 +10,4 @@ assets/song.mp3
 assets/sfx/
 # full-size stills; the contact sheet is kept
 stills/*.png
+preview-*

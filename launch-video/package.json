@@ -1,9 +1,9 @@
 {
   "name": "tax-scanner-launch-film",
   "private": true,
-  "description": "24s square launch film. scene.js draws it; render.cjs renders frames, audio.cjs builds the soundtrack.",
+  "description": "28s square launch film. scene.js draws it; render.cjs renders frames, audio.cjs builds the soundtrack.",
   "scripts": {
-    "stills": "node stills.cjs 1-open=1.5 2-find=6.8 3-write=8.3 4-results=12.3 5-phone=15.2 6-out=22.05",
+    "stills": "node stills.cjs 1-open=1.5 2-find=8.0 3-write=10.5 4-results=15.8 5-phone=18.86 6-out=26.15",
     "render": "node render.cjs video.mp4 metrics.json",
     "audio": "node audio.cjs assets/sfx audio.wav"
   },

@@ -27,7 +27,7 @@ Tax Scanner/
     site/                     the website files
     tax-scan-site.zip         the file to upload to Netlify
     Build Website.bat         rebuilds the site and the zip
-  launch-video/             the 24-second launch film: its source, render scripts and stills
+  launch-video/             the 28-second launch film: its source, render scripts and stills
   app/                      the program: code, config/grader.yaml, tests, docs
 ```
 
@@ -214,7 +214,7 @@ To update it after changing the rules or design:
 
 ### Launch film
 
-The site also plays a 24-second launch film, on the home page and on its own page (`film.html`), each with a
+The site also plays a 28-second launch film, on the home page and on its own page (`film.html`), each with a
 **Scan now** button. The film is one HTML canvas in `launch-video\` where every frame is a function of time;
 `render.cjs` renders it at 60fps and `audio.cjs` builds the soundtrack. The web copy lives at
 `app\src\web\launch.mp4` and the site build copies it into the site. See `launch-video\README.md` to re-render.

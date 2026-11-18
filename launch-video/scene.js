@@ -2,7 +2,9 @@
 /* tax scanner. launch film — one canvas, everything a pure function of time.
    seek(t, tf): t = (sub)frame time for motion, tf = frame time for counters/typing. */
 
-const W = 1440, H = 1440, DUR = 24, CX = 720, CY = 720;
+const W = 1440, H = 1440, CX = 720, CY = 720;
+const { P, BEAT, g, T, DUR } = window.TIMING;      // every time in the film lives in timing.js
+const MID = DUR / 2;
 
 /* ───────── copy (edit here) ───────── */
 const COPY = {
@@ -32,23 +34,6 @@ const COPY = {
   cta: 'Scan now', endCta: 'scan now',
 };
 
-/* ───────── beats (the song's): hit lands on the first pill ───────── */
-const P = 2.8, BEAT = 0.4626, g = k => P + 0.265 + (k - 1) * BEAT;   // g(20) = 11.854
-const T = {
-  lettersIn: 0.25, irisOpen: 1.05, line1: 1.25, line2: 2.2, linesOut: 3.4,
-  pill: P, click1: g(2), type0: 4.0, type1: 5.05, send: g(6),
-  ripple: 5.62, scan0: g(8) - 0.08, scan1: 7.2, pour: g(10),
-  type2a: 7.68, type2b: 8.41, sent: g(13),
-  ring0: 9.3, ring1: 11.0, clock: [9.15, 9.9, 10.37, 10.83], sleepIn: 9.5, sleepOut: 10.9,
-  relight0: 9.45, relight1: 11.35,
-  black: 10.95, split: 11.22, checks: [11.86, 11.98, 12.10],
-  merge: g(22), day0: g(22), day1: g(24) + 0.8, phone: g(24),
-  notif: [14.5, 14.66, 14.82], tap: g(28), card: g(29),
-  meet0: 16.6, hover: 17.38, chart: g(33), count0: 18.62, count1: 19.62,
-  flood: g(37), cta: g(37) + 0.2, ctaClick: g(40),
-  irisClose: 21.55, lettersOut: 22.3, tagline: 23.0,
-};
-T.irisClosed = T.irisClose + 0.8;
 const WSLOW = 1.1;                                // word motion runs 10% slower than the shape morphs, so lines are easier to read
 const ROLL = 0.6 * WSLOW;
 
@@ -272,7 +257,7 @@ function askContent(c, t, tf, m) {
     const out = typed(COPY.job, lin(tf, T.type0, T.type1));
     let cx = tx, cyl = ys[0];
     out.forEach((s, i) => { if (!s && i) return; text(c, s, tx, ys[i], font, '#fff', 'left', ls); cx = tx + measure(c, s, font, ls); cyl = ys[i]; });
-    if (tf < T.type1 + 0.25) { c.fillStyle = '#fff'; c.fillRect(cx + 5, cyl - 36, 3, 46); }
+    if (tf < T.send) { c.fillStyle = '#fff'; c.fillRect(cx + 5, cyl - 36, 3, 46); }
     if (tf < T.type0) text(c, 'Ask anything', tx + 18, ys[0] + 28, font, 'rgba(255,255,255,0.45)', 'left', ls);
     const bs = G(t, T.click1 + 0.25, 0.5) * (1 - 0.1 * bump(t, T.send)), bx = m.x1 - 92, by = m.y;
     c.fillStyle = '#fff'; c.beginPath(); c.arc(bx, by, 56 * bs, 0, 6.2832); c.fill();
@@ -533,12 +518,12 @@ function floodAndCta(c, t, m) {
 const LINE_END_HOLD = { a: T.count1 - 0.002, b: T.count1 - 0.001, x: CH.end[0], y: CH.end[1] };
 const START = CH.xy(CH.P2[0]);
 const CUR = [
-  { a: 2.92, b: 3.48, x: 792, y: 760 }, { a: 4.5, b: 5.3, x: CX + 595 - 88, y: CY + 12 }, { a: 5.5, b: 6.3, x: 1580, y: 1330 },
-  { a: 14.55, b: 15.45, x: 772, y: 884 }, { a: 16.65, b: 17.36, x: meetRect(2).x + 118, y: meetRect(2).y + 40 },
-  { a: 17.95, b: 18.6, x: START[0], y: START[1] }, LINE_END_HOLD,
-  { a: 20.0, b: 20.9, x: 912, y: 764 }, { a: 21.22, b: 22.0, x: 1580, y: 1560 },
+  { a: P + 0.12, b: T.click1 - 0.06, x: 792, y: 760 }, { a: T.send - 0.88, b: T.send - 0.08, x: CX + 595 - 88, y: CY + 12 }, { a: T.send + 0.12, b: T.send + 0.92, x: 1580, y: 1330 },
+  { a: T.tap - 1.0, b: T.tap - 0.1, x: 772, y: 884 }, { a: T.card + 0.63, b: T.card + 1.34, x: meetRect(2).x + 118, y: meetRect(2).y + 40 },
+  { a: T.chart + 0.08, b: T.chart + 0.73, x: START[0], y: START[1] }, LINE_END_HOLD,
+  { a: T.cta + 0.08, b: T.cta + 0.98, x: 912, y: 764 }, { a: T.ctaClick + 0.11, b: T.ctaClick + 0.89, x: 1580, y: 1560 },
 ];
-const PUR = [{ a: 7.4, b: 8.0, x: 1030, y: 812 }, { a: 8.04, b: 8.55, x: SEND_BTN[0] + 74, y: SEND_BTN[1] + 22 }];
+const PUR = [{ a: T.pour + 0.17, b: T.pour + 0.77, x: 1030, y: 812 }, { a: T.sent - 0.6, b: T.sent - 0.08, x: SEND_BTN[0] + 74, y: SEND_BTN[1] + 22 }];
 
 function drawInside(c, t, tf) {
   c.globalAlpha = 1; c.filter = 'none';
@@ -573,7 +558,7 @@ function drawInside(c, t, tf) {
   if (t >= T.count0 && t <= T.count1) [x, y] = CH.xy(CH.at(chartF(t)));
   const dip = 1 - 0.13 * (bump(t, T.click1) + bump(t, T.send) + bump(t, T.tap) + bump(t, T.ctaClick));
   pointer(c, x, y, '#0b0b0f', dip);
-  if (t > 7.3 && t < 9.3) {
+  if (t > T.pour && t < T.sent + 0.7) {
     const [px, py] = path(t, [1620, 960], PUR), s = (1 - 0.13 * bump(t, T.sent)) * (1 - G(t, T.sent + 0.16, 0.4));
     if (s > 0.01) pointer(c, px, py, '#7B5CFF', s, COPY.name);
   }
@@ -583,13 +568,13 @@ function drawInside(c, t, tf) {
 const RMAX = 1032;
 function irisR(t) {
   if (t <= T.irisOpen) return R0;
-  if (t < 12) return Math.sqrt(lerp(R0 * R0, RMAX * RMAX, G(t, T.irisOpen)));
+  if (t < MID) return Math.sqrt(lerp(R0 * R0, RMAX * RMAX, G(t, T.irisOpen)));
   return Math.sqrt(lerp(RMAX * RMAX, R0 * R0, G(t, T.irisClose)));      // eased by area, not radius
 }
 let WORD = null;
 function drawOutside(c, t) {
   c.globalAlpha = 1; c.drawImage(IM.day, 0, 0);
-  const q = t < 12 ? G(t, T.lettersIn) : 1 - G(t, T.lettersOut);         // 0 = wordmark, 1 = just the period
+  const q = t < MID ? G(t, T.lettersIn) : 1 - G(t, T.lettersOut);         // 0 = wordmark, 1 = just the period
   const font = F(700, 136), ls = -5.5, gap = 7;
   if (!WORD) WORD = measure(c, COPY.name, font, ls);
   const total = WORD + gap + 2 * R0, pxRest = CX - total / 2 + WORD + gap + R0, px = lerp(pxRest, CX, q);
@@ -600,10 +585,10 @@ function drawOutside(c, t) {
   }
   c.fillStyle = '#0b0b0f'; c.beginPath(); c.arc(px, CY, R0, 0, 6.2832); c.fill();
   // tagline through its own mask line
-  const p = t < 12 ? 1 - G(t, 0.08, 0.5 * WSLOW) : G(t, T.tagline, ROLL);
+  const p = t < MID ? 1 - G(t, 0.08, 0.5 * WSLOW) : G(t, T.tagline, ROLL);
   if (p > 0) { c.save(); c.beginPath(); c.rect(0, CY + 62, W, 52); c.clip(); stext(c, COPY.tagline, CX, CY + 100 + (1 - p) * 52, F(500, 37), '#0b0b0f', 'center', -0.4); c.restore(); }
   // the end card's call to action: a black "scan now ->" pill that rises after the tagline
-  const cp = t < 12 ? 1 - G(t, 0.04, 0.5 * WSLOW) : G(t, T.tagline + 0.12, ROLL);
+  const cp = t < MID ? 1 - G(t, 0.04, 0.5 * WSLOW) : G(t, T.tagline + 0.12, ROLL);
   if (cp > 0) A(c, cp, () => {
     const font = F(600, 37), tw = Math.ceil(measure(c, COPY.endCta, font, -0.6)), w = tw + 150, h = 88, x = Math.round(CX - w / 2), y = CY + 156 + (1 - cp) * 36;
     shadow(c, x, y, w, h, 44, 0.75); rr(c, x, y, w, h, 44); c.fillStyle = '#0b0b0f'; c.fill();

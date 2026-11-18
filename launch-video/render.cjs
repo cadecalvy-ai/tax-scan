@@ -6,9 +6,9 @@ const http = require('http'), fs = require('fs'), path = require('path'), { spaw
 const { chromium } = require('playwright-core');
 const ffmpeg = require('ffmpeg-static');
 
-const FPS = 60, DUR = 24, SUB = 4, SHUTTER = 0.5;       // shutter = fraction of the frame the blur spans
+const FPS = 60, SUB = 4, SHUTTER = 0.5, { DUR } = require('./timing.js');       // shutter = fraction of the frame the blur spans
 const root = __dirname, out = process.argv[2], metricsPath = process.argv[3];
-const f0 = parseInt(process.argv[4] ?? '0'), f1 = parseInt(process.argv[5] ?? String(FPS * DUR));
+const f0 = parseInt(process.argv[4] ?? '0'), f1 = parseInt(process.argv[5] ?? String(Math.round(FPS * DUR)));
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.jpg': 'image/jpeg', '.woff2': 'font/woff2' };
 const server = http.createServer((req, res) => {
   const p = path.join(root, decodeURIComponent(req.url.split('?')[0].replace(/^\/+/, '')) || 'index.html');

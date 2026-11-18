@@ -1,14 +1,15 @@
 # tax scanner. launch film
 
-A 24-second square film (1440×1440, 60fps) that loops. One HTML canvas; every frame is a pure function of
+A 28-second square film (1440×1440, 60fps) that loops. One HTML canvas; every frame is a pure function of
 time, so `seek(t)` can draw any moment.
 
 | File | What it is |
 |---|---|
-| `scene.js` | The whole film. Copy is in `COPY` at the top; all timing is in the `T` table below it |
+| `scene.js` | The whole film. Copy is in `COPY` at the top |
+| `timing.js` | Every time in the film, in one table on the song's beats. Picture and sound both read it, so a retime is one edit |
 | `index.html` | Open it through a local web server to play the film; add `?t=12.3` for a still |
-| `render.cjs` | Renders 1440 frames with 4 motion-blur subframes each and pipes them into ffmpeg |
-| `audio.cjs` | Builds the soundtrack: song on its hit at 2.8s, effects placed by measured peak, -14 LUFS |
+| `render.cjs` | Renders every frame with 4 motion-blur subframes and pipes them into ffmpeg |
+| `audio.cjs` | Builds the soundtrack: the song's hit lands on the first pill at 2.8s, effects placed by measured peak, -14 LUFS |
 | `stills.cjs` | Renders stills at chosen times |
 | `diag.cjs` | Shows what changed on screen around a frame (for hunting single-frame jumps) |
 
@@ -29,7 +30,7 @@ saved to `app/src/web/launch.mp4`.
 - `tax-scanner-launch.mp4`, the 25 MB master. The web copy is in `app/src/web/`.
 - `assets/song.mp3` and `assets/sfx/`. They are Mixkit files and are not redistributed here. `audio.cjs` lists
   the effect ids; download each from `https://assets.mixkit.co/active_storage/sfx/<id>/<id>-preview.mp3` into
-  `assets/sfx/`, and the song from `https://assets.mixkit.co/music/77/77.mp3` to `assets/song.mp3`.
+  `assets/sfx/`, and the song from `https://assets.mixkit.co/music/224/224.mp3` to `assets/song.mp3`.
 
 ## Credits
 

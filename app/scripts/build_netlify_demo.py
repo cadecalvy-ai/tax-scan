@@ -6,7 +6,7 @@
 Output in netlify_site/site/, zipped as netlify_site/tax-scan-site.zip for uploading:
   index.html            landing page (hero + drop box, demo mode: nothing is uploaded or read)
   anime.min.js          animation library (MIT), served locally
-  launch.mp4, film.html the 24-second launch film, its poster, and a page that plays it
+  launch.mp4, film.html the 28-second launch film, its poster, and a page that plays it
   sample-clients.zip    the 24 fictional clients' PDFs, to try the drop box / the local grader
   demo/index.html       ranking of the sample clients
   demo/clients/*.html   one profile per sample client
